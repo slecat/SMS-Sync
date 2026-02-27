@@ -25,6 +25,10 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.13.1
 
+dependency_overrides:
+  flutter_background_service_android:
+    path: third_party/flutter_background_service_android
+
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: false
