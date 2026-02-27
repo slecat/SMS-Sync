@@ -159,9 +159,7 @@ void onStart(ServiceInstance service) async {
           try {
             AppLogger.trace('Received WebSocket message: $message');
             final data = Map<String, dynamic>.from(jsonDecode(message));
-            if ((data['type'] == 'device-presence' ||
-                    data['type'] == 'sms' ||
-                    data['type'] == 'test') &&
+            if ((data['type'] == 'sms' || data['type'] == 'test') &&
                 !isTrustedPayload(data, 'ws')) {
               return;
             }
@@ -266,8 +264,7 @@ void onStart(ServiceInstance service) async {
           final data = Map<String, dynamic>.from(
             jsonDecode(utf8.decode(datagram.data)),
           );
-          if ((data['type'] == 'device-presence' || data['type'] == 'sms') &&
-              !isTrustedPayload(data, 'lan')) {
+          if (data['type'] == 'sms' && !isTrustedPayload(data, 'lan')) {
             return;
           }
           if (data['type'] == 'device-presence' &&

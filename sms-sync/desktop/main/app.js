@@ -38,7 +38,7 @@ const LISTEN_PORT = 8888;
 const BROADCAST_PORTS = [8888, 8889];
 
 const store = new Store();
-const autoLauncher = new AutoLaunch({ name: '短信转发' });
+const autoLauncher = new AutoLaunch({ name: '短信转发', isHidden: true });
 const desktopDeviceId = crypto.randomUUID();
 const deviceRegistry = new DeviceRegistry({ deviceTimeout: DEVICE_TIMEOUT });
 const isDuplicateMessage = createMessageDeduper(5000);
@@ -46,6 +46,7 @@ const state = {
   mainWindow: null,
   tray: null,
   isQuitting: false,
+  startHiddenOnLaunch: false,
   localGroupId: DEFAULT_SETTINGS.groupId,
   localDeviceName: DEFAULT_SETTINGS.deviceName,
   localSyncSecret: DEFAULT_SETTINGS.syncSecret,
@@ -90,6 +91,7 @@ function createWindow() {
     height: 680,
     minWidth: 800,
     minHeight: 500,
+    show: !state.startHiddenOnLaunch,
     autoHideMenuBar: true,
     icon: iconPath || undefined,
     webPreferences: {
@@ -109,6 +111,9 @@ function createWindow() {
 function showMainWindow() {
   if (!state.mainWindow) {
     return;
+  }
+  if (state.mainWindow.isMinimized()) {
+    state.mainWindow.restore();
   }
   state.mainWindow.show();
   state.mainWindow.focus();
@@ -196,7 +201,7 @@ function handleIncomingMessage(data, source) {
   }
 
   if (
-    (data.type === 'sms' || data.type === 'test' || data.type === 'device-presence') &&
+    (data.type === 'sms' || data.type === 'test') &&
     !verifyPayload(data, state.localSyncSecret)
   ) {
     return;
@@ -304,6 +309,35 @@ function setupTray() {
       showMainWindow();
     }
   });
+}
+
+function hasHiddenStartupArg() {
+  return process.argv.some((arg) => arg === '--hidden');
+}
+
+function wasOpenedAtLogin() {
+  try {
+    const settings = app.getLoginItemSettings();
+    return Boolean(settings.wasOpenedAtLogin);
+  } catch (error) {
+    console.error('Get login item settings error:', error);
+    return false;
+  }
+}
+
+function shouldStartHiddenOnLaunch() {
+  return hasHiddenStartupArg() || wasOpenedAtLogin();
+}
+
+async function refreshAutoLaunchEntry() {
+  try {
+    const enabled = await autoLauncher.isEnabled();
+    if (enabled) {
+      await autoLauncher.enable();
+    }
+  } catch (error) {
+    console.error('Refresh auto launch entry error:', error);
+  }
 }
 
 function initServices() {
@@ -437,16 +471,15 @@ function start() {
 
   app.on('second-instance', () => {
     if (state.mainWindow) {
-      if (state.mainWindow.isMinimized()) {
-        state.mainWindow.restore();
-      }
-      state.mainWindow.focus();
+      showMainWindow();
     }
   });
 
   app.whenReady().then(() => {
+    state.startHiddenOnLaunch = shouldStartHiddenOnLaunch();
     createWindow();
     setupTray();
+    refreshAutoLaunchEntry();
 
     const settings = loadSettings();
     connectToServer(settings.serverUrl);
