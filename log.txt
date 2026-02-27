@@ -1,0 +1,412 @@
+PS E:\File\MySoftword\CodeNow\sms-sync\mobile> flutter run
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+Launching lib\main.dart on V2452A in debug mode...
+I/flutter (15364): Saving devices to SharedPreferences: []
+I/flutter (15364): Saving devices to SharedPreferences: []
+I/flutter (15364): Received UDP from: InternetAddress('10.7.33.73', IPv4):45028, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210353275,"_sig_v":1,"_sig":"0d74ce8f072e09c4409160e35668f86e56755533f341424a53e79c24e36fbe4d"}
+I/flutter (15364): Received UDP from: InternetAddress('10.7.33.73', IPv4):45028, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210353275,"_sig_v":1,"_sig":"0d74ce8f072e09c4409160e35668f86e56755533f341424a53e79c24e36fbe4d"}
+D/FlutterJNI(16238): Beginning load of flutter...
+D/FlutterJNI(16238): flutter (null) was loaded normally!
+I/flutter (16238): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+I/flutter (16238): [ConnDiag][BG] onStart entered
+I/flutter (16238): [ConnDiag][BG] onStart entered
+I/flutter (16238): Background service started
+I/flutter (16238): Background service started
+I/flutter (16238): [ConnDiag][BG] background service started
+I/flutter (16238): [ConnDiag][BG] background service started
+I/flutter (16238): [ConnDiag][BG] initial settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16238): [ConnDiag][BG] initial settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16238): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16238): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16238): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16238): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16238): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16238): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16238): [ConnDiag][BG] attempting WebSocket.connect
+I/flutter (16238): [ConnDiag][BG] attempting WebSocket.connect
+I/flutter (16238): [ConnDiag][BG] WebSocket.connect returned
+I/flutter (16238): [ConnDiag][BG] WebSocket.connect returned
+I/flutter (16238): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16238): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16238): [ConnDiag][BG] waiting for channel.ready
+I/flutter (16238): [ConnDiag][BG] waiting for channel.ready
+I/flutter (16238): [ConnDiag][BG] channel.ready completed
+I/flutter (16238): [ConnDiag][BG] channel.ready completed
+I/flutter (16238): [ConnDiag][BG] register message sent
+I/flutter (16238): [ConnDiag][BG] register message sent
+I/flutter (16238): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16238): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16238): UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+I/flutter (16238): UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210358915}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210358915}
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):37033, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210361324,"_sig_v":1,"_sig":"1987c50f54c57d06b1f2c8a252b088976c4fd4d9f868a5999a9379ab20380cc3"}
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):37033, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210361324,"_sig_v":1,"_sig":"1987c50f54c57d06b1f2c8a252b088976c4fd4d9f868a5999a9379ab20380cc3"}
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210363927}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210363927}
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):45602, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210366309,"_sig_v":1,"_sig":"845425d08053a2981c7c47afab5373402a38d3c1663b86c6906f9ed9da93eaa0"}
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):45602, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210366309,"_sig_v":1,"_sig":"845425d08053a2981c7c47afab5373402a38d3c1663b86c6906f9ed9da93eaa0"}
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210368929}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210368929}
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):37942, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210371311,"_sig_v":1,"_sig":"7c099fd14f48849343e7638a73cca1b9e65e15f3e407e30c2ff8224663d84e5f"}
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):37942, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210371311,"_sig_v":1,"_sig":"7c099fd14f48849343e7638a73cca1b9e65e15f3e407e30c2ff8224663d84e5f"}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210373932}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210373932}
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):53297, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210376307,"_sig_v":1,"_sig":"3fdf5587a9435c3d0523c45d9717e6d4af683f3288a9462dc21b5d275d8255ef"}
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):53297, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210376307,"_sig_v":1,"_sig":"3fdf5587a9435c3d0523c45d9717e6d4af683f3288a9462dc21b5d275d8255ef"}
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210378942}
+I/flutter (16238): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210378942}
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Saving devices to SharedPreferences: []
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):40448, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210381307,"_sig_v":1,"_sig":"2e354ef3f07d19a41f1b9fe96ed88e24e6a7d09f9441e57d2c665359595a6e86"}
+I/flutter (16238): Received UDP from: InternetAddress('10.7.33.73', IPv4):40448, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210381307,"_sig_v":1,"_sig":"2e354ef3f07d19a41f1b9fe96ed88e24e6a7d09f9441e57d2c665359595a6e86"}
+Running Gradle task 'assembleDebug'...                             28.8s
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+Installing build\app\outputs\flutter-apk\app-debug.apk...           6.9s
+D/FlutterJNI(16721): Beginning load of flutter...
+D/FlutterJNI(16721): flutter (null) was loaded normally!
+I/flutter (16721): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+I/flutter (16721): [ConnDiag][APP] raw print before binding
+I/flutter (16721): [ConnDiag][APP] main entry
+I/flutter (16721): [ConnDiag][APP] main entry
+I/flutter (16721): [ConnDiag][APP] bindings initialized
+I/flutter (16721): [ConnDiag][APP] bindings initialized
+I/flutter (16721): [ConnDiag][BG] initializeService begin
+I/flutter (16721): [ConnDiag][BG] initializeService begin
+I/flutter (16721): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+I/flutter (16721): [ConnDiag][BG] onStart entered
+I/flutter (16721): [ConnDiag][BG] onStart entered
+I/flutter (16721): [ConnDiag][BG] initializeService complete: startService called
+I/flutter (16721): [ConnDiag][BG] initializeService complete: startService called
+I/flutter (16721): [ConnDiag][APP] initializeService done
+I/flutter (16721): [ConnDiag][APP] initializeService done
+I/flutter (16721): [ConnDiag][APP] runApp called
+I/flutter (16721): [ConnDiag][APP] runApp called
+I/flutter (16721): [ConnDiag][UI] HomeRuntimeCoordinator.startCore
+I/flutter (16721): [ConnDiag][UI] HomeRuntimeCoordinator.startCore
+I/flutter (16721): [ConnDiag][UI] attaching background event listeners
+I/flutter (16721): [ConnDiag][UI] attaching background event listeners
+Syncing files to device V2452A...                                   64ms
+
+Flutter run key commands.
+r Hot reload.
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+A Dart VM Service on V2452A is available at: http://127.0.0.1:10435/LrDBGLQYOsk=/
+I/GrallocExtra(16721): gralloc_extra_query:is_SW3D 0
+I/GrallocExtra(16721): gralloc_extra_query:is_SW3D 0
+E/MEMCWrapper(16721): MEMC_POST_PROCESSING_ENABLE_PROPERTY false.
+D/BLASTBufferQueue(16721): [55e1a7d SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#1](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=146542899892426(auto) mPendingTransactions.size=0 graphicBufferId=71816148156426 transform=0
+I/Choreographer(16721): Skipped 90 frames!  The application may be doing too much work on its main thread.
+I/flutter (16721): [ConnDiag][UI] status sync from storage: null -> connected
+I/flutter (16721): [ConnDiag][UI] status sync from storage: null -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connected
+V/BackgroundService(16721): Service already running, using existing service
+W/VSPA    (16721): Jni_setThreadSpeed write data pid = 16721, tid = 0, start = 1
+W/VSPA    (16721): Jni_setThreadSpeed write data pid = 16721, tid = 0, start = 0
+D/BLASTBufferQueue(16721): [VRI[MainActivity,type=1]#0](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=146542997459810(auto) mPendingTransactions.size=0 graphicBufferId=71816148156433 transform=0
+I/flutter (16721): UI UDP listening on port 8889
+I/flutter (16721): UI UDP listening on port 8889
+I/flutter (16721): Background service started
+I/flutter (16721): Background service started
+I/flutter (16721): [ConnDiag][BG] background service started
+I/flutter (16721): [ConnDiag][BG] background service started
+V/ImeFocusController(16721): onWindowFocus: com.android.internal.policy.DecorView{f40bfe0 V.E...... R....... 0,0-1260,2800}[MainActivity] softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE|IS_FORWARD_NAVIGATION
+I/flutter (16721): [ConnDiag][BG] initial settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][BG] initial settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+I/flutter (16721): UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+I/flutter (16721): [ConnDiag][BG] subscriptions ready, trigger initial connect
+I/flutter (16721): [ConnDiag][BG] subscriptions ready, trigger initial connect
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+The Flutter DevTools debugger and profiler on V2452A is available at: http://127.0.0.1:9102?uri=http://127.0.0.1:10435/LrDBGLQYOsk=/
+I/sms_sync_mobile(16721): AssetManager2(0xb40000793c2aafb8) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(16721): AssetManager2(0xb40000793c2a99d8) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(16721): AssetManager2(0xb40000793c2a5b58) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(16721): AssetManager2(0xb40000793c2b0d78) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(16721): AssetManager2(0xb40000793c2b19f8) locale list changing from [] to [zh-CN]
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:2818aca1: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> connecting
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210393966}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210393966}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(16721): Open vivo delay for GC JIT .
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(16721): Close vivo delay for GC JIT .
+W/libc    (16721): Access denied finding property "ro.vendor.vivo.software.ai.llm.disable"
+W/support-thread(16721): type=1400 audit(0.0:2417135): avc:  denied  { read } for  name="u:object_r:vendor_feature_prop:s0" dev="tmpfs" ino=614 scontext=u:r:untrusted_app:s0:c160,c257,c512,c768 tcontext=u:object_r:vendor_feature_prop:s0 tclass=file permissive=0 app=com.smssync.sms_sync_mobile
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(16721): Open vivo delay for GC JIT .
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(16721): Close vivo delay for GC JIT .
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:f229931b: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/InsetsController(16721): Setting requestedVisibleTypes to -5121 (was -5129)
+I/AssistStructure(16721): Flattened final assist data: 556 bytes, containing 1 windows, 3 views
+W/InteractionJankMonitor(16721): Initializing without READ_DEVICE_CONFIG permission. enabled=false, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.smssync.sms_sync_mobile
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+D/InsetsAnimationCtrlImpl(16721): notify control request finished for types: 8
+I/ANDR-VIVO-PERF(16721): vivo inside perf_lock_rel of client
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:f229931b: onShown
+D/ProfileInstaller(16721): Installing profile for com.smssync.sms_sync_mobile
+W/WindowOnBackDispatcher(16721): sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@79054254 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@220e29a
+D/InsetsController(16721): Setting requestedVisibleTypes to -5129 (was -5121)
+I/ImeTracker(16721): com.sohu.inputmethod.sogou.vivo:ffa95a41: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+D/InsetsAnimationCtrlImpl(16721): notify control request finished for types: 8
+I/ANDR-VIVO-PERF(16721): vivo inside perf_lock_rel of client
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(16721): Open vivo delay for GC JIT .
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(16721): Close vivo delay for GC JIT .
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):59135, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210398060,"_sig_v":1,"_sig":"e7f6b84961971dc80210c02cf17966d5cf96077e011929530bf053a9f97c8bd3"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):59135, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210398060,"_sig_v":1,"_sig":"e7f6b84961971dc80210c02cf17966d5cf96077e011929530bf053a9f97c8bd3"}
+I/flutter (16721): [ConnDiag][UI] HomePage save clicked: serverUrl=ws://111.228.32.12:8004, groupId=Dulin
+I/flutter (16721): [ConnDiag][UI] HomePage save clicked: serverUrl=ws://111.228.32.12:8004, groupId=Dulin
+I/flutter (16721): [ConnDiag][UI] savePreferences start: groupId=Dulin, serverUrl=ws://111.228.32.12:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][UI] savePreferences start: groupId=Dulin, serverUrl=ws://111.228.32.12:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][UI] settings persisted
+I/flutter (16721): [ConnDiag][UI] settings persisted
+I/flutter (16721): [ConnDiag][UI] background service isRunning=true
+I/flutter (16721): [ConnDiag][UI] background service isRunning=true
+I/flutter (16721): [ConnDiag][UI] invoke reconnect-server
+I/flutter (16721): [ConnDiag][UI] invoke reconnect-server
+I/flutter (16721): [ConnDiag][BG] received reconnect-server event
+I/flutter (16721): [ConnDiag][BG] received reconnect-server event
+I/flutter (16721): [ConnDiag][BG] reconnect with settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][BG] reconnect with settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): WebSocket onDone
+I/flutter (16721): WebSocket onDone
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> disconnected
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> disconnected
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+I/flutter (16721): UI received server-status-change event: {status: disconnected}
+I/flutter (16721): UI received server-status-change event: {status: disconnected}
+I/flutter (16721): [ConnDiag][UI] status event -> disconnected
+I/flutter (16721): [ConnDiag][UI] status event -> disconnected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> disconnected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> disconnected
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connecting
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/sms_sync_mobile(16721): vart_dgc, 8192KB,32MB,0.5
+I/sms_sync_mobile(16721): Background concurrent copying GC freed 8825KB AllocSpace bytes, 20(820KB) LOS objects, 88% free, 3086KB(1652KB_60KB)/27MB, 2Fd, itvl 10.629s, cpu 31.339ms, paused 57us,18us total 32.991ms      
+I/sms_sync_mobile(16721): vart_bigdata, last_report_time=1772210401424
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):46006, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210403043,"_sig_v":1,"_sig":"6328b4c4de0248a92eae25bc93df4c3e3f9d352f3a20194c1e713874c140aaf1"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):46006, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210403043,"_sig_v":1,"_sig":"6328b4c4de0248a92eae25bc93df4c3e3f9d352f3a20194c1e713874c140aaf1"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210403984}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210403984}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):54476, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210408041,"_sig_v":1,"_sig":"0e64982cac2283c20bb182ad8119167929b1a43cf9c9d70af7540e8c42c4041a"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):54476, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210408041,"_sig_v":1,"_sig":"0e64982cac2283c20bb182ad8119167929b1a43cf9c9d70af7540e8c42c4041a"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210408988}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210408988}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):42622, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210413038,"_sig_v":1,"_sig":"2f1ddc080ec695b5e01b1feab42ac2df2e5e9b4e89795692adcb82c5785f6a33"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):42622, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210413038,"_sig_v":1,"_sig":"2f1ddc080ec695b5e01b1feab42ac2df2e5e9b4e89795692adcb82c5785f6a33"}
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:5296190a: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/InsetsController(16721): Setting requestedVisibleTypes to -5121 (was -5129)
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:1dfb0bc3: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:1dfb0bc3: onCancelled at PHASE_CLIENT_REPORT_REQUESTED_VISIBLE_TYPES
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210413990}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210413990}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+D/InsetsAnimationCtrlImpl(16721): notify control request finished for types: 8
+I/ANDR-VIVO-PERF(16721): vivo inside perf_lock_rel of client
+I/ImeTracker(16721): com.smssync.sms_sync_mobile:5296190a: onShown
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(16721): Open vivo delay for GC JIT .
+V/ActivityThread(16721): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(16721): Close vivo delay for GC JIT .
+W/WindowOnBackDispatcher(16721): sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@79054254 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@9929231
+D/InsetsController(16721): Setting requestedVisibleTypes to -5129 (was -5121)
+I/ImeTracker(16721): com.sohu.inputmethod.sogou.vivo:6a220bac: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+D/InsetsAnimationCtrlImpl(16721): notify control request finished for types: 8
+I/ANDR-VIVO-PERF(16721): vivo inside perf_lock_rel of client
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): [ConnDiag][UI] HomePage save clicked: serverUrl=ws://111.228.32.128:8004, groupId=Dulin
+I/flutter (16721): [ConnDiag][UI] HomePage save clicked: serverUrl=ws://111.228.32.128:8004, groupId=Dulin
+I/flutter (16721): [ConnDiag][UI] savePreferences start: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][UI] savePreferences start: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][UI] settings persisted
+I/flutter (16721): [ConnDiag][UI] settings persisted
+I/flutter (16721): [ConnDiag][UI] background service isRunning=true
+I/flutter (16721): [ConnDiag][UI] background service isRunning=true
+I/flutter (16721): [ConnDiag][UI] invoke reconnect-server
+I/flutter (16721): [ConnDiag][UI] invoke reconnect-server
+I/flutter (16721): [ConnDiag][BG] received reconnect-server event
+I/flutter (16721): [ConnDiag][BG] received reconnect-server event
+I/flutter (16721): [ConnDiag][BG] reconnect with settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][BG] reconnect with settings: groupId=Dulin, serverUrl=ws://111.228.32.128:8004, deviceName=iQOO, secretLen=3
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): [ConnDiag][BG] connectToServer start: url=ws://111.228.32.128:8004, groupId=Dulin, deviceName=iQOO
+I/flutter (16721): WebSocket onDone
+I/flutter (16721): WebSocket onDone
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> disconnected
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> disconnected
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] parsed URI: ws://111.228.32.128:8004, scheme=ws
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connecting
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+I/flutter (16721): [ConnDiag][BG] attempting dart:io WebSocket.connect
+I/flutter (16721): UI received server-status-change event: {status: disconnected}
+I/flutter (16721): UI received server-status-change event: {status: disconnected}
+I/flutter (16721): [ConnDiag][UI] status event -> disconnected
+I/flutter (16721): [ConnDiag][UI] status event -> disconnected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> disconnected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connected -> disconnected
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): UI received server-status-change event: {status: connecting}
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] status event -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connecting
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: disconnected -> connecting
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket.connect completed
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] WebSocket stream.listen registered
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] register message sent
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): [ConnDiag][BG] notifyServerStatus -> connected
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): UI received server-status-change event: {status: connected}
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] status event -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): [ConnDiag][UI] HomePage onServerStatusUpdate: connecting -> connected
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):49707, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210418040,"_sig_v":1,"_sig":"ddea482058c930a6f075f5d526cae1be1d7125562aa6fb74dfef41b2d7d86ea6"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):49707, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210418040,"_sig_v":1,"_sig":"ddea482058c930a6f075f5d526cae1be1d7125562aa6fb74dfef41b2d7d86ea6"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210418998}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210418998}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):44813, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210423043,"_sig_v":1,"_sig":"042b6716666a250e31599f741b0462821326792ccf13acb7d2f6015c14d3a5e1"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):44813, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210423043,"_sig_v":1,"_sig":"042b6716666a250e31599f741b0462821326792ccf13acb7d2f6015c14d3a5e1"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210424007}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210424007}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):38954, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210428038,"_sig_v":1,"_sig":"9223db62a16f3274d1c734170a1f36560af434af00f98a99e37ce1afe1d8ff43"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):38954, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210428038,"_sig_v":1,"_sig":"9223db62a16f3274d1c734170a1f36560af434af00f98a99e37ce1afe1d8ff43"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210429012}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210429012}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):47691, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210433042,"_sig_v":1,"_sig":"a119d1dc0e5eaa4a57572480c105b23ce5d7ba77044d945e8ec3160707296309"}
+I/flutter (16721): Received UDP from: InternetAddress('10.7.33.73', IPv4):47691, data: {"type":"device-presence","deviceId":"d0c4fffa20738c41","deviceName":"iQOO","groupId":"Dulin","timestamp":1772210433042,"_sig_v":1,"_sig":"a119d1dc0e5eaa4a57572480c105b23ce5d7ba77044d945e8ec3160707296309"}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210434021}
+I/flutter (16721): Received WebSocket message: {"type":"device-presence","deviceId":"bade538f-b890-4a25-9d92-f13399c46902","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772210434021}
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Dropped untrusted payload from ws, type: device-presence
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devices to SharedPreferences: []
+I/flutter (16721): Saving devi

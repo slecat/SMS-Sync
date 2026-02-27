@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="flutter.deviceName">iQOO</string>
+    <string name="flutter.serverUrl">ws://192.168.1.102:8004</string>
+    <long name="flutter.syncMode" value="2" />
+    <string name="flutter.groupId">Dulin</string>
+    <string name="flutter.lastDevicePresence">[]</string>
+</map>

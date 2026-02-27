@@ -1,0 +1,3 @@
+@echo off
+echo Starting SMS Sync Desktop...
+npm start

@@ -1,0 +1,48 @@
+{
+  "name": "sms-sync-desktop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test \"test/**/*.test.js\"",
+    "lint": "eslint . --ext .js --max-warnings=0",
+    "format": "prettier --write \"**/*.{js,json,html,css,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,html,css,md}\"",
+    "dist:win": "electron-builder --win portable nsis",
+    "dist:win:mirror": "set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/&& set ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/&& electron-builder --win portable nsis"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "auto-launch": "^5.0.6",
+    "electron-store": "^8.2.0",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "electron-builder": "^26.0.12",
+    "electron": "^35.1.2",
+    "eslint": "^8.57.1",
+    "prettier": "^3.6.2",
+    "proper-lockfile": "^4.1.2"
+  },
+  "build": {
+    "appId": "com.smsforward.app",
+    "productName": "短信转发",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    }
+  }
+}

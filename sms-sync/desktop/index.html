@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>短信转发</title>
+    <link rel="stylesheet" href="./renderer/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <div class="sidebar">
+          <div class="settings-section">
+            <div class="section-header" data-section="settings">
+              <div class="section-title">设置</div>
+              <div class="section-toggle">
+                <span class="toggle-icon">▼</span>
+              </div>
+            </div>
+            <div class="section-content-wrapper" id="settingsContent">
+              <div class="section-content-inner">
+                <div class="input-group">
+                  <label class="input-label" for="groupId">组 ID</label>
+                  <input
+                    type="text"
+                    id="groupId"
+                    class="input-field"
+                    placeholder="默认：default"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label" for="syncSecret">同步密钥</label>
+                  <input
+                    type="password"
+                    id="syncSecret"
+                    class="input-field"
+                    placeholder="必填，所有设备保持一致"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label" for="serverUrl">服务器地址（可选）</label>
+                  <input
+                    type="text"
+                    id="serverUrl"
+                    class="input-field"
+                    placeholder="ws://your-server:3000"
+                  />
+                  <div id="serverStatus" class="server-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text"></span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label" for="deviceName">设备名称</label>
+                  <input
+                    type="text"
+                    id="deviceName"
+                    class="input-field"
+                    placeholder="桌面端"
+                  />
+                </div>
+                <div class="toggle-group">
+                  <span class="toggle-label">开机自启动</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="autoLaunchToggle" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <button id="saveBtn" class="btn btn-primary">保存设置</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="devices-section">
+            <div class="section-header" data-section="devices">
+              <div class="section-title">在线设备</div>
+              <div class="section-toggle">
+                <span class="toggle-icon">▼</span>
+              </div>
+            </div>
+            <div class="section-content-wrapper" id="devicesContent">
+              <div class="section-content-inner">
+                <div id="deviceList">
+                  <div class="empty-devices">暂无在线设备</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-content">
+          <div class="message-header">
+            <div class="message-title">消息</div>
+            <div class="header-right">
+              <button id="clearBtn" class="btn-icon" title="清空消息">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                  ></path>
+                </svg>
+              </button>
+              <div class="message-count" id="messageCount">0 条消息</div>
+            </div>
+          </div>
+          <div class="stats-bar">
+            <div class="stat-item-inline">
+              <span class="stat-label-inline">短信数量</span>
+              <span class="stat-value-inline" id="smsCount">0</span>
+            </div>
+            <div class="stat-item-inline">
+              <span class="stat-label-inline">测试消息</span>
+              <span class="stat-value-inline" id="testCount">0</span>
+            </div>
+          </div>
+          <div class="message-list" id="messageList">
+            <div class="empty-state">
+              <div class="empty-icon">📱</div>
+              <div class="empty-text">暂无消息，等待接收中...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="./renderer/app.js"></script>
+  </body>
+</html>

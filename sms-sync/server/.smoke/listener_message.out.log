@@ -1,0 +1,7 @@
+LISTENER_REGISTERED desktop_smoke_msg_1772199380491
+LISTENER_MESSAGE {"type":"device-presence","deviceId":"1c187114-d11e-4f0a-9c1d-34dc8505c759","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772199382406}
+LISTENER_MESSAGE {"type":"device-presence","deviceId":"BP2A.250605.031.A3_V000L1","deviceName":"iQOO","groupId":"Dulin","timestamp":1772199382886}
+LISTENER_MESSAGE {"type":"device-presence","deviceId":"1c187114-d11e-4f0a-9c1d-34dc8505c759","deviceName":"家中的联想","groupId":"Dulin","timestamp":1772199387420}
+LISTENER_MESSAGE {"type":"device-presence","deviceId":"BP2A.250605.031.A3_V000L1","deviceName":"iQOO","groupId":"Dulin","timestamp":1772199387904}
+LISTENER_MESSAGE {"type":"test","messageId":"BP2A.250605.031.A3_V000L1_1772199391211","from":"iQOO","body":"这是一条测试消息","timestamp":1772199391211,"groupId":"Dulin"}
+LISTENER_SUCCESS_MESSAGE_TYPE_test
