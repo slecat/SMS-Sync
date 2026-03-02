@@ -27,7 +27,7 @@ class HomeConfigTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '首页',
+              '同步设置',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -37,7 +37,7 @@ class HomeConfigTab extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '短信同步配置',
+              '配置组ID、密钥和服务器连接',
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.white.withValues(alpha: 0.5),

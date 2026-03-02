@@ -21,59 +21,66 @@ class WebSocketClient {
     this.heartbeatInterval = heartbeatInterval;
     this.socket = null;
     this.heartbeatTimer = null;
+    this.connectionEpoch = 0;
+    this.lastStatusKey = null;
   }
 
   connect(serverUrl) {
     this.disconnect();
+    const connectionEpoch = this.connectionEpoch;
 
     if (!serverUrl) {
-      this.onStatusChange('disconnected', '未配置服务器地址');
+      this.emitStatus('disconnected', '未配置服务器地址');
       this.onDisconnected();
       return;
     }
 
-    this.onStatusChange('connecting', '正在连接...');
+    this.emitStatus('connecting', '正在连接...');
 
     try {
       const socket = new this.WebSocketImpl(serverUrl);
       this.socket = socket;
 
       socket.on('open', () => {
-        if (this.socket !== socket) {
+        if (!this.isActiveConnection(socket, connectionEpoch)) {
           return;
         }
 
         try {
           socket.send(JSON.stringify(this.getRegisterPayload()));
+          // Emit immediate presence so peers can discover this device right
+          // after reconnect without waiting for the next heartbeat tick.
+          socket.send(JSON.stringify(this.getHeartbeatPayload()));
         } catch (error) {
+          this.forceDisconnect(socket, connectionEpoch, '无法连接到服务器');
           this.onError(error);
           return;
         }
 
-        this.onStatusChange('connected', '已连接到服务器');
+        this.emitStatus('connected', '已连接到服务器');
         this.startHeartbeat();
       });
 
       socket.on('close', () => {
-        if (this.socket !== socket) {
+        if (!this.isActiveConnection(socket, connectionEpoch)) {
           return;
         }
         this.socket = null;
         this.stopHeartbeat();
-        this.onStatusChange('disconnected', '服务器连接已断开');
+        this.emitStatus('disconnected', '服务器连接已断开');
         this.onDisconnected();
       });
 
       socket.on('error', (error) => {
-        if (this.socket !== socket) {
+        if (!this.isActiveConnection(socket, connectionEpoch)) {
           return;
         }
-        this.onStatusChange('disconnected', '无法连接到服务器');
+        this.forceDisconnect(socket, connectionEpoch, '无法连接到服务器');
         this.onError(error);
       });
 
       socket.on('message', (data) => {
-        if (this.socket !== socket) {
+        if (!this.isActiveConnection(socket, connectionEpoch)) {
           return;
         }
 
@@ -88,12 +95,13 @@ class WebSocketClient {
         this.onMessage(parsed);
       });
     } catch (error) {
-      this.onStatusChange('disconnected', '无法连接到服务器');
+      this.emitStatus('disconnected', '无法连接到服务器');
       this.onError(error);
     }
   }
 
   disconnect() {
+    this.connectionEpoch += 1;
     this.stopHeartbeat();
     if (this.socket) {
       this.socket.removeAllListeners();
@@ -128,6 +136,36 @@ class WebSocketClient {
       clearInterval(this.heartbeatTimer);
       this.heartbeatTimer = null;
     }
+  }
+
+  isActiveConnection(socket, connectionEpoch) {
+    return this.socket === socket && this.connectionEpoch === connectionEpoch;
+  }
+
+  emitStatus(status, message) {
+    const key = `${status}|${message}`;
+    if (this.lastStatusKey === key) {
+      return;
+    }
+    this.lastStatusKey = key;
+    this.onStatusChange(status, message);
+  }
+
+  forceDisconnect(socket, connectionEpoch, message) {
+    if (!this.isActiveConnection(socket, connectionEpoch)) {
+      return;
+    }
+
+    this.stopHeartbeat();
+    this.socket = null;
+
+    socket.removeAllListeners();
+    try {
+      socket.close();
+    } catch (_) {}
+
+    this.emitStatus('disconnected', message);
+    this.onDisconnected();
   }
 }
 

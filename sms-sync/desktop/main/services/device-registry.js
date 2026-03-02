@@ -5,32 +5,18 @@ class DeviceRegistry {
     this.serverDevices = new Map();
   }
 
-  updateLanPresence(data, selfDeviceId) {
-    if (!data || data.deviceId === selfDeviceId) {
-      return false;
-    }
-
-    this.lanDevices.set(data.deviceId, {
-      deviceId: data.deviceId,
-      deviceName: data.deviceName || '未知设备',
-      timestamp: data.timestamp,
-      source: 'lan',
-    });
-    return true;
+  updateLanPresence(data, selfDeviceId, now = Date.now()) {
+    return this.updatePresence(this.lanDevices, data, selfDeviceId, 'lan', now);
   }
 
-  updateServerPresence(data, selfDeviceId) {
-    if (!data || data.deviceId === selfDeviceId) {
-      return false;
-    }
-
-    this.serverDevices.set(data.deviceId, {
-      deviceId: data.deviceId,
-      deviceName: data.deviceName || '未知设备',
-      timestamp: data.timestamp,
-      source: 'server',
-    });
-    return true;
+  updateServerPresence(data, selfDeviceId, now = Date.now()) {
+    return this.updatePresence(
+      this.serverDevices,
+      data,
+      selfDeviceId,
+      'server',
+      now
+    );
   }
 
   clearServer() {
@@ -73,6 +59,34 @@ class DeviceRegistry {
     }
 
     return Array.from(combinedDevices.values());
+  }
+
+  updatePresence(store, data, selfDeviceId, source, now) {
+    if (!data) {
+      return false;
+    }
+
+    const deviceId = String(data.deviceId || '').trim();
+    if (!deviceId || deviceId === selfDeviceId) {
+      return false;
+    }
+
+    const normalizedName = String(data.deviceName || '').trim();
+    const deviceName = normalizedName || '未知设备';
+    const existing = store.get(deviceId);
+
+    store.set(deviceId, {
+      deviceId,
+      deviceName,
+      // Always use local receive time to avoid remote clock skew.
+      timestamp: now,
+      source,
+    });
+
+    if (!existing) {
+      return true;
+    }
+    return existing.deviceName !== deviceName || existing.source !== source;
   }
 }
 

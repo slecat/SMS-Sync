@@ -68,6 +68,22 @@ void onStart(ServiceInstance service) async {
 
   WebSocketChannel? channel;
   StreamSubscription<dynamic>? socketSubscription;
+  var currentConnectionEpoch = 0;
+  String? lastNotifiedServerStatus;
+  var lastReconnectProbeAtMs = 0;
+
+  bool isCurrentConnectionEpoch(int epoch) => epoch == currentConnectionEpoch;
+
+  int nowMs() => DateTime.now().millisecondsSinceEpoch;
+
+  bool sameGroupOrMissing(dynamic incomingGroupId, String expectedGroupId) {
+    if (incomingGroupId == null) {
+      return true;
+    }
+    final normalizedGroupId = incomingGroupId.toString().trim();
+    return normalizedGroupId.isEmpty || normalizedGroupId == expectedGroupId;
+  }
+
   Map<String, dynamic> signOutgoingPayload(Map<String, dynamic> payload) {
     return dependencies.messageSecurityService.signPayload(
       payload,
@@ -88,9 +104,77 @@ void onStart(ServiceInstance service) async {
     return trusted;
   }
 
-  void notifyServerStatus(String status) {
+  bool shouldAcceptDevicePresencePayload(
+    Map<String, dynamic> payload,
+    String source,
+  ) {
+    final hasSignatureFields =
+        payload.containsKey('_sig') || payload.containsKey('_sig_v');
+    if (!hasSignatureFields) {
+      return true;
+    }
+    return isTrustedPayload(payload, source);
+  }
+
+  int resolveServerPresenceTimestamp(Map<String, dynamic> payload) {
+    final now = nowMs();
+    final dynamic rawTimestamp = payload['timestamp'];
+    if (rawTimestamp is int && rawTimestamp > 0) {
+      // Guard against obviously incorrect future timestamps.
+      if (rawTimestamp > now + 60000) {
+        return now;
+      }
+      return rawTimestamp;
+    }
+    if (rawTimestamp is String) {
+      final parsed = int.tryParse(rawTimestamp);
+      if (parsed != null && parsed > 0) {
+        if (parsed > now + 60000) {
+          return now;
+        }
+        return parsed;
+      }
+    }
+    return now;
+  }
+
+  Future<void> broadcastLanPresence({String trigger = 'periodic'}) async {
+    try {
+      final latestSettings = await dependencies.settingsRepository
+          .loadSettings();
+      final latestDeviceName = latestSettings.deviceName;
+      final signedPresence = dependencies.messageSecurityService.signPayload(
+        dependencies.messagePayloadFactory.devicePresence(
+          deviceId: localDeviceId,
+          deviceName: latestDeviceName,
+          groupId: groupId,
+        ),
+        secret: syncSecret,
+      );
+      await dependencies.messageTransportService.broadcastUdp(signedPresence);
+      AppLogger.trace('LAN presence sent, trigger=$trigger');
+    } catch (e) {
+      AppLogger.debug('Device broadcast failed ($trigger): $e');
+    }
+  }
+
+  void notifyServerStatus(String status, {int? connectionEpoch}) {
+    if (connectionEpoch != null && !isCurrentConnectionEpoch(connectionEpoch)) {
+      AppLogger.trace(
+        'Ignored stale status event from epoch=$connectionEpoch: $status',
+      );
+      return;
+    }
+    if (lastNotifiedServerStatus == status) {
+      return;
+    }
+    lastNotifiedServerStatus = status;
     AppLogger.debug('[ServerStatus] $status');
-    service.invoke('server-status-change', {'status': status});
+    service.invoke('server-status-change', {
+      'status': status,
+      'epoch': currentConnectionEpoch,
+      'timestamp': nowMs(),
+    });
     unawaited(
       dependencies.settingsRepository
           .saveServerConnectionStatus(status)
@@ -100,60 +184,70 @@ void onStart(ServiceInstance service) async {
     );
   }
 
-  // Function to connect to WebSocket server - GRADUAL RESTORATION
   Future<void> connectToServer(
     String newServerUrl,
     String newGroupId,
     String newDeviceName,
+    String trigger,
   ) async {
-    // Close existing connection if exists
-    if (channel != null) {
+    AppLogger.debug('[ServerStatus] connectToServer trigger=$trigger');
+    final connectionEpoch = ++currentConnectionEpoch;
+
+    // Cancel/close the old channel first, so stale callbacks are less likely.
+    final previousSubscription = socketSubscription;
+    socketSubscription = null;
+    await previousSubscription?.cancel();
+
+    final previousChannel = channel;
+    channel = null;
+    if (previousChannel != null) {
       try {
-        channel!.sink.close();
+        previousChannel.sink.close();
       } catch (e, stackTrace) {
         AppLogger.debug('Error closing existing WebSocket: $e');
         AppLogger.debug('Stack trace: $stackTrace');
       }
-      channel = null;
     }
-    socketSubscription?.cancel();
-    socketSubscription = null;
 
     if (newServerUrl.isEmpty) {
-      notifyServerStatus('disconnected');
+      notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
       return;
     }
 
-    // Validate and parse the URL first
     Uri? uri;
     try {
       uri = Uri.parse(newServerUrl);
-      // Ensure it's a ws or wss scheme
       if (uri.scheme != 'ws' && uri.scheme != 'wss') {
         AppLogger.debug('Invalid scheme=${uri.scheme}, expected ws/wss');
-        notifyServerStatus('disconnected');
+        notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
         return;
       }
     } catch (e, stackTrace) {
       AppLogger.debug('Invalid server URL: $e');
       AppLogger.debug('Stack trace: $stackTrace');
-      notifyServerStatus('disconnected');
+      notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
       return;
     }
 
-    // Now try to connect - with ALL errors caught!
     IOWebSocketChannel? newChannel;
     WebSocket? rawSocket;
     try {
-      notifyServerStatus('connecting');
+      notifyServerStatus('connecting', connectionEpoch: connectionEpoch);
       rawSocket = await WebSocket.connect(
         uri.toString(),
       ).timeout(const Duration(seconds: 8));
-      rawSocket.pingInterval = const Duration(seconds: 20);
+
+      if (!isCurrentConnectionEpoch(connectionEpoch)) {
+        try {
+          rawSocket.close();
+        } catch (_) {}
+        return;
+      }
+
+      rawSocket.pingInterval = const Duration(seconds: 10);
       newChannel = IOWebSocketChannel(rawSocket);
       channel = newChannel;
 
-      // Listen for all events with maximum error handling
       socketSubscription = newChannel.stream.listen(
         (message) {
           try {
@@ -165,13 +259,22 @@ void onStart(ServiceInstance service) async {
             }
             if (data['type'] == 'device-presence' &&
                 data['deviceId'] != localDeviceId &&
-                data['groupId'] == newGroupId) {
-              final deviceId = data['deviceId'];
-              final name = data['deviceName'] ?? '未知设备';
-              final timestamp = data['timestamp'] as int;
+                sameGroupOrMissing(data['groupId'], newGroupId) &&
+                shouldAcceptDevicePresencePayload(data, 'ws')) {
+              final deviceId = data['deviceId'].toString();
+              final rawName = data['deviceName']?.toString().trim();
+              final name = (rawName == null || rawName.isEmpty)
+                  ? '未知设备'
+                  : rawName;
+              final timestamp = resolveServerPresenceTimestamp(data);
+              final ageMs = nowMs() - timestamp;
+              if (ageMs > 15000) {
+                AppLogger.debug(
+                  '[DevicePresence][WS] stale presence id=$deviceId ageMs=$ageMs',
+                );
+              }
               AppLogger.trace('Processing server device: $deviceId, $name');
 
-              // Update internal lanDevices map
               lanDevices[deviceId] = {
                 'deviceId': deviceId,
                 'deviceName': name,
@@ -179,7 +282,6 @@ void onStart(ServiceInstance service) async {
                 'source': 'server',
               };
 
-              // Send event to UI
               try {
                 service.invoke('device-presence', {
                   'deviceId': deviceId,
@@ -201,22 +303,40 @@ void onStart(ServiceInstance service) async {
         onError: (error, stackTrace) {
           AppLogger.debug('WebSocket onError: $error');
           AppLogger.debug('Stack trace: $stackTrace');
+          if (!isCurrentConnectionEpoch(connectionEpoch)) {
+            AppLogger.trace(
+              'Ignored stale WebSocket onError from epoch=$connectionEpoch',
+            );
+            return;
+          }
           if (identical(channel, newChannel)) {
             channel = null;
           }
-          notifyServerStatus('disconnected');
+          notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
         },
         onDone: () {
           AppLogger.debug('WebSocket onDone');
+          if (!isCurrentConnectionEpoch(connectionEpoch)) {
+            AppLogger.trace(
+              'Ignored stale WebSocket onDone from epoch=$connectionEpoch',
+            );
+            return;
+          }
           if (identical(channel, newChannel)) {
             channel = null;
           }
-          notifyServerStatus('disconnected');
+          notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
         },
         cancelOnError: true,
       );
-      if (channel != newChannel) {
-        AppLogger.debug('WebSocket channel changed before register');
+
+      if (channel != newChannel || !isCurrentConnectionEpoch(connectionEpoch)) {
+        AppLogger.debug(
+          'WebSocket channel changed before register (epoch=$connectionEpoch)',
+        );
+        try {
+          newChannel.sink.close();
+        } catch (_) {}
         return;
       }
 
@@ -229,10 +349,32 @@ void onStart(ServiceInstance service) async {
           ),
         ),
       );
-      notifyServerStatus('connected');
+      // Send an immediate signed presence after register so peers can
+      // rediscover this device right after reconnect.
+      newChannel.sink.add(
+        jsonEncode(
+          signOutgoingPayload(
+            dependencies.messagePayloadFactory.devicePresence(
+              deviceId: localDeviceId,
+              deviceName: newDeviceName,
+              groupId: newGroupId,
+            ),
+          ),
+        ),
+      );
+      notifyServerStatus('connected', connectionEpoch: connectionEpoch);
     } catch (e, stackTrace) {
       AppLogger.debug('WebSocket connect flow failed: $e');
       AppLogger.debug('Stack trace: $stackTrace');
+      if (!isCurrentConnectionEpoch(connectionEpoch)) {
+        try {
+          newChannel?.sink.close();
+        } catch (_) {}
+        try {
+          rawSocket?.close();
+        } catch (_) {}
+        return;
+      }
       if (identical(channel, newChannel)) {
         channel = null;
       }
@@ -242,7 +384,7 @@ void onStart(ServiceInstance service) async {
       try {
         rawSocket?.close();
       } catch (_) {}
-      notifyServerStatus('disconnected');
+      notifyServerStatus('disconnected', connectionEpoch: connectionEpoch);
     }
   }
 
@@ -345,29 +487,39 @@ void onStart(ServiceInstance service) async {
         );
       } catch (e) {
         AppLogger.debug('WebSocket device presence failed: $e');
+        try {
+          channel?.sink.close();
+        } catch (_) {}
+        channel = null;
+        notifyServerStatus('disconnected');
       }
     }
+  });
+
+  // Heartbeat-style probe:
+  // keep attempts low-frequency and only when currently disconnected.
+  final reconnectProbeTimer = Timer.periodic(const Duration(seconds: 5), (
+    timer,
+  ) async {
+    if (serverUrl.trim().isEmpty) {
+      return;
+    }
+    if (channel != null || lastNotifiedServerStatus == 'connecting') {
+      return;
+    }
+    final now = nowMs();
+    // Probe every 12s at most to avoid aggressive reconnect storms.
+    if (now - lastReconnectProbeAtMs < 12000) {
+      return;
+    }
+    lastReconnectProbeAtMs = now;
+    await connectToServer(serverUrl, groupId, deviceName, 'heartbeat-probe');
   });
 
   final lanPresenceTimer = Timer.periodic(const Duration(seconds: 5), (
     timer,
   ) async {
-    try {
-      final latestSettings = await dependencies.settingsRepository
-          .loadSettings();
-      final latestDeviceName = latestSettings.deviceName;
-      final signedPresence = dependencies.messageSecurityService.signPayload(
-        dependencies.messagePayloadFactory.devicePresence(
-          deviceId: localDeviceId,
-          deviceName: latestDeviceName,
-          groupId: groupId,
-        ),
-        secret: syncSecret,
-      );
-      await dependencies.messageTransportService.broadcastUdp(signedPresence);
-    } catch (e) {
-      AppLogger.debug('Device broadcast failed: $e');
-    }
+    await broadcastLanPresence();
   });
 
   // Listen for SMS from UI isolate via ServiceInstance
@@ -433,19 +585,26 @@ void onStart(ServiceInstance service) async {
       syncSecret = newSyncSecret;
 
       // Reconnect
-      await connectToServer(newServerUrl, newGroupId, newDeviceName);
+      await connectToServer(
+        newServerUrl,
+        newGroupId,
+        newDeviceName,
+        'manual-reconnect-event',
+      );
     } catch (e, stackTrace) {
       AppLogger.debug('Error in reconnect-server handler: $e');
       AppLogger.debug('Stack trace: $stackTrace');
     }
   });
 
-  unawaited(connectToServer(serverUrl, groupId, deviceName));
+  unawaited(connectToServer(serverUrl, groupId, deviceName, 'startup'));
+  unawaited(broadcastLanPresence(trigger: 'startup'));
 
   late final StreamSubscription<dynamic> stopServiceSubscription;
   stopServiceSubscription = service.on('stopService').listen((event) async {
     cleanupTimer.cancel();
     wsPresenceTimer.cancel();
+    reconnectProbeTimer.cancel();
     lanPresenceTimer.cancel();
     await socketSubscription?.cancel();
     await smsReceivedSubscription.cancel();

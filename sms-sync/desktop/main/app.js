@@ -8,7 +8,6 @@ const {
   clipboard,
   screen,
 } = require('electron');
-const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const Store = require('electron-store');
@@ -21,6 +20,7 @@ const {
   createMessageDeduper,
   extractVerificationCode,
 } = require('./services/message-utils');
+const { getIconPath } = require('./services/icon-path');
 const { InAppAlertService } = require('./services/in-app-alert-service');
 const { WebSocketClient } = require('./transport/websocket-client');
 const { UdpService } = require('./transport/udp-service');
@@ -36,6 +36,8 @@ const DEFAULT_SETTINGS = {
 const DEVICE_TIMEOUT = 30000;
 const LISTEN_PORT = 8888;
 const BROADCAST_PORTS = [8888, 8889];
+const RECONNECT_PROBE_INTERVAL_MS = 5000;
+const RECONNECT_PROBE_COOLDOWN_MS = 12000;
 
 const store = new Store();
 const autoLauncher = new AutoLaunch({ name: '短信转发', isHidden: true });
@@ -48,6 +50,7 @@ const state = {
   isQuitting: false,
   startHiddenOnLaunch: false,
   localGroupId: DEFAULT_SETTINGS.groupId,
+  localServerUrl: DEFAULT_SETTINGS.serverUrl,
   localDeviceName: DEFAULT_SETTINGS.deviceName,
   localSyncSecret: DEFAULT_SETTINGS.syncSecret,
   serverStatus: {
@@ -57,6 +60,8 @@ const state = {
 };
 
 let cleanupTimer = null;
+let reconnectProbeTimer = null;
+let lastReconnectProbeAtMs = 0;
 let wsClient = null;
 let udpService = null;
 
@@ -71,21 +76,8 @@ const inAppAlertService = new InAppAlertService({
   },
 });
 
-function getIconPath() {
-  const primaryPath = path.join(__dirname, '..', 'icon.png');
-  const fallbackPath = path.join(__dirname, '..', '..', 'icon.png');
-
-  if (fs.existsSync(primaryPath)) {
-    return primaryPath;
-  }
-  if (fs.existsSync(fallbackPath)) {
-    return fallbackPath;
-  }
-  return null;
-}
-
 function createWindow() {
-  const iconPath = getIconPath();
+  const iconPath = getIconPath({ baseDir: __dirname });
   state.mainWindow = new BrowserWindow({
     width: 1000,
     height: 680,
@@ -140,7 +132,8 @@ function updateDeviceList() {
   }
 }
 
-function connectToServer(serverUrl) {
+function connectToServer(serverUrl, trigger = 'unknown') {
+  console.log(`[ServerStatus] connectToServer trigger=${trigger}`);
   wsClient.connect(serverUrl);
 }
 
@@ -195,6 +188,10 @@ function handleServerDevicePresence(data) {
   }
 }
 
+function hasSignatureFields(payload) {
+  return Boolean(payload && (payload._sig || payload._sig_v));
+}
+
 function handleIncomingMessage(data, source) {
   if (data.groupId && data.groupId !== state.localGroupId) {
     return;
@@ -212,6 +209,9 @@ function handleIncomingMessage(data, source) {
   } else if (data.type === 'test') {
     handleTestMessage(data, source);
   } else if (data.type === 'device-presence') {
+    if (hasSignatureFields(data) && !verifyPayload(data, state.localSyncSecret)) {
+      return;
+    }
     if (source === 'websocket') {
       handleServerDevicePresence(data);
     } else {
@@ -269,6 +269,7 @@ function sendTestMessage(from = '桌面端') {
 function loadSettings() {
   const settings = store.get('settings', DEFAULT_SETTINGS);
   state.localGroupId = settings.groupId || DEFAULT_SETTINGS.groupId;
+  state.localServerUrl = settings.serverUrl || DEFAULT_SETTINGS.serverUrl;
   state.localDeviceName = settings.deviceName || DEFAULT_SETTINGS.deviceName;
   state.localSyncSecret = settings.syncSecret || DEFAULT_SETTINGS.syncSecret;
   return settings;
@@ -290,8 +291,36 @@ function stopCleanupLoop() {
   }
 }
 
+function startReconnectProbeLoop() {
+  stopReconnectProbeLoop();
+  reconnectProbeTimer = setInterval(() => {
+    if (!state.localServerUrl) {
+      return;
+    }
+    if (
+      state.serverStatus.status === 'connected' ||
+      state.serverStatus.status === 'connecting'
+    ) {
+      return;
+    }
+    const now = Date.now();
+    if (now - lastReconnectProbeAtMs < RECONNECT_PROBE_COOLDOWN_MS) {
+      return;
+    }
+    lastReconnectProbeAtMs = now;
+    connectToServer(state.localServerUrl, 'heartbeat-probe');
+  }, RECONNECT_PROBE_INTERVAL_MS);
+}
+
+function stopReconnectProbeLoop() {
+  if (reconnectProbeTimer) {
+    clearInterval(reconnectProbeTimer);
+    reconnectProbeTimer = null;
+  }
+}
+
 function setupTray() {
-  const iconPath = getIconPath();
+  const iconPath = getIconPath({ baseDir: __dirname });
   state.tray = iconPath ? new Tray(iconPath) : new Tray(nativeImage.createEmpty());
 
   const contextMenu = Menu.buildFromTemplate([
@@ -380,6 +409,7 @@ function initServices() {
 
 function cleanupServices() {
   stopCleanupLoop();
+  stopReconnectProbeLoop();
   inAppAlertService.closeAlert();
   wsClient.disconnect();
   udpService.stop();
@@ -403,9 +433,10 @@ function registerHandlers() {
 
       store.set('settings', normalizedSettings);
       state.localGroupId = normalizedSettings.groupId;
+      state.localServerUrl = normalizedSettings.serverUrl;
       state.localDeviceName = normalizedSettings.deviceName;
       state.localSyncSecret = normalizedSettings.syncSecret;
-      connectToServer(normalizedSettings.serverUrl);
+      connectToServer(normalizedSettings.serverUrl, 'manual-save-settings');
       return true;
     },
     sendTest: (event, from) => {
@@ -482,7 +513,8 @@ function start() {
     refreshAutoLaunchEntry();
 
     const settings = loadSettings();
-    connectToServer(settings.serverUrl);
+    connectToServer(settings.serverUrl, 'startup');
+    startReconnectProbeLoop();
     udpService.start({
       getPresencePayload: () =>
         signPayload(

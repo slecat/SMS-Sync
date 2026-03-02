@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'home/devices_tab.dart';
 import 'home/home_action_coordinator.dart';
 import 'home/home_bottom_nav_bar.dart';
-import 'home/home_config_tab.dart';
 import 'home/home_dependencies.dart';
 import 'home/home_runtime_coordinator.dart';
 import 'home/home_setup_coordinator.dart';
@@ -11,6 +9,7 @@ import 'home/home_snack_bar.dart';
 import 'home/home_view_state.dart';
 import 'home/messages_tab.dart';
 import 'home/settings_tab.dart';
+import 'home/sync_settings_tab.dart';
 import '../services/app_logger.dart';
 import '../services/sms_deduplicator.dart';
 
@@ -40,7 +39,8 @@ class _HomePageState extends State<HomePage> {
         dependencies: _dependencies,
         smsDeduplicator: _smsDeduplicator,
       );
-  static const int _deviceTimeout = 30000;
+  static const int _deviceTimeout = 8000;
+  bool _hasLiveServerStatus = false;
 
   @override
   void initState() {
@@ -52,6 +52,8 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) {
           return;
         }
+        _hasLiveServerStatus = true;
+        AppLogger.debug('[UI][ServerStatus] apply live status: $status');
         setState(() {
           _viewState = _viewState.withServerStatus(status);
         });
@@ -84,6 +86,15 @@ class _HomePageState extends State<HomePage> {
       AppLogger.debug('Permission request failed: ${result.permissionError}');
     }
     if (mounted) {
+      final bootstrapStatus = result.data.serverStatus;
+      final effectiveServerStatus = _hasLiveServerStatus
+          ? _viewState.serverStatus
+          : bootstrapStatus;
+      if (_hasLiveServerStatus && bootstrapStatus != _viewState.serverStatus) {
+        AppLogger.debug(
+          '[UI][ServerStatus] skip bootstrap status "$bootstrapStatus", keep live "${_viewState.serverStatus}"',
+        );
+      }
       setState(() {
         _viewState = _viewState.withSetupData(
           deviceId: result.data.deviceId,
@@ -91,7 +102,7 @@ class _HomePageState extends State<HomePage> {
           serverUrl: result.data.serverUrl,
           deviceName: result.data.deviceName,
           syncSecret: result.data.syncSecret,
-          serverStatus: result.data.serverStatus,
+          serverStatus: effectiveServerStatus,
         );
         _groupIdController.text = result.data.groupId;
         _serverUrlController.text = result.data.serverUrl;
@@ -117,12 +128,19 @@ class _HomePageState extends State<HomePage> {
     if (!mounted) {
       return;
     }
+    final before = _viewState.onlineDevices.length;
     setState(() {
       _viewState = _viewState.withoutStaleDevices(
         nowMs: DateTime.now().millisecondsSinceEpoch,
         timeoutMs: _deviceTimeout,
       );
     });
+    final removed = before - _viewState.onlineDevices.length;
+    if (removed > 0) {
+      AppLogger.debug(
+        '[UI][Devices] cleaned stale devices: removed=$removed, remain=${_viewState.onlineDevices.length}',
+      );
+    }
   }
 
   Future<void> _savePreferences() async {
@@ -232,11 +250,23 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    final currentIndex = _viewState.currentIndex.clamp(0, 2);
+
     return Scaffold(
       body: IndexedStack(
-        index: _viewState.currentIndex,
+        index: currentIndex,
         children: [
-          HomeConfigTab(
+          MessagesTab(
+            onlineDevices: _viewState.onlineDevices,
+            serverStatus: _viewState.serverStatus,
+            latestSmsFrom: _viewState.latestSmsFrom,
+            latestSmsBody: _viewState.latestSmsBody,
+            smsCount: _viewState.smsCount,
+            verificationCodeCount: _viewState.verificationCodeCount,
+            onReadLatestSms: _readLatestSms,
+            onSendTest: _sendTest,
+          ),
+          SyncSettingsTab(
             serverStatus: _viewState.serverStatus,
             groupIdController: _groupIdController,
             serverUrlController: _serverUrlController,
@@ -244,18 +274,11 @@ class _HomePageState extends State<HomePage> {
             syncSecretController: _syncSecretController,
             onSavePreferences: _savePreferences,
           ),
-          MessagesTab(
-            latestSmsFrom: _viewState.latestSmsFrom,
-            latestSmsBody: _viewState.latestSmsBody,
-            onReadLatestSms: _readLatestSms,
-            onSendTest: _sendTest,
-          ),
-          DevicesTab(onlineDevices: _viewState.onlineDevices),
           SettingsTab(deviceId: _viewState.deviceId),
         ],
       ),
       bottomNavigationBar: HomeBottomNavBar(
-        currentIndex: _viewState.currentIndex,
+        currentIndex: currentIndex,
         smsCount: _viewState.smsCount,
         onTabSelected: (index) {
           setState(() {

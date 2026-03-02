@@ -119,3 +119,26 @@ test('WebSocketClient should send heartbeats and stop after disconnect', async (
   await wait(20);
   assert.equal(socket.sent.length, sentBeforeDisconnect);
 });
+
+test('WebSocketClient should ignore stale events from previous connection', () => {
+  FakeWebSocket.instances = [];
+  const { client, statuses } = createClient();
+
+  client.connect('ws://localhost:3000');
+  const first = FakeWebSocket.instances[0];
+  first.emit('open');
+
+  client.connect('ws://localhost:3001');
+  const second = FakeWebSocket.instances[1];
+
+  // Should be ignored because this socket is already stale.
+  first.emit('message', Buffer.from(JSON.stringify({ type: 'test' })));
+  first.emit('close');
+
+  second.emit('open');
+  second.emit('close');
+
+  assert.equal(statuses[0].status, 'connecting');
+  assert.equal(statuses[1].status, 'connected');
+  assert.equal(statuses.at(-1).status, 'disconnected');
+});

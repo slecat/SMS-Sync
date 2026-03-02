@@ -39,11 +39,13 @@ test('DeviceRegistry should cleanup expired devices', () => {
 
   registry.updateLanPresence(
     { deviceId: 'dev-lan', deviceName: 'lan', timestamp: now - 1500 },
-    'self'
+    'self',
+    now - 1500
   );
   registry.updateServerPresence(
     { deviceId: 'dev-server', deviceName: 'server', timestamp: now },
-    'self'
+    'self',
+    now
   );
 
   const changed = registry.cleanup(now);
@@ -52,4 +54,23 @@ test('DeviceRegistry should cleanup expired devices', () => {
   const devices = registry.getCombinedDevices();
   assert.equal(devices.length, 1);
   assert.equal(devices[0].deviceId, 'dev-server');
+});
+
+test('DeviceRegistry should treat timestamp-only refresh as unchanged', () => {
+  const now = Date.now();
+  const registry = new DeviceRegistry({ deviceTimeout: 1000 });
+
+  const firstChanged = registry.updateServerPresence(
+    { deviceId: 'dev-1', deviceName: 'server', timestamp: now },
+    'self',
+    now
+  );
+  const secondChanged = registry.updateServerPresence(
+    { deviceId: 'dev-1', deviceName: 'server', timestamp: now + 500 },
+    'self',
+    now + 500
+  );
+
+  assert.equal(firstChanged, true);
+  assert.equal(secondChanged, false);
 });

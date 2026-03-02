@@ -23,8 +23,9 @@ class HomeRuntimeCoordinator {
   StreamSubscription<Map<String, dynamic>?>? _devicePresenceSubscription;
   StreamSubscription<Map<String, dynamic>?>? _serverStatusSubscription;
   Timer? _onlineDeviceCleanupTimer;
-  Timer? _serverStatusSyncTimer;
   String? _lastServerStatus;
+  int? _lastServerStatusEpoch;
+  bool _hasRealtimeServerStatusEvent = false;
 
   void startCore({
     required String Function() deviceIdProvider,
@@ -45,14 +46,9 @@ class HomeRuntimeCoordinator {
       onServerStatusUpdate: onServerStatusUpdate,
     );
     _syncServerStatus(onServerStatusUpdate);
-    _serverStatusSyncTimer?.cancel();
-    _serverStatusSyncTimer = Timer.periodic(
-      const Duration(seconds: 2),
-      (_) => _syncServerStatus(onServerStatusUpdate),
-    );
     _onlineDeviceCleanupTimer?.cancel();
     _onlineDeviceCleanupTimer = Timer.periodic(
-      const Duration(seconds: 3),
+      const Duration(seconds: 2),
       (_) => onCleanupDevices(),
     );
   }
@@ -122,7 +118,10 @@ class HomeRuntimeCoordinator {
       if (data == null) {
         return;
       }
-      final deviceId = data['deviceId'] as String;
+      final deviceId = data['deviceId']?.toString();
+      if (deviceId == null || deviceId.isEmpty) {
+        return;
+      }
       if (deviceId == deviceIdProvider()) {
         return;
       }
@@ -143,7 +142,23 @@ class HomeRuntimeCoordinator {
         return;
       }
       AppLogger.trace('UI received server-status-change event: $data');
+      final eventEpoch = data['epoch'] as int?;
+      if (eventEpoch != null &&
+          _lastServerStatusEpoch != null &&
+          eventEpoch < _lastServerStatusEpoch!) {
+        AppLogger.trace(
+          'Ignored stale server-status event epoch=$eventEpoch, last=$_lastServerStatusEpoch',
+        );
+        return;
+      }
       final status = data['status'] as String? ?? 'disconnected';
+      _lastServerStatusEpoch = eventEpoch ?? _lastServerStatusEpoch;
+      _hasRealtimeServerStatusEvent = true;
+      if (_lastServerStatus != status) {
+        AppLogger.debug(
+          '[UI][ServerStatus] realtime: $_lastServerStatus -> $status (epoch=$_lastServerStatusEpoch)',
+        );
+      }
       _lastServerStatus = status;
       onServerStatusUpdate(status);
     });
@@ -152,12 +167,24 @@ class HomeRuntimeCoordinator {
   Future<void> _syncServerStatus(
     void Function(String) onServerStatusUpdate,
   ) async {
+    if (_hasRealtimeServerStatusEvent) {
+      return;
+    }
     try {
       final status = await dependencies.settingsRepository
           .loadServerConnectionStatus();
+      if (_hasRealtimeServerStatusEvent) {
+        AppLogger.debug(
+          '[UI][ServerStatus] ignore stored sync after realtime event (stored=$status)',
+        );
+        return;
+      }
       if (status == _lastServerStatus) {
         return;
       }
+      AppLogger.debug(
+        '[UI][ServerStatus] apply stored status: $_lastServerStatus -> $status',
+      );
       _lastServerStatus = status;
       onServerStatusUpdate(status);
     } catch (e) {
@@ -239,7 +266,6 @@ class HomeRuntimeCoordinator {
     _devicePresenceSubscription?.cancel();
     _serverStatusSubscription?.cancel();
     _onlineDeviceCleanupTimer?.cancel();
-    _serverStatusSyncTimer?.cancel();
     dependencies.smsMethodChannel.setMethodCallHandler(null);
   }
 }

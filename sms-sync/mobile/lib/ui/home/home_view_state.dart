@@ -1,10 +1,19 @@
 class HomeViewState {
+  static final RegExp _verificationCodeDigitsPattern = RegExp(
+    r'(?<!\d)\d{4,8}(?!\d)',
+  );
+  static final RegExp _verificationCodeKeywordPattern = RegExp(
+    r'(验证码|校验码|动态码|otp|one[\s-]?time|verification\s*code|security\s*code)',
+    caseSensitive: false,
+  );
+
   const HomeViewState({
     required this.deviceId,
     required this.isLoading,
     required this.latestSmsFrom,
     required this.latestSmsBody,
     required this.smsCount,
+    required this.verificationCodeCount,
     required this.currentIndex,
     required this.serverStatus,
     required this.onlineDevices,
@@ -17,6 +26,7 @@ class HomeViewState {
       latestSmsFrom: null,
       latestSmsBody: null,
       smsCount: 0,
+      verificationCodeCount: 0,
       currentIndex: 0,
       serverStatus: 'disconnected',
       onlineDevices: {},
@@ -28,6 +38,7 @@ class HomeViewState {
   final String? latestSmsFrom;
   final String? latestSmsBody;
   final int smsCount;
+  final int verificationCodeCount;
   final int currentIndex;
   final String serverStatus;
   final Map<String, Map<String, dynamic>> onlineDevices;
@@ -40,6 +51,7 @@ class HomeViewState {
     String? latestSmsBody,
     bool clearLatestSmsBody = false,
     int? smsCount,
+    int? verificationCodeCount,
     int? currentIndex,
     String? serverStatus,
     Map<String, Map<String, dynamic>>? onlineDevices,
@@ -54,6 +66,8 @@ class HomeViewState {
           ? null
           : latestSmsBody ?? this.latestSmsBody,
       smsCount: smsCount ?? this.smsCount,
+      verificationCodeCount:
+          verificationCodeCount ?? this.verificationCodeCount,
       currentIndex: currentIndex ?? this.currentIndex,
       serverStatus: serverStatus ?? this.serverStatus,
       onlineDevices: onlineDevices ?? this.onlineDevices,
@@ -82,10 +96,13 @@ class HomeViewState {
   }
 
   HomeViewState withReceivedSms({required String from, required String body}) {
+    final hasVerificationCode = _looksLikeVerificationCode(body);
     return copyWith(
       latestSmsFrom: from,
       latestSmsBody: body,
       smsCount: smsCount + 1,
+      verificationCodeCount:
+          verificationCodeCount + (hasVerificationCode ? 1 : 0),
     );
   }
 
@@ -124,5 +141,14 @@ class HomeViewState {
       return nowMs - ts > timeoutMs;
     });
     return copyWith(onlineDevices: updated);
+  }
+
+  bool _looksLikeVerificationCode(String body) {
+    final normalized = body.trim();
+    if (normalized.isEmpty) {
+      return false;
+    }
+    return _verificationCodeKeywordPattern.hasMatch(normalized) &&
+        _verificationCodeDigitsPattern.hasMatch(normalized);
   }
 }
