@@ -38,12 +38,15 @@
                 </div>
                 <div class="input-group">
                   <label class="input-label" for="serverUrl">服务器地址（可选）</label>
-                  <input
-                    type="text"
-                    id="serverUrl"
-                    class="input-field"
-                    placeholder="ws://your-server:3000"
-                  />
+                  <div class="input-with-prefix">
+                    <span class="input-prefix">ws://</span>
+                    <input
+                      type="text"
+                      id="serverUrl"
+                      class="input-field input-field-prefixed"
+                      placeholder="your-server:3000"
+                    />
+                  </div>
                   <div id="serverStatus" class="server-status">
                     <span class="status-dot"></span>
                     <span class="status-text"></span>

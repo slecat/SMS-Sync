@@ -156,6 +156,43 @@ body {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.input-with-prefix:focus-within {
+  border-color: #007bff;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-prefix {
+  padding-left: 14px;
+  color: #6c757d;
+  font-size: 14px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.input-field-prefixed {
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  padding-left: 6px;
+}
+
+.input-field-prefixed:focus {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
 .toggle-group {
   display: flex;
   align-items: center;

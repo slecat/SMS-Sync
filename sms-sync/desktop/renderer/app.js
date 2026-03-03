@@ -12,6 +12,7 @@ const testCountEl = document.getElementById('testCount');
 const messageCountEl = document.getElementById('messageCount');
 const toast = document.getElementById('toast');
 const serverStatus = document.getElementById('serverStatus');
+const SERVER_URL_PREFIX = 'ws://';
 
 const messages = [];
 const MAX_MESSAGES = 300;
@@ -130,11 +131,30 @@ function updateServerStatusUI(status, message) {
   serverStatus.querySelector('.status-text').textContent = message;
 }
 
+function stripServerProtocol(serverUrl) {
+  const normalized = String(serverUrl || '').trim();
+  if (!normalized) {
+    return '';
+  }
+
+  return normalized.replace(/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//, '');
+}
+
+function toServerUrl(serverAddressInput) {
+  const normalized = String(serverAddressInput || '').trim();
+  if (!normalized) {
+    return '';
+  }
+
+  const addressOnly = stripServerProtocol(normalized);
+  return `${SERVER_URL_PREFIX}${addressOnly}`;
+}
+
 async function loadSettings() {
   const settings = await window.electronAPI.getSettings();
   groupIdInput.value = settings.groupId || 'default';
   syncSecretInput.value = settings.syncSecret || '';
-  serverUrlInput.value = settings.serverUrl || '';
+  serverUrlInput.value = stripServerProtocol(settings.serverUrl || '');
   deviceNameInput.value = settings.deviceName || '桌面端';
 
   const autoLaunchEnabled = await window.electronAPI.getAutoLaunch();
@@ -200,7 +220,7 @@ saveBtn.addEventListener('click', async () => {
   const settings = {
     groupId: groupIdInput.value || 'default',
     syncSecret,
-    serverUrl: serverUrlInput.value,
+    serverUrl: toServerUrl(serverUrlInput.value),
     deviceName: deviceNameInput.value || '桌面端',
   };
   const success = await window.electronAPI.saveSettings(settings);

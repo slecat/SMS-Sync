@@ -22,6 +22,7 @@ const {
 } = require('./services/message-utils');
 const { getIconPath } = require('./services/icon-path');
 const { InAppAlertService } = require('./services/in-app-alert-service');
+const { normalizeServerUrl } = require('./services/server-url');
 const { WebSocketClient } = require('./transport/websocket-client');
 const { UdpService } = require('./transport/udp-service');
 
@@ -134,7 +135,7 @@ function updateDeviceList() {
 
 function connectToServer(serverUrl, trigger = 'unknown') {
   console.log(`[ServerStatus] connectToServer trigger=${trigger}`);
-  wsClient.connect(serverUrl);
+  wsClient.connect(normalizeServerUrl(serverUrl));
 }
 
 function handleSmsMessage(sms, source) {
@@ -268,11 +269,23 @@ function sendTestMessage(from = '桌面端') {
 
 function loadSettings() {
   const settings = store.get('settings', DEFAULT_SETTINGS);
-  state.localGroupId = settings.groupId || DEFAULT_SETTINGS.groupId;
-  state.localServerUrl = settings.serverUrl || DEFAULT_SETTINGS.serverUrl;
-  state.localDeviceName = settings.deviceName || DEFAULT_SETTINGS.deviceName;
-  state.localSyncSecret = settings.syncSecret || DEFAULT_SETTINGS.syncSecret;
-  return settings;
+  const normalizedSettings = {
+    groupId: settings.groupId || DEFAULT_SETTINGS.groupId,
+    serverUrl: normalizeServerUrl(settings.serverUrl || DEFAULT_SETTINGS.serverUrl),
+    deviceName: settings.deviceName || DEFAULT_SETTINGS.deviceName,
+    syncSecret: (settings.syncSecret || '').trim(),
+  };
+
+  state.localGroupId = normalizedSettings.groupId;
+  state.localServerUrl = normalizedSettings.serverUrl;
+  state.localDeviceName = normalizedSettings.deviceName;
+  state.localSyncSecret = normalizedSettings.syncSecret;
+
+  if (JSON.stringify(settings) !== JSON.stringify(normalizedSettings)) {
+    store.set('settings', normalizedSettings);
+  }
+
+  return normalizedSettings;
 }
 
 function startCleanupLoop() {
@@ -423,7 +436,7 @@ function registerHandlers() {
     saveSettings: (event, settings) => {
       const normalizedSettings = {
         groupId: settings.groupId || DEFAULT_SETTINGS.groupId,
-        serverUrl: settings.serverUrl || DEFAULT_SETTINGS.serverUrl,
+        serverUrl: normalizeServerUrl(settings.serverUrl || DEFAULT_SETTINGS.serverUrl),
         deviceName: settings.deviceName || DEFAULT_SETTINGS.deviceName,
         syncSecret: (settings.syncSecret || '').trim(),
       };
