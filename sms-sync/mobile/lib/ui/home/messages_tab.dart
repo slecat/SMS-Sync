@@ -380,10 +380,7 @@ class _DeviceStatusCard extends StatelessWidget {
     final nowMs = DateTime.now().millisecondsSinceEpoch;
     final isOnline =
         timestamp != null && nowMs - timestamp <= _deviceOnlineWindowMs;
-    final source = device['source'] as String? ?? 'lan';
-    final sourceColor = source == 'server'
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFF10B981);
+    final sources = _resolveSources(device);
     final statusColor = isOnline
         ? const Color(0xFF22C55E)
         : const Color(0xFFF97316);
@@ -442,24 +439,71 @@ class _DeviceStatusCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: sourceColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: Text(
-              source == 'server' ? '服务器' : '局域网',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: sourceColor,
-              ),
-            ),
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: sources
+                .map(
+                  (source) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _sourceColor(source).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: Text(
+                      _sourceLabel(source),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: _sourceColor(source),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
     );
+  }
+
+  List<String> _resolveSources(Map<String, dynamic> device) {
+    final raw = device['sources'];
+    if (raw is List && raw.isNotEmpty) {
+      final normalized = raw
+          .map((item) => item.toString() == 'server' ? 'server' : 'lan')
+          .toSet()
+          .toList();
+      normalized.sort(
+        (a, b) => _sourcePriority(a).compareTo(_sourcePriority(b)),
+      );
+      return normalized;
+    }
+    final source = device['source']?.toString() == 'server' ? 'server' : 'lan';
+    return [source];
+  }
+
+  int _sourcePriority(String source) {
+    if (source == 'server') {
+      return 0;
+    }
+    if (source == 'lan') {
+      return 1;
+    }
+    return 2;
+  }
+
+  String _sourceLabel(String source) {
+    return source == 'server' ? '服务器' : '局域网';
+  }
+
+  Color _sourceColor(String source) {
+    return source == 'server'
+        ? const Color(0xFFF59E0B)
+        : const Color(0xFF10B981);
   }
 
   String _formatTimestamp(int? timestamp) {

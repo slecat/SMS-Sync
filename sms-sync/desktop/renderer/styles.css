@@ -271,6 +271,7 @@ body {
 .device-item {
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 10px 0;
   border-bottom: 1px solid #f1f3f5;
 }
@@ -295,10 +296,42 @@ body {
   background: #6c757d;
 }
 
+.device-indicator.mixed {
+  background: linear-gradient(90deg, #6c757d 0%, #28a745 100%);
+}
+
 .device-name {
   font-size: 14px;
   color: #495057;
   flex: 1;
+}
+
+.device-sources {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.device-source-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 10px;
+}
+
+.device-source-tag.lan {
+  color: #28a745;
+  background: rgba(40, 167, 69, 0.12);
+}
+
+.device-source-tag.server {
+  color: #6c757d;
+  background: rgba(108, 117, 125, 0.14);
 }
 
 .empty-devices {

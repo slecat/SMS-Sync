@@ -124,7 +124,36 @@ class HomeViewState {
     }
 
     final updated = Map<String, Map<String, dynamic>>.from(onlineDevices);
-    updated[deviceId] = Map<String, dynamic>.from(device);
+    final existing = updated[deviceId];
+    final normalizedSource = _normalizeSource(device['source'] as String?);
+    final incomingTimestamp =
+        (device['timestamp'] as int?) ?? DateTime.now().millisecondsSinceEpoch;
+
+    final sourceTimestamps = _extractSourceTimestamps(existing);
+    sourceTimestamps[normalizedSource] = incomingTimestamp;
+    final sources = _sortSources(sourceTimestamps.keys);
+    final latestTimestamp = sourceTimestamps.values.fold<int>(
+      0,
+      (maxValue, ts) => ts > maxValue ? ts : maxValue,
+    );
+    final incomingName = (device['deviceName'] as String?)?.trim();
+    final existingName = (existing?['deviceName'] as String?)?.trim();
+    final resolvedName = (incomingName != null && incomingName.isNotEmpty)
+        ? incomingName
+        : ((existingName != null && existingName.isNotEmpty)
+              ? existingName
+              : '未知设备');
+
+    updated[deviceId] = {
+      ...?existing,
+      ...Map<String, dynamic>.from(device),
+      'deviceId': deviceId,
+      'deviceName': resolvedName,
+      'source': sources.contains('server') ? 'server' : sources.first,
+      'sources': sources,
+      'sourceTimestamps': sourceTimestamps,
+      'timestamp': latestTimestamp,
+    };
     return copyWith(onlineDevices: updated);
   }
 
@@ -132,15 +161,84 @@ class HomeViewState {
     required int nowMs,
     required int timeoutMs,
   }) {
-    final updated = Map<String, Map<String, dynamic>>.from(onlineDevices);
-    updated.removeWhere((_, device) {
-      final ts = device['timestamp'] as int?;
-      if (ts == null) {
-        return true;
+    final updated = <String, Map<String, dynamic>>{};
+    for (final entry in onlineDevices.entries) {
+      final device = Map<String, dynamic>.from(entry.value);
+      final sourceTimestamps = _extractSourceTimestamps(device);
+      sourceTimestamps.removeWhere((_, ts) => nowMs - ts > timeoutMs);
+      if (sourceTimestamps.isEmpty) {
+        continue;
       }
-      return nowMs - ts > timeoutMs;
-    });
+
+      final sources = _sortSources(sourceTimestamps.keys);
+      final latestTimestamp = sourceTimestamps.values.fold<int>(
+        0,
+        (maxValue, ts) => ts > maxValue ? ts : maxValue,
+      );
+      device['sourceTimestamps'] = sourceTimestamps;
+      device['sources'] = sources;
+      device['source'] = sources.contains('server') ? 'server' : sources.first;
+      device['timestamp'] = latestTimestamp;
+      updated[entry.key] = device;
+    }
     return copyWith(onlineDevices: updated);
+  }
+
+  Map<String, int> _extractSourceTimestamps(Map<String, dynamic>? device) {
+    final result = <String, int>{};
+    if (device == null) {
+      return result;
+    }
+
+    final rawSourceTimestamps = device['sourceTimestamps'];
+    if (rawSourceTimestamps is Map) {
+      for (final entry in rawSourceTimestamps.entries) {
+        final key = _normalizeSource(entry.key?.toString());
+        final value = entry.value;
+        if (value is int) {
+          result[key] = value;
+          continue;
+        }
+        if (value is String) {
+          final parsed = int.tryParse(value);
+          if (parsed != null) {
+            result[key] = parsed;
+          }
+        }
+      }
+    }
+
+    if (result.isEmpty) {
+      final source = _normalizeSource(device['source'] as String?);
+      final timestamp = device['timestamp'] as int?;
+      if (timestamp != null) {
+        result[source] = timestamp;
+      }
+    }
+
+    return result;
+  }
+
+  List<String> _sortSources(Iterable<String> sources) {
+    final normalized = {
+      for (final source in sources) _normalizeSource(source): true,
+    }.keys.toList();
+    normalized.sort((a, b) => _sourcePriority(a).compareTo(_sourcePriority(b)));
+    return normalized;
+  }
+
+  int _sourcePriority(String source) {
+    if (source == 'server') {
+      return 0;
+    }
+    if (source == 'lan') {
+      return 1;
+    }
+    return 2;
+  }
+
+  String _normalizeSource(String? source) {
+    return source == 'server' ? 'server' : 'lan';
   }
 
   bool _looksLikeVerificationCode(String body) {

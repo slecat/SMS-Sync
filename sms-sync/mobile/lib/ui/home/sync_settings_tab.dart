@@ -123,9 +123,10 @@ class _SyncCard extends StatelessWidget {
           _SyncInput(
             icon: Icons.cloud_rounded,
             label: '服务器地址',
-            hint: 'ws://your-server:8004（可选）',
+            hint: 'your-server:8004（可选）',
             controller: serverUrlController,
             keyboardType: TextInputType.url,
+            prefixText: 'ws://',
           ),
           const SizedBox(height: 10),
           Container(
@@ -192,6 +193,7 @@ class _SyncInput extends StatelessWidget {
     required this.controller,
     this.obscureText = false,
     this.keyboardType,
+    this.prefixText,
   });
 
   final IconData icon;
@@ -200,6 +202,7 @@ class _SyncInput extends StatelessWidget {
   final TextEditingController controller;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final String? prefixText;
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +234,12 @@ class _SyncInput extends StatelessWidget {
             hintStyle: TextStyle(
               color: Colors.white.withValues(alpha: 0.35),
               fontSize: 13,
+            ),
+            prefixText: prefixText,
+            prefixStyle: TextStyle(
+              color: Colors.white.withValues(alpha: 0.72),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
             filled: true,
             fillColor: const Color(0xFF0F141C),

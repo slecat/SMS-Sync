@@ -10,13 +10,7 @@ class DeviceRegistry {
   }
 
   updateServerPresence(data, selfDeviceId, now = Date.now()) {
-    return this.updatePresence(
-      this.serverDevices,
-      data,
-      selfDeviceId,
-      'server',
-      now
-    );
+    return this.updatePresence(this.serverDevices, data, selfDeviceId, 'server', now);
   }
 
   clearServer() {
@@ -49,13 +43,54 @@ class DeviceRegistry {
 
   getCombinedDevices() {
     const combinedDevices = new Map();
+    const sourcePriority = { server: 0, lan: 1 };
+
+    const mergePresence = (device, source) => {
+      const existing = combinedDevices.get(device.deviceId);
+      if (!existing) {
+        combinedDevices.set(device.deviceId, {
+          ...device,
+          source,
+          sources: [source],
+          sourceTimestamps: { [source]: device.timestamp },
+        });
+        return;
+      }
+
+      const sourceTimestamps = {
+        ...(existing.sourceTimestamps || {}),
+        [source]: device.timestamp,
+      };
+      const sources = Array.from(
+        new Set([...(existing.sources || [existing.source]), source])
+      ).sort((a, b) => {
+        const left = sourcePriority[a] ?? 99;
+        const right = sourcePriority[b] ?? 99;
+        return left - right;
+      });
+      const preferredSource = sources.includes('lan') ? 'lan' : sources[0] || 'server';
+      const preferredName =
+        source === 'lan'
+          ? device.deviceName || existing.deviceName
+          : existing.deviceName || device.deviceName;
+
+      combinedDevices.set(device.deviceId, {
+        ...existing,
+        ...device,
+        deviceName: preferredName,
+        source: preferredSource,
+        sources,
+        sourceTimestamps,
+        timestamp: Math.max(existing.timestamp || 0, device.timestamp || 0),
+      });
+    };
 
     for (const device of this.serverDevices.values()) {
-      combinedDevices.set(device.deviceId, device);
+      mergePresence(device, 'server');
     }
 
     for (const device of this.lanDevices.values()) {
-      combinedDevices.set(device.deviceId, device);
+      mergePresence(device, 'lan');
     }
 
     return Array.from(combinedDevices.values());
@@ -86,7 +121,7 @@ class DeviceRegistry {
     if (!existing) {
       return true;
     }
-    return existing.deviceName !== deviceName || existing.source !== source;
+    return existing.deviceName !== deviceName;
   }
 }
 

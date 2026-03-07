@@ -21,7 +21,7 @@ Future<void> initializeService() async {
       autoStart: true,
       autoStartOnBoot: true,
       isForegroundMode: true,
-      notificationChannelId: 'sms_sync_channel',
+      notificationChannelId: 'sms_sync_service_v2',
       initialNotificationTitle: '短信同步',
       initialNotificationContent: '正在后台同步短信',
       foregroundServiceNotificationId: 888,

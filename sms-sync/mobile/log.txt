@@ -1,0 +1,205 @@
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+Launching lib\main.dart on V2452A in debug mode...
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "Windows_NT" == "Windows_NT" setlocal
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set DEFAULT_JVM_OPTS=
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set DIRNAME=E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android\
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android\" == "" set DIRNAME=.
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set APP_BASE_NAME=gradlew
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set APP_HOME=E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android\
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if defined JAVA_HOME goto findJavaFromJavaHome
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set JAVA_EXE=C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot/bin/java.exe
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if exist "C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot/bin/java.exe" goto init
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if not "Windows_NT" == "Windows_NT" goto win9xME_args
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "@eval[2+2]" == "4" goto 4NT_args
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set CMD_LINE_ARGS=
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set _SKIP=2
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "x-q" == "x" goto execute
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set CMD_LINE_ARGS=-q -Ptarget-platform=android-arm64 -Ptarget=E:\File\MySoftword\Sms-Sync\sms-sync\mobile\lib\main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9WRVJTSU9OPTMuNDEuMg==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049OTA2NzNhNGVlZg==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NmMwYmFhZWJmNw==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMS4w -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=false -Pfilesystem-scheme=org-dartlang-root assembleDebug
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>goto execute
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>set CLASSPATH=E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android\\gradle\wrapper\gradle-wrapper.jar
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>"C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot/bin/java.exe"    "-Dorg.gradle.appname=gradlew" -classpath "E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android\\gradle\wrapper\gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain -q -Ptarget-platform=android-arm64 -Ptarget=E:\File\MySoftword\Sms-Sync\sms-sync\mobile\lib\main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9WRVJTSU9OPTMuNDEuMg==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049OTA2NzNhNGVlZg==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NmMwYmFhZWJmNw==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMS4w -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=false -Pfilesystem-scheme=org-dartlang-root assembleDebug
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "0" == "0" goto mainEnd
+
+E:\File\MySoftword\Sms-Sync\sms-sync\mobile\android>if "Windows_NT" == "Windows_NT" endlocal
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+D/FlutterJNI(17904): Beginning load of flutter...
+D/FlutterJNI(17904): flutter (null) was loaded normally!
+I/flutter (17904): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+D/FlutterRenderer(17904): Width is zero. 0,0
+D/FlutterRenderer(17904): Width is zero. 0,0
+D/FlutterJNI(17904): Sending viewport metrics to the engine.
+I/flutter (17904): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+D/FlutterJNI(17904): Sending viewport metrics to the engine.
+Connecting to VM Service at ws://127.0.0.1:51737/Rm3242_gNC8=/ws
+Connected to the VM Service.
+V/BackgroundService(17904): Service already running, using existing service
+I/GrallocExtra(17904): gralloc_extra_query:is_SW3D 0
+I/GrallocExtra(17904): gralloc_extra_query:is_SW3D 0
+E/MEMCWrapper(17904): MEMC_POST_PROCESSING_ENABLE_PROPERTY false.
+D/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#1](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=50343417794922(auto) mPendingTransactions.size=0 graphicBufferId=76897094467594 transform=0
+V/BackgroundService(17904): Service already running, using existing service
+I/flutter (17904): [UI][ServerStatus] apply stored status: null -> connected
+I/flutter (17904): [UI][ServerStatus] apply live status: connected
+I/flutter (17904): UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+I/flutter (17904): [ServerStatus] connectToServer trigger=startup
+I/flutter (17904): [ServerStatus] connecting
+D/BLASTBufferQueue(17904): [VRI[MainActivity,type=1]#0](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=50343585451153(auto) mPendingTransactions.size=0 graphicBufferId=76897094467601 transform=0
+I/flutter (17904): UI UDP listening on port 8889
+I/flutter (17904): [ServerStatus] connected
+I/flutter (17904): [UI][ServerStatus] realtime: connected -> connecting (epoch=1)
+I/flutter (17904): [UI][ServerStatus] apply live status: connecting
+I/sms_sync_mobile(17904): AssetManager2(0xb40000728953d8b8) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(17904): AssetManager2(0xb400007289554658) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(17904): AssetManager2(0xb40000728954e258) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(17904): AssetManager2(0xb40000728954aa18) locale list changing from [] to [zh-CN]
+I/sms_sync_mobile(17904): AssetManager2(0xb4000072895843f8) locale list changing from [] to [zh-CN]
+V/ImeFocusController(17904): onWindowFocus: com.android.internal.policy.DecorView{debd64e V.E...... R....... 0,0-1260,2800}[MainActivity] softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE|IS_FORWARD_NAVIGATION
+I/flutter (17904): [UI][ServerStatus] realtime: connecting -> connected (epoch=1)
+I/flutter (17904): [UI][ServerStatus] apply live status: connected
+I/ImeTracker(17904): com.smssync.sms_sync_mobile:3eeb5132: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+D/ProfileInstaller(17904): Installing profile for com.smssync.sms_sync_mobile
+W/support-thread(17904): type=1400 audit(0.0:4222419): avc:  denied  { read } for  name="u:object_r:vendor_feature_prop:s0" dev="tmpfs" ino=580 scontext=u:r:untrusted_app:s0:c173,c257,c512,c768 tcontext=u:object_r:vendor_feature_prop:s0 tclass=file permissive=0 app=com.smssync.sms_sync_mobile
+W/libc    (17904): Access denied finding property "ro.vendor.vivo.software.ai.llm.disable"
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/VRI[MainActivity,type=1](17904): visibilityChanged oldVisibility=true newVisibility=false
+D/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#1](f:0,a:3) destructor()
+D/BufferQueueConsumer(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#1(BLAST Consumer)1](id:45f000000001,api:0,p:-1,c:17904) disconnect
+I/HWUI    (17904): [destroy] CanvasContext will be destroyed.
+D/ViewRootImpl(17904): AppSizeAfterRelayout, size: Point(1260, 2800), rotation: ROTATION_0
+D/BLASTBufferQueue(17904): [VRI[MainActivity,type=1]#0](f:0,a:1) destructor()
+D/BufferQueueConsumer(17904): [VRI[MainActivity,type=1]#0(BLAST Consumer)0](id:45f000000000,api:0,p:-1,c:17904) disconnect
+I/HWUI    (17904): [setStopped] CanvasContext will be destroyed.
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =1001 state=-2080374784
+I/sms_sync_mobile(17904): vart_impl, update 67108864, state=75497472
+I/sms_sync_mobile(17904): CollectorTransition concurrent copying GC freed 2445KB AllocSpace bytes, 16(612KB) LOS objects, 69% free, 2689KB(1652KB_52KB)/8833KB, 2Bd, itvl 10.896s, cpu 20.231ms, paused 92us,18us total 21.560ms
+I/sms_sync_mobile(17904): vart_bigdata, last_report_time=1772877189222
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=31B/s↑ 740KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=224B/s↑ 2B/s↓
+D/ViewRootImpl(17904): Skipping stats log for color mode
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =1000 state=-2038431744
+I/sms_sync_mobile(17904): vart_impl, update 109051904, state=109051904
+D/ViewRootImpl(17904): AppSizeAfterRelayout, size: Point(1260, 2800), rotation: ROTATION_0
+D/BufferQueueConsumer(17904): [](id:45f000000002,api:0,p:-1,c:17904) connect: controlledByApp=false
+D/BLASTBufferQueue(17904): [VRI[MainActivity,type=1]#2](f:0,a:0) constructor()
+D/BLASTBufferQueue(17904): [VRI[MainActivity,type=1]#2](f:0,a:0) update width=1260 height=2800 format=-3 mTransformHint=0
+D/BufferQueueConsumer(17904): [](id:45f000000003,api:0,p:-1,c:17904) connect: controlledByApp=false
+D/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:0,a:0) constructor()
+D/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:0,a:0) update width=1260 height=2800 format=4 mTransformHint=0
+D/BLASTBufferQueue(17904): [VRI[MainActivity,type=1]#2](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=50354122263538(auto) mPendingTransactions.size=0 graphicBufferId=76897094467619 transform=0
+D/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:0,a:1) acquireNextBufferLocked size=1260x2800 mFrameNumber=1 applyTransaction=true mTimestamp=50354177150308(auto) mPendingTransactions.size=0 graphicBufferId=76897094467612 transform=0
+V/ImeFocusController(17904): onWindowFocus: com.android.internal.policy.DecorView{debd64e V.E...... R....... 0,0-1260,2800 aid=0}[MainActivity] softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE
+I/ImeTracker(17904): com.smssync.sms_sync_mobile:6cce76e8: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=2.9KB/s↑ 5.6KB/s↓
+D/MainActivity(17904): Received method call: readLatestSms
+D/MainActivity(17904): Recent SMS[all] - no rows
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=1.5KB/s↑ 472B/s↓
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=891B/s↑ 311B/s↓
+D/MainActivity(17904): Received method call: readLatestSms
+D/MainActivity(17904): Recent SMS[all] - no rows
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+I/flutter (17904): [ServerStatus] connectToServer trigger=manual-reconnect-event
+I/flutter (17904): [ServerStatus] connecting
+I/flutter (17904): [UI][ServerStatus] realtime: connected -> connecting (epoch=2)
+I/flutter (17904): [UI][ServerStatus] apply live status: connecting
+I/flutter (17904): [ServerStatus] connected
+I/flutter (17904): [UI][ServerStatus] realtime: connecting -> connected (epoch=2)
+I/flutter (17904): [UI][ServerStatus] apply live status: connected
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=631B/s↑ 283B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=4.4KB/s↑ 460KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=24B/s↑ 31B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 31B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 425KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=218B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=6B/s↑ 441KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=4.3KB/s↑ 3.1KB/s↓
+D/SmsNotifListener(17904): Accepted notification SMS pkg=com.android.mms.service, from=鹰角网络, body=【鹰角网络】验证码：409737。此验证码只用于鹰角账号登录使用，请勿将此信息以任何形式告知他人！30分钟内有效。
+I/flutter (17904): Received SMS in UI - shouldProcess: true
+D/NativeSmsRelay(17904): Delivered SMS from notification-listener to Flutter via method channel
+D/SmsNotifListener(17904): Skipped duplicate notification candidate from com.android.mms.service
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=11KB/s↑ 6.0KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=254B/s↑ 441KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=218B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=197376
+I/sms_sync_mobile(17904): Open vivo delay for GC JIT .
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+V/ActivityThread(17904): updateVmProcessStateForGc sceneId =2 state=196608
+I/sms_sync_mobile(17904): Close vivo delay for GC JIT .
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=6B/s↑ 378KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=249B/s↑ 31B/s↓
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 0B/s↓
+E/BLASTBufferQueue(17904): [ec89cf3 SurfaceView[com.smssync.sms_sync_mobile/com.smssync.sms_sync_mobile.MainActivity]#3](f:1,a:6) acquireNextBufferLocked: Can't acquire next buffer. Already acquired max frames 6 max:4 + 2
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=0B/s↑ 237B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=24B/s↑ 63B/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=2.5KB/s↑ 378KB/s↓
+D/SmsNotifListener(17904): Ignored notification pkg=com.getsurfboard, title=SakuraCat, text=218B/s↑ 0B/s↓
+Lost connection to device.
+
+Exited.

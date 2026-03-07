@@ -40,6 +40,9 @@ class _HomePageState extends State<HomePage> {
         smsDeduplicator: _smsDeduplicator,
       );
   static const int _deviceTimeout = 8000;
+  static final RegExp _schemePrefixPattern = RegExp(
+    r'^[a-zA-Z][a-zA-Z\d+\-.]*://',
+  );
   bool _hasLiveServerStatus = false;
 
   @override
@@ -105,7 +108,9 @@ class _HomePageState extends State<HomePage> {
           serverStatus: effectiveServerStatus,
         );
         _groupIdController.text = result.data.groupId;
-        _serverUrlController.text = result.data.serverUrl;
+        _serverUrlController.text = _toServerAddressInput(
+          result.data.serverUrl,
+        );
         _deviceNameController.text = result.data.deviceName;
         _syncSecretController.text = result.data.syncSecret;
       });
@@ -152,7 +157,7 @@ class _HomePageState extends State<HomePage> {
 
     await _actionCoordinator.savePreferences(
       groupId: _groupIdController.text,
-      serverUrl: _serverUrlController.text,
+      serverUrl: _toServerUrl(_serverUrlController.text),
       deviceName: _deviceNameController.text,
       syncSecret: syncSecret,
     );
@@ -228,6 +233,23 @@ class _HomePageState extends State<HomePage> {
       '读取短信失败：${result.error}',
       tone: HomeSnackBarTone.error,
     );
+  }
+
+  String _toServerUrl(String input) {
+    final normalized = input.trim();
+    if (normalized.isEmpty) {
+      return '';
+    }
+    final addressOnly = normalized.replaceFirst(_schemePrefixPattern, '');
+    return 'ws://$addressOnly';
+  }
+
+  String _toServerAddressInput(String serverUrl) {
+    final normalized = serverUrl.trim();
+    if (normalized.isEmpty) {
+      return '';
+    }
+    return normalized.replaceFirst(_schemePrefixPattern, '');
   }
 
   @override

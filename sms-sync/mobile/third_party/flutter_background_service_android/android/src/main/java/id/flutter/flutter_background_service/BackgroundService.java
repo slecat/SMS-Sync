@@ -3,6 +3,7 @@ package id.flutter.flutter_background_service;
 import static android.os.Build.VERSION.SDK_INT;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -89,10 +90,10 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         String notificationChannelId = config.getNotificationChannelId();
         if (notificationChannelId == null) {
             this.notificationChannelId = "FOREGROUND_DEFAULT";
-            createNotificationChannel();
         } else {
             this.notificationChannelId = notificationChannelId;
         }
+        ensureNotificationChannel();
 
         notificationTitle = config.getInitialNotificationTitle();
         notificationContent = config.getInitialNotificationContent();
@@ -145,6 +146,33 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         }
     }
 
+    private void ensureNotificationChannel() {
+        if (SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+        // Keep channel creation in service as well, so boot-start still has a valid channel
+        // even before the UI process is opened.
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        NotificationChannel existing = manager.getNotificationChannel(notificationChannelId);
+        if (existing != null) {
+            return;
+        }
+
+        CharSequence name = "SMS Sync";
+        String description = "Background SMS sync notification";
+        NotificationChannel channel = new NotificationChannel(
+                notificationChannelId,
+                name,
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        channel.setDescription(description);
+        channel.setShowBadge(false);
+        channel.enableVibration(false);
+        channel.setSound(null, null);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        manager.createNotificationChannel(channel);
+    }
+
     protected void updateNotificationInfo() {
         if (config.isForeground()) {
             String packageName = getApplicationContext().getPackageName();
@@ -158,11 +186,19 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
             PendingIntent pi = PendingIntent.getActivity(BackgroundService.this, 11, i, flags);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, notificationChannelId)
                     .setSmallIcon(getApplicationInfo().icon)
-                    .setAutoCancel(true)
+                    .setAutoCancel(false)
                     .setOngoing(true)
+                    .setOnlyAlertOnce(true)
+                    .setSilent(true)
+                    .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationContent)
                     .setContentIntent(pi);
+
+            if (SDK_INT >= Build.VERSION_CODES.S) {
+                mBuilder.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
+            }
 
             try {
                 foregroundTypes = null;
@@ -170,7 +206,10 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                     foregroundTypes = configForegroundTypes.split(",");
                 }
                 Integer serviceType = ForegroundTypeMapper.getForegroundServiceType(foregroundTypes);
-                ServiceCompat.startForeground(this, notificationId, mBuilder.build(), serviceType);
+                Notification foregroundNotification = mBuilder.build();
+                foregroundNotification.flags |= Notification.FLAG_ONGOING_EVENT;
+                foregroundNotification.flags |= Notification.FLAG_NO_CLEAR;
+                ServiceCompat.startForeground(this, notificationId, foregroundNotification, serviceType);
             } catch (SecurityException e) {
               Log.w(TAG, "Failed to start foreground service due to SecurityException - have you forgotten to request a permission? - " + e.getMessage());
             }
@@ -183,7 +222,7 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         WatchdogReceiver.enqueue(this);
         runService();
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @SuppressLint("WakelockTimeout")

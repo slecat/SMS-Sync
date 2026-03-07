@@ -101,23 +101,66 @@ function renderMessages() {
 
 function renderDeviceList(devices) {
   if (devices.length === 0) {
-    deviceListEl.innerHTML = '<div class="empty-devices">暂无在线设备</div>';
+    deviceListEl.innerHTML =
+      '<div class="empty-devices">\u6682\u65e0\u5728\u7ebf\u8bbe\u5907</div>';
     return;
   }
 
   deviceListEl.innerHTML = '';
   devices.forEach((device) => {
+    const sources = normalizeDeviceSources(device);
+    const indicatorClass =
+      sources.length > 1 ? 'mixed' : sources[0] === 'server' ? 'server' : 'lan';
+    const sourceTags = sources
+      .map(
+        (source) =>
+          `<span class="device-source-tag ${source}">${sourceLabel(source)}</span>`
+      )
+      .join('');
+
     const item = document.createElement('div');
-    const isLan = device.source === 'lan';
-    const sourceLabel = isLan ? '局域网' : '服务器';
     item.className = 'device-item';
     item.innerHTML = `
-      <div class="device-indicator ${isLan ? 'lan' : 'server'}"></div>
-      <div class="device-name">${device.deviceName}</div>
-      <div style="font-size: 10px; color: ${isLan ? '#28a745' : '#6c757d'};">${sourceLabel}</div>
+      <div class="device-indicator ${indicatorClass}"></div>
+      <div class="device-name">${escapeHtml(device.deviceName || '\u672a\u77e5\u8bbe\u5907')}</div>
+      <div class="device-sources">${sourceTags}</div>
     `;
     deviceListEl.appendChild(item);
   });
+}
+
+function normalizeDeviceSources(device) {
+  if (Array.isArray(device.sources) && device.sources.length > 0) {
+    const normalized = Array.from(
+      new Set(device.sources.map((source) => (source === 'server' ? 'server' : 'lan')))
+    );
+    normalized.sort((a, b) => sourcePriority(a) - sourcePriority(b));
+    return normalized;
+  }
+  return [device.source === 'server' ? 'server' : 'lan'];
+}
+
+function sourcePriority(source) {
+  if (source === 'server') {
+    return 0;
+  }
+  if (source === 'lan') {
+    return 1;
+  }
+  return 2;
+}
+
+function sourceLabel(source) {
+  return source === 'server' ? '\u670d\u52a1\u5668' : '\u5c40\u57df\u7f51';
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function updateServerStatusUI(status, message) {

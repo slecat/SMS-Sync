@@ -14,7 +14,7 @@ test('DeviceRegistry should ignore presence from current device', () => {
   assert.equal(registry.getCombinedDevices().length, 0);
 });
 
-test('DeviceRegistry should merge server and lan devices and prefer lan', () => {
+test('DeviceRegistry should merge server and lan devices and keep both sources', () => {
   const now = Date.now();
   const registry = new DeviceRegistry();
 
@@ -31,6 +31,9 @@ test('DeviceRegistry should merge server and lan devices and prefer lan', () => 
   assert.equal(devices.length, 1);
   assert.equal(devices[0].deviceName, 'from-lan');
   assert.equal(devices[0].source, 'lan');
+  assert.deepEqual(devices[0].sources, ['server', 'lan']);
+  assert.equal(devices[0].sourceTimestamps.server, now);
+  assert.equal(devices[0].sourceTimestamps.lan, now);
 });
 
 test('DeviceRegistry should cleanup expired devices', () => {
