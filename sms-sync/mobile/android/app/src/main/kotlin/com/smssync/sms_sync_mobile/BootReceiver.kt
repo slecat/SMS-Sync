@@ -11,8 +11,16 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            Log.d(TAG, "Boot completed - SMS Sync app should auto-start")
+        val action = intent.action ?: return
+        val shouldStart = action == Intent.ACTION_BOOT_COMPLETED ||
+            action == Intent.ACTION_LOCKED_BOOT_COMPLETED ||
+            action == Intent.ACTION_MY_PACKAGE_REPLACED ||
+            action == Intent.ACTION_USER_UNLOCKED ||
+            action == "android.intent.action.QUICKBOOT_POWERON"
+
+        if (shouldStart) {
+            Log.d(TAG, "Auto start trigger received: $action")
+            BackgroundServiceStarter.ensureRunning(context, "boot-event:$action")
         }
     }
 }

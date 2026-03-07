@@ -1,11 +1,13 @@
 package com.smssync.sms_sync_mobile
 
+import android.content.ContentUris
+import android.content.Context
 import android.database.ContentObserver
+import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.Telephony
-import android.content.Context
 import android.util.Log
 
 class SmsObserver(
@@ -15,75 +17,125 @@ class SmsObserver(
 
     companion object {
         const val TAG = "SmsObserver"
-        private var lastSmsId = -1L
-        private var lastProcessTime = 0L
-        private const val MIN_INTERVAL = 2000L
+        private var lastProcessedSignature: String? = null
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         super.onChange(selfChange, uri)
         Log.d(TAG, "SMS database changed: $uri")
-        
+
         Handler(Looper.getMainLooper()).postDelayed({
-            checkSms()
+            checkSms(uri)
         }, 500)
     }
 
-    private fun checkSms() {
+    private fun checkSms(changedUri: Uri?) {
         try {
-            val projection = arrayOf(
-                Telephony.Sms._ID,
-                Telephony.Sms.ADDRESS,
-                Telephony.Sms.BODY,
-                Telephony.Sms.TYPE,
-                Telephony.Sms.DATE
+            val changedSmsId = SmsObserverSelector.parseChangedSmsId(changedUri?.toString())
+            val changedRecord = changedSmsId?.let { querySmsById(it) }
+            val latestInboxRecord = queryLatestInboxSms()
+            val selectedRecord = SmsObserverSelector.chooseRecord(
+                changedSmsId = changedSmsId,
+                changedRecord = changedRecord,
+                latestInboxRecord = latestInboxRecord,
+                inboxType = Telephony.Sms.MESSAGE_TYPE_INBOX,
             )
-            
-            val sortOrder = "${Telephony.Sms._ID} DESC LIMIT 1"
-            
-            val cursor = context.contentResolver.query(
-                Telephony.Sms.CONTENT_URI,
-                projection,
-                null,
-                null,
-                sortOrder
-            )
-            
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    val idIndex = it.getColumnIndex(Telephony.Sms._ID)
-                    val addressIndex = it.getColumnIndex(Telephony.Sms.ADDRESS)
-                    val bodyIndex = it.getColumnIndex(Telephony.Sms.BODY)
-                    val typeIndex = it.getColumnIndex(Telephony.Sms.TYPE)
-                    
-                    if (idIndex >= 0 && addressIndex >= 0 && bodyIndex >= 0 && typeIndex >= 0) {
-                        val smsId = it.getLong(idIndex)
-                        val from = it.getString(addressIndex)
-                        val body = it.getString(bodyIndex)
-                        val type = it.getInt(typeIndex)
-                        val currentTime = System.currentTimeMillis()
-                        
-                        Log.d(TAG, "SMS: ID=$smsId, Type=$type, From=$from")
-                        
-                        val isNewInbox = type == Telephony.Sms.MESSAGE_TYPE_INBOX
-                        val isNewId = smsId != lastSmsId
-                        val isRecentTime = (currentTime - lastProcessTime) > MIN_INTERVAL
-                        
-                        Log.d(TAG, "Check - isNewInbox=$isNewInbox, isNewId=$isNewId, isRecentTime=$isRecentTime")
-                        
-                        if (isNewInbox && isNewId && isRecentTime) {
-                            lastSmsId = smsId
-                            lastProcessTime = currentTime
-                            Log.d(TAG, "Processing new SMS: From=$from")
-                            onSmsReceived(from, body)
-                        } else {
-                            Log.d(TAG, "Skipping duplicate or old SMS")
-                        }
-                    }
-                }
+
+            if (selectedRecord == null) {
+                Log.d(TAG, "No SMS record available to process")
+                return
             }
+
+            processSmsRecord(selectedRecord, changedSmsId)
         } catch (e: Exception) {
             Log.e(TAG, "Error checking SMS: ${e.message}", e)
         }
     }
+
+    private fun processSmsRecord(record: ObservedSmsRecord, changedSmsId: Long?) {
+        val signature = "${record.id}|${record.date}|${record.from}|${record.body.hashCode()}"
+        val isNewInbox = record.type == Telephony.Sms.MESSAGE_TYPE_INBOX
+        val isNewSignature = signature != lastProcessedSignature
+
+        Log.d(
+            TAG,
+            "SMS: ID=${record.id}, Date=${record.date}, Type=${record.type}, From=${record.from}, ChangedId=$changedSmsId",
+        )
+        Log.d(TAG, "Check - isNewInbox=$isNewInbox, isNewSignature=$isNewSignature")
+
+        if (isNewInbox && isNewSignature) {
+            lastProcessedSignature = signature
+            Log.d(TAG, "Processing new SMS: From=${record.from}")
+            onSmsReceived(record.from, record.body)
+        } else {
+            Log.d(TAG, "Skipping duplicate or old SMS")
+        }
+    }
+
+    private fun querySmsById(smsId: Long): ObservedSmsRecord? {
+        val smsUri = ContentUris.withAppendedId(Telephony.Sms.CONTENT_URI, smsId)
+        return context.contentResolver.query(
+            smsUri,
+            projection,
+            null,
+            null,
+            null,
+        )?.use { cursor ->
+            cursor.toObservedSmsRecord()
+        }
+    }
+
+    private fun queryLatestInboxSms(): ObservedSmsRecord? {
+        val selection = "${Telephony.Sms.TYPE} = ?"
+        val selectionArgs = arrayOf(Telephony.Sms.MESSAGE_TYPE_INBOX.toString())
+        val sortOrder = "${Telephony.Sms.DATE} DESC, ${Telephony.Sms._ID} DESC"
+
+        return context.contentResolver.query(
+            Telephony.Sms.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder,
+        )?.use { cursor ->
+            cursor.toObservedSmsRecord()
+        }
+    }
+
+    private fun Cursor.toObservedSmsRecord(): ObservedSmsRecord? {
+        if (!moveToFirst()) {
+            return null
+        }
+
+        val idIndex = getColumnIndex(Telephony.Sms._ID)
+        val addressIndex = getColumnIndex(Telephony.Sms.ADDRESS)
+        val bodyIndex = getColumnIndex(Telephony.Sms.BODY)
+        val typeIndex = getColumnIndex(Telephony.Sms.TYPE)
+        val dateIndex = getColumnIndex(Telephony.Sms.DATE)
+
+        if (
+            idIndex < 0 ||
+            addressIndex < 0 ||
+            bodyIndex < 0 ||
+            typeIndex < 0 ||
+            dateIndex < 0
+        ) {
+            return null
+        }
+
+        return ObservedSmsRecord(
+            id = getLong(idIndex),
+            from = getString(addressIndex) ?: "unknown_sender",
+            body = getString(bodyIndex) ?: "",
+            type = getInt(typeIndex),
+            date = getLong(dateIndex),
+        )
+    }
+
+    private val projection = arrayOf(
+        Telephony.Sms._ID,
+        Telephony.Sms.ADDRESS,
+        Telephony.Sms.BODY,
+        Telephony.Sms.TYPE,
+        Telephony.Sms.DATE,
+    )
 }
