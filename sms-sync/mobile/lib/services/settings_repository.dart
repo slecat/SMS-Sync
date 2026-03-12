@@ -24,6 +24,7 @@ class SettingsRepository {
   static const String syncSecretKey = 'syncSecret';
   static const String lastDevicePresenceKey = 'lastDevicePresence';
   static const String serverConnectionStatusKey = 'serverConnectionStatus';
+  static const String pendingNativeSmsQueueKey = 'pendingNativeSmsQueue';
 
   Future<SharedPreferences> _prefs({bool reload = false}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,5 +85,35 @@ class SettingsRepository {
   Future<String> loadServerConnectionStatus() async {
     final prefs = await _prefs(reload: true);
     return prefs.getString(serverConnectionStatusKey) ?? 'disconnected';
+  }
+
+  Future<List<Map<String, dynamic>>> takePendingNativeSmsQueue() async {
+    final prefs = await _prefs(reload: true);
+    final rawQueue = prefs.getString(pendingNativeSmsQueueKey);
+    if (rawQueue == null || rawQueue.isEmpty) {
+      return const [];
+    }
+
+    try {
+      final decoded = jsonDecode(rawQueue);
+      if (decoded is! List) {
+        await prefs.remove(pendingNativeSmsQueueKey);
+        return const [];
+      }
+
+      final queue = decoded
+          .whereType<Map>()
+          .map(
+            (entry) => entry.map(
+              (key, value) => MapEntry(key.toString(), value),
+            ),
+          )
+          .toList(growable: false);
+      await prefs.remove(pendingNativeSmsQueueKey);
+      return queue;
+    } catch (_) {
+      await prefs.remove(pendingNativeSmsQueueKey);
+      return const [];
+    }
   }
 }

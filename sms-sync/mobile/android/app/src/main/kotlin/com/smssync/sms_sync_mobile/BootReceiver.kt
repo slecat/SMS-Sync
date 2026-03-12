@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import id.flutter.flutter_background_service.Config
 
 class BootReceiver : BroadcastReceiver() {
     companion object {
@@ -12,13 +13,22 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
-        val shouldStart = action == Intent.ACTION_BOOT_COMPLETED ||
-            action == Intent.ACTION_LOCKED_BOOT_COMPLETED ||
-            action == Intent.ACTION_MY_PACKAGE_REPLACED ||
-            action == Intent.ACTION_USER_UNLOCKED ||
-            action == "android.intent.action.QUICKBOOT_POWERON"
+        val shouldStart = action == Intent.ACTION_USER_UNLOCKED
 
         if (shouldStart) {
+            val config = Config(context)
+            val autoStart = config.isAutoStartOnBoot
+            val manuallyStopped = config.isManuallyStopped
+            val backgroundHandle = config.backgroundHandle
+
+            if (!autoStart || manuallyStopped || backgroundHandle <= 0) {
+                Log.d(
+                    TAG,
+                    "Skipped auto start: action=$action, autoStart=$autoStart, manuallyStopped=$manuallyStopped, handle=$backgroundHandle",
+                )
+                return
+            }
+
             Log.d(TAG, "Auto start trigger received: $action")
             BackgroundServiceStarter.ensureRunning(context, "boot-event:$action")
         }

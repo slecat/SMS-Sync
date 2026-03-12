@@ -1,6 +1,7 @@
 ﻿package com.smssync.sms_sync_mobile
 
 import android.content.Context
+import org.json.JSONArray
 import android.provider.Settings
 import android.util.Log
 import io.flutter.plugin.common.MethodChannel
@@ -18,12 +19,33 @@ object NativeSmsRelay {
     private const val KEY_SYNC_SECRET = "syncSecret"
     private const val KEY_GROUP_ID_FLUTTER = "flutter.groupId"
     private const val KEY_SYNC_SECRET_FLUTTER = "flutter.syncSecret"
+    private const val KEY_PENDING_NATIVE_SMS_QUEUE_FLUTTER = "flutter.pendingNativeSmsQueue"
     private const val DEFAULT_GROUP_ID = "default"
     private const val SIGNATURE_VERSION = 1
+    private const val DUPLICATE_WINDOW_MS = 15_000L
+
+    private data class PendingSms(
+        val from: String,
+        val body: String,
+        val timestamp: Long,
+        val source: String,
+    )
+
+    private data class RecentDispatch(
+        val signature: String,
+        val timestamp: Long,
+    )
 
     var methodChannel: MethodChannel? = null
+    private val recentDispatches = ArrayDeque<RecentDispatch>()
+    private val dispatchLock = Any()
 
     fun deliver(context: Context, from: String, body: String, timestamp: Long, source: String) {
+        if (shouldSkipDuplicate(from, body, timestamp)) {
+            Log.d(TAG, "Skipped duplicate SMS from $source")
+            return
+        }
+
         val smsData = mapOf(
             "from" to from,
             "body" to body,
@@ -36,9 +58,53 @@ object NativeSmsRelay {
             return
         }
 
-        Log.d(TAG, "Method channel unavailable for $source, falling back to UDP")
+        Log.d(TAG, "Method channel unavailable for $source, queueing for background runtime")
         BackgroundServiceStarter.ensureRunning(context, "$source-no-channel")
-        sendSmsViaBroadcast(context, from, body, timestamp)
+        enqueuePendingSms(
+            context = context,
+            sms = PendingSms(from = from, body = body, timestamp = timestamp, source = source),
+        )
+    }
+
+    private fun shouldSkipDuplicate(from: String, body: String, timestamp: Long): Boolean {
+        val normalizedFrom = from.trim().lowercase()
+        val normalizedBody = body.trim().replace("\r\n", "\n")
+        val signature = "$normalizedFrom|${normalizedBody.hashCode()}"
+
+        synchronized(dispatchLock) {
+            while (recentDispatches.isNotEmpty() && timestamp - recentDispatches.first().timestamp > DUPLICATE_WINDOW_MS) {
+                recentDispatches.removeFirst()
+            }
+
+            val duplicate = recentDispatches.any { dispatch ->
+                dispatch.signature == signature && kotlin.math.abs(timestamp - dispatch.timestamp) <= DUPLICATE_WINDOW_MS
+            }
+            if (duplicate) {
+                return true
+            }
+
+            recentDispatches.addLast(RecentDispatch(signature = signature, timestamp = timestamp))
+            return false
+        }
+    }
+
+    private fun enqueuePendingSms(context: Context, sms: PendingSms) {
+        try {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val rawQueue = prefs.getString(KEY_PENDING_NATIVE_SMS_QUEUE_FLUTTER, null)
+            val queue = if (rawQueue.isNullOrBlank()) JSONArray() else JSONArray(rawQueue)
+            val payload = JSONObject()
+                .put("from", sms.from)
+                .put("body", sms.body)
+                .put("timestamp", sms.timestamp)
+                .put("source", sms.source)
+
+            queue.put(payload)
+            prefs.edit().putString(KEY_PENDING_NATIVE_SMS_QUEUE_FLUTTER, queue.toString()).apply()
+            Log.d(TAG, "Queued pending SMS from ${sms.source} for background delivery")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error queueing pending SMS: ${e.message}", e)
+        }
     }
 
     private fun sendSmsViaBroadcast(context: Context, from: String, body: String, timestamp: Long) {

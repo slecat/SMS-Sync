@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -45,6 +47,7 @@ Future<void> ensureServiceRunning() async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  ui.DartPluginRegistrant.ensureInitialized();
   final dependencies = backgroundDependencies;
 
   if (service is AndroidServiceInstance) {
@@ -55,14 +58,28 @@ void onStart(ServiceInstance service) async {
     );
   }
 
-  final settings = await dependencies.settingsRepository.loadSettings();
-  final localDeviceId = await dependencies.deviceIdService.resolveDeviceId(
-    dependencies.settingsRepository,
-  );
-  var serverUrl = settings.serverUrl;
-  var groupId = settings.groupId;
-  var deviceName = settings.deviceName;
-  var syncSecret = settings.syncSecret;
+  var serverUrl = '';
+  var groupId = 'default';
+  var deviceName = '手机端';
+  var syncSecret = '';
+  try {
+    final settings = await dependencies.settingsRepository.loadSettings();
+    serverUrl = settings.serverUrl;
+    groupId = settings.groupId;
+    deviceName = settings.deviceName;
+    syncSecret = settings.syncSecret;
+  } catch (e) {
+    AppLogger.debug('loadSettings failed in background runtime: $e');
+  }
+
+  var localDeviceId = 'unknown_device';
+  try {
+    localDeviceId = await dependencies.deviceIdService.resolveDeviceId(
+      dependencies.settingsRepository,
+    );
+  } catch (e) {
+    AppLogger.debug('resolveDeviceId failed in background runtime: $e');
+  }
 
   final lanDevices = <String, Map<String, dynamic>>{};
 
@@ -89,6 +106,80 @@ void onStart(ServiceInstance service) async {
       payload,
       secret: syncSecret,
     );
+  }
+
+  Future<void> processIncomingSms({
+    required String from,
+    required String body,
+    required int timestamp,
+    required String source,
+  }) async {
+    final messageId = '${localDeviceId}_$timestamp';
+
+    final smsData = dependencies.messagePayloadFactory.sms(
+      messageId: messageId,
+      from: from,
+      body: body,
+      groupId: groupId,
+      timestamp: timestamp,
+    );
+    final signedSmsData = signOutgoingPayload(smsData);
+
+    try {
+      await dependencies.messageTransportService.broadcastUdp(signedSmsData);
+    } catch (e) {
+      AppLogger.debug('Local broadcast failed for $source: $e');
+    }
+
+    if (dependencies.messageRoutingPolicy.shouldSendToServerWithLiveChannel(
+      serverUrl: serverUrl,
+      hasLiveChannel: channel != null,
+    )) {
+      try {
+        await dependencies.messageTransportService.sendViaExistingChannel(
+          channel,
+          signedSmsData,
+        );
+      } catch (e) {
+        AppLogger.debug('Server send failed for $source: $e');
+      }
+    }
+  }
+
+  Future<void> flushPendingNativeSms({required String trigger}) async {
+    try {
+      final pendingQueue = await dependencies.settingsRepository
+          .takePendingNativeSmsQueue();
+      if (pendingQueue.isEmpty) {
+        return;
+      }
+
+      AppLogger.debug(
+        'Processing ${pendingQueue.length} pending native SMS item(s), trigger=$trigger',
+      );
+      for (final sms in pendingQueue) {
+        final from = sms['from']?.toString();
+        final body = sms['body']?.toString();
+        if (from == null || from.isEmpty || body == null || body.isEmpty) {
+          continue;
+        }
+
+        final timestamp =
+            sms['timestamp'] is int
+                ? sms['timestamp'] as int
+                : int.tryParse('${sms['timestamp']}') ??
+                    DateTime.now().millisecondsSinceEpoch;
+        final source = sms['source']?.toString() ?? 'native-queue';
+        await processIncomingSms(
+          from: from,
+          body: body,
+          timestamp: timestamp,
+          source: source,
+        );
+      }
+    } catch (e) {
+      AppLogger.debug('Error flushing pending native SMS: $e');
+    }
   }
 
   bool isTrustedPayload(Map<String, dynamic> payload, String source) {
@@ -522,6 +613,12 @@ void onStart(ServiceInstance service) async {
     await broadcastLanPresence();
   });
 
+  final pendingNativeSmsTimer = Timer.periodic(const Duration(seconds: 3), (
+    timer,
+  ) async {
+    await flushPendingNativeSms(trigger: 'periodic');
+  });
+
   // Listen for SMS from UI isolate via ServiceInstance
   final smsReceivedSubscription = service.on('smsReceived').listen((
     data,
@@ -532,36 +629,12 @@ void onStart(ServiceInstance service) async {
       final timestamp =
           data['timestamp'] as int? ?? DateTime.now().millisecondsSinceEpoch;
 
-      final messageId = '${localDeviceId}_$timestamp';
-
-      final smsData = dependencies.messagePayloadFactory.sms(
-        messageId: messageId,
+      await processIncomingSms(
         from: from,
         body: body,
-        groupId: groupId,
         timestamp: timestamp,
+        source: 'ui-service-event',
       );
-      final signedSmsData = signOutgoingPayload(smsData);
-
-      try {
-        await dependencies.messageTransportService.broadcastUdp(signedSmsData);
-      } catch (e) {
-        AppLogger.debug('Local broadcast failed: $e');
-      }
-
-      if (dependencies.messageRoutingPolicy.shouldSendToServerWithLiveChannel(
-        serverUrl: serverUrl,
-        hasLiveChannel: channel != null,
-      )) {
-        try {
-          await dependencies.messageTransportService.sendViaExistingChannel(
-            channel,
-            signedSmsData,
-          );
-        } catch (e) {
-          AppLogger.debug('Server send failed: $e');
-        }
-      }
     } catch (e) {
       AppLogger.debug('Error processing SMS in background: $e');
     }
@@ -599,6 +672,7 @@ void onStart(ServiceInstance service) async {
 
   unawaited(connectToServer(serverUrl, groupId, deviceName, 'startup'));
   unawaited(broadcastLanPresence(trigger: 'startup'));
+  unawaited(flushPendingNativeSms(trigger: 'startup'));
 
   late final StreamSubscription<dynamic> stopServiceSubscription;
   stopServiceSubscription = service.on('stopService').listen((event) async {
@@ -606,6 +680,7 @@ void onStart(ServiceInstance service) async {
     wsPresenceTimer.cancel();
     reconnectProbeTimer.cancel();
     lanPresenceTimer.cancel();
+    pendingNativeSmsTimer.cancel();
     await socketSubscription?.cancel();
     await smsReceivedSubscription.cancel();
     await reconnectSubscription.cancel();

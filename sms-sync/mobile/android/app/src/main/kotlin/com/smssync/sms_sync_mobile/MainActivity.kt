@@ -69,12 +69,12 @@ class MainActivity : FlutterActivity() {
     private fun setupSmsObserver(methodChannel: MethodChannel) {
         Log.d(TAG, "Setting up SmsObserver")
 
-        smsObserver = SmsObserver(this) { from, body ->
+        smsObserver = SmsObserver(this) { from, body, timestamp ->
             Log.d(TAG, "SmsObserver received SMS: From=$from")
             val smsData = mapOf(
                 "from" to from,
                 "body" to body,
-                "timestamp" to System.currentTimeMillis()
+                "timestamp" to timestamp
             )
             methodChannel.invokeMethod("onSmsReceived", smsData)
         }

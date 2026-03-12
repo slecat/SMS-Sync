@@ -12,7 +12,7 @@ import android.util.Log
 
 class SmsObserver(
     private val context: Context,
-    private val onSmsReceived: (String, String) -> Unit
+    private val onSmsReceived: (String, String, Long) -> Unit
 ) : ContentObserver(Handler(Looper.getMainLooper())) {
 
     companion object {
@@ -66,7 +66,7 @@ class SmsObserver(
         if (isNewInbox && isNewSignature) {
             lastProcessedSignature = signature
             Log.d(TAG, "Processing new SMS: From=${record.from}")
-            onSmsReceived(record.from, record.body)
+            onSmsReceived(record.from, record.body, record.date)
         } else {
             Log.d(TAG, "Skipping duplicate or old SMS")
         }
