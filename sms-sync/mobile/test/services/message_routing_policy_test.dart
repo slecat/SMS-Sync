@@ -29,13 +29,13 @@ void main() {
       );
     });
 
-    test('temporary connection route should only require serverUrl', () {
+    test('direct connection route should only require serverUrl', () {
       expect(
-        policy.shouldSendToServerWithTemporaryConnection(serverUrl: ''),
+        policy.shouldSendToServerWithDirectConnection(serverUrl: ''),
         isFalse,
       );
       expect(
-        policy.shouldSendToServerWithTemporaryConnection(
+        policy.shouldSendToServerWithDirectConnection(
           serverUrl: 'ws://example',
         ),
         isTrue,

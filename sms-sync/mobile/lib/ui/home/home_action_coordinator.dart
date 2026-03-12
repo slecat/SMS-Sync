@@ -85,9 +85,9 @@ class HomeActionCoordinator {
     }
 
     if (dependencies.messageRoutingPolicy
-        .shouldSendToServerWithTemporaryConnection(serverUrl: serverUrl)) {
+        .shouldSendToServerWithDirectConnection(serverUrl: serverUrl)) {
       try {
-        await dependencies.messageTransportService.sendViaTemporaryWebSocket(
+        await dependencies.messageTransportService.sendViaDirectWebSocket(
           serverUrl: serverUrl,
           registerPayload: dependencies.messagePayloadFactory.register(
             deviceId: deviceId,
@@ -146,9 +146,9 @@ class HomeActionCoordinator {
       }
 
       if (dependencies.messageRoutingPolicy
-          .shouldSendToServerWithTemporaryConnection(serverUrl: serverUrl)) {
+          .shouldSendToServerWithDirectConnection(serverUrl: serverUrl)) {
         try {
-          await dependencies.messageTransportService.sendViaTemporaryWebSocket(
+          await dependencies.messageTransportService.sendViaDirectWebSocket(
             serverUrl: serverUrl,
             registerPayload: dependencies.messagePayloadFactory.register(
               deviceId: deviceId,

@@ -34,7 +34,7 @@ class MessageTransportService {
     channel.sink.add(jsonEncode(payload));
   }
 
-  Future<void> sendViaTemporaryWebSocket({
+  Future<void> sendViaDirectWebSocket({
     required String serverUrl,
     required Map<String, dynamic> registerPayload,
     required Map<String, dynamic> payload,
@@ -49,5 +49,20 @@ class MessageTransportService {
     } finally {
       channel.sink.close();
     }
+  }
+
+  @Deprecated('Use sendViaDirectWebSocket')
+  Future<void> sendViaTemporaryWebSocket({
+    required String serverUrl,
+    required Map<String, dynamic> registerPayload,
+    required Map<String, dynamic> payload,
+    Duration settleDelay = const Duration(milliseconds: 500),
+  }) {
+    return sendViaDirectWebSocket(
+      serverUrl: serverUrl,
+      registerPayload: registerPayload,
+      payload: payload,
+      settleDelay: settleDelay,
+    );
   }
 }

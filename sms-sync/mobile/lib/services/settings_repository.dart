@@ -104,9 +104,8 @@ class SettingsRepository {
       final queue = decoded
           .whereType<Map>()
           .map(
-            (entry) => entry.map(
-              (key, value) => MapEntry(key.toString(), value),
-            ),
+            (entry) =>
+                entry.map((key, value) => MapEntry(key.toString(), value)),
           )
           .toList(growable: false);
       await prefs.remove(pendingNativeSmsQueueKey);
@@ -115,5 +114,16 @@ class SettingsRepository {
       await prefs.remove(pendingNativeSmsQueueKey);
       return const [];
     }
+  }
+
+  Future<void> savePendingNativeSmsQueue(
+    List<Map<String, dynamic>> queue,
+  ) async {
+    final prefs = await _prefs();
+    if (queue.isEmpty) {
+      await prefs.remove(pendingNativeSmsQueueKey);
+      return;
+    }
+    await prefs.setString(pendingNativeSmsQueueKey, jsonEncode(queue));
   }
 }

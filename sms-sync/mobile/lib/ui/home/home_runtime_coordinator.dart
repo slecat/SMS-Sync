@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../../platform/runtime_support.dart';
 import '../../services/app_logger.dart';
@@ -23,6 +24,7 @@ class HomeRuntimeCoordinator {
   StreamSubscription<Map<String, dynamic>?>? _devicePresenceSubscription;
   StreamSubscription<Map<String, dynamic>?>? _serverStatusSubscription;
   Timer? _onlineDeviceCleanupTimer;
+  Timer? _serverStatusSnapshotRetryTimer;
   String? _lastServerStatus;
   int? _lastServerStatusEpoch;
   bool _hasRealtimeServerStatusEvent = false;
@@ -162,6 +164,27 @@ class HomeRuntimeCoordinator {
       _lastServerStatus = status;
       onServerStatusUpdate(status);
     });
+
+    _requestServerStatusSnapshot(service, trigger: 'ui-startup');
+    _serverStatusSnapshotRetryTimer?.cancel();
+    _serverStatusSnapshotRetryTimer = Timer(
+      const Duration(milliseconds: 700),
+      () => _requestServerStatusSnapshot(service, trigger: 'ui-retry'),
+    );
+  }
+
+  void _requestServerStatusSnapshot(
+    FlutterBackgroundService service, {
+    required String trigger,
+  }) {
+    try {
+      service.invoke('request-server-status', {'trigger': trigger});
+      AppLogger.trace('[UI][ServerStatus] request snapshot, trigger=$trigger');
+    } catch (e) {
+      AppLogger.debug(
+        '[UI][ServerStatus] request snapshot failed, trigger=$trigger, error=$e',
+      );
+    }
   }
 
   Future<void> _syncServerStatus(
@@ -265,6 +288,7 @@ class HomeRuntimeCoordinator {
     _uiSocket?.close();
     _devicePresenceSubscription?.cancel();
     _serverStatusSubscription?.cancel();
+    _serverStatusSnapshotRetryTimer?.cancel();
     _onlineDeviceCleanupTimer?.cancel();
     dependencies.smsMethodChannel.setMethodCallHandler(null);
   }

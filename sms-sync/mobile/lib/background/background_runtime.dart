@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter/widgets.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -108,12 +107,15 @@ void onStart(ServiceInstance service) async {
     );
   }
 
-  Future<void> processIncomingSms({
+  Future<bool> processIncomingSms({
     required String from,
     required String body,
     required int timestamp,
     required String source,
+    bool requireServerAck = false,
   }) async {
+    final requiresServerDelivery = serverUrl.trim().isNotEmpty;
+
     final messageId = '${localDeviceId}_$timestamp';
 
     final smsData = dependencies.messagePayloadFactory.sms(
@@ -131,18 +133,44 @@ void onStart(ServiceInstance service) async {
       AppLogger.debug('Local broadcast failed for $source: $e');
     }
 
-    if (dependencies.messageRoutingPolicy.shouldSendToServerWithLiveChannel(
-      serverUrl: serverUrl,
-      hasLiveChannel: channel != null,
-    )) {
+    if (!requiresServerDelivery) {
+      return true;
+    }
+
+    if (requireServerAck) {
       try {
-        await dependencies.messageTransportService.sendViaExistingChannel(
-          channel,
-          signedSmsData,
+        await dependencies.messageTransportService.sendViaDirectWebSocket(
+          serverUrl: serverUrl,
+          registerPayload: dependencies.messagePayloadFactory.register(
+            deviceId: localDeviceId,
+            groupId: groupId,
+            deviceName: deviceName,
+          ),
+          payload: signedSmsData,
         );
+        AppLogger.debug(
+          'Pending SMS delivered to server via direct socket, source=$source',
+        );
+        return true;
       } catch (e) {
-        AppLogger.debug('Server send failed for $source: $e');
+        AppLogger.debug('Pending SMS server send failed for $source: $e');
+        return false;
       }
+    }
+
+    if (channel == null) {
+      return true;
+    }
+
+    try {
+      await dependencies.messageTransportService.sendViaExistingChannel(
+        channel,
+        signedSmsData,
+      );
+      return true;
+    } catch (e) {
+      AppLogger.debug('Server send failed for $source: $e');
+      return true;
     }
   }
 
@@ -157,6 +185,7 @@ void onStart(ServiceInstance service) async {
       AppLogger.debug(
         'Processing ${pendingQueue.length} pending native SMS item(s), trigger=$trigger',
       );
+      final failedQueue = <Map<String, dynamic>>[];
       for (final sms in pendingQueue) {
         final from = sms['from']?.toString();
         final body = sms['body']?.toString();
@@ -164,17 +193,29 @@ void onStart(ServiceInstance service) async {
           continue;
         }
 
-        final timestamp =
-            sms['timestamp'] is int
-                ? sms['timestamp'] as int
-                : int.tryParse('${sms['timestamp']}') ??
-                    DateTime.now().millisecondsSinceEpoch;
+        final timestamp = sms['timestamp'] is int
+            ? sms['timestamp'] as int
+            : int.tryParse('${sms['timestamp']}') ??
+                  DateTime.now().millisecondsSinceEpoch;
         final source = sms['source']?.toString() ?? 'native-queue';
-        await processIncomingSms(
+        final delivered = await processIncomingSms(
           from: from,
           body: body,
           timestamp: timestamp,
           source: source,
+          requireServerAck: true,
+        );
+        if (!delivered) {
+          failedQueue.add(Map<String, dynamic>.from(sms));
+        }
+      }
+
+      if (failedQueue.isNotEmpty) {
+        await dependencies.settingsRepository.savePendingNativeSmsQueue(
+          failedQueue,
+        );
+        AppLogger.debug(
+          'Re-queued ${failedQueue.length} pending native SMS item(s) after failed delivery, trigger=$trigger',
         );
       }
     } catch (e) {
@@ -273,6 +314,19 @@ void onStart(ServiceInstance service) async {
             AppLogger.debug('saveServerConnectionStatus failed: $error');
           }),
     );
+  }
+
+  void emitServerStatusSnapshot({required String trigger}) {
+    final snapshotStatus = channel != null
+        ? 'connected'
+        : (lastNotifiedServerStatus ?? 'disconnected');
+    AppLogger.debug('[ServerStatus] snapshot=$snapshotStatus trigger=$trigger');
+    service.invoke('server-status-change', {
+      'status': snapshotStatus,
+      'epoch': currentConnectionEpoch,
+      'timestamp': nowMs(),
+      'trigger': trigger,
+    });
   }
 
   Future<void> connectToServer(
@@ -670,6 +724,12 @@ void onStart(ServiceInstance service) async {
     }
   });
 
+  final serverStatusRequestSubscription = service
+      .on('request-server-status')
+      .listen((event) {
+        emitServerStatusSnapshot(trigger: 'ui-request');
+      });
+
   unawaited(connectToServer(serverUrl, groupId, deviceName, 'startup'));
   unawaited(broadcastLanPresence(trigger: 'startup'));
   unawaited(flushPendingNativeSms(trigger: 'startup'));
@@ -684,6 +744,7 @@ void onStart(ServiceInstance service) async {
     await socketSubscription?.cancel();
     await smsReceivedSubscription.cancel();
     await reconnectSubscription.cancel();
+    await serverStatusRequestSubscription.cancel();
     await stopServiceSubscription.cancel();
     try {
       channel?.sink.close();

@@ -8,7 +8,12 @@ class MessageRoutingPolicy {
     return serverUrl.isNotEmpty && hasLiveChannel;
   }
 
-  bool shouldSendToServerWithTemporaryConnection({required String serverUrl}) {
+  bool shouldSendToServerWithDirectConnection({required String serverUrl}) {
     return serverUrl.isNotEmpty;
+  }
+
+  @Deprecated('Use shouldSendToServerWithDirectConnection')
+  bool shouldSendToServerWithTemporaryConnection({required String serverUrl}) {
+    return shouldSendToServerWithDirectConnection(serverUrl: serverUrl);
   }
 }

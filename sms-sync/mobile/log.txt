@@ -1,448 +1,108 @@
-NPBehaveActionContextHelper.TryGetBlackboard failed: tree is null or disposed. tree=<null> treeRef(default=False, hash=1010716) caller=ActionSuccess (NP_CommonBlackChangeValueDataSystem.cs:56).
-  ET.NPBehaveActionContextHelper.TryGetBlackboard (ET.EntityRef`1[T] treeRef, ET.NPBehaveTreeChild& tree, NPBehave.Blackboard& blackboard, System.String callerMemberName, System.String callerFilePath, System.Int32 callerLineNumber) [0x00018]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs" line="20">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs:20</a> 
-  ET.NP_CommonBlackChangeValueDataSystem.ActionSuccess (ET.NP_CommonBlackChangeValueData self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs" line="56">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs:56</a> 
-  NPBehave.Action.DoStart () [0x00008]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="152">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:152</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Succeeder.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs" line="25">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs:25</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Composite.Stopped (System.Boolean success) [0x0001e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs" line="37">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs:37</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0003e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="62">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:62</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.DoStart () [0x00013]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="153">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:153</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.OnUpdateFunc2 () [0x00046]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="220">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:220</a> 
-  NPBehave.Clock.FixedUpdate () [0x00081]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs" line="120">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs:120</a> 
-  NPBehave.SyncContext.FixedUpdate () [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs" line="70">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs:70</a> 
-  ET.BehaveSyncContextComponentSystem+BehaveSyncContextComponentFrameSystem.Frame (ET.BehaveSyncContextComponent self, System.UInt32 currentFrame) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs" line="36">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs:36</a> 
-  ET.FrameSystem`1[T].Event (T e, ET.FrameEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="35">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:35</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, System.Int32 sceneType, T t) [0x000af]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="105">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:105</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Scene scene, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="123">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:123</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Entity entity, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="129">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:129</a> 
-  ET.BehaveFrameComponentSystem.FrameUpdate (ET.BehaveFrameComponent self) [0x0000b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="72">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:72</a> 
-  ET.BehaveFrameComponentSystem+BehaveFrameComponentTimer.Run (ET.BehaveFrameComponent self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="81">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:81</a> 
-  ET.ATimer`1[T].Handle (ET.TimerCallback a) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs" line="7">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs:7</a> 
-  ET.EventSystem.Invoke[A] (System.Int64 type, A args) [0x0002f]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs" line="190">.\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs:190</a> 
-  ET.TimerComponentSystem.Run (ET.TimerComponent self, System.Int64 timerId) [0x000aa]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="140">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:140</a> 
-  ET.TimerComponentSystem.Update (ET.TimerComponent self) [0x00100]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="93">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:93</a> 
-  ET.TimerComponentSystem+ET_TimerComponent_UpdateSystem.Update (ET.TimerComponent self) [0x00000]
-<a href=".\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs" line="22">.\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs:22</a> 
-  ET.UpdateSystem`1[T].Event (T e, ET.UpdateEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs" line="18">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs:18</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.EntitySystem.Publish[T] (T t) [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs" line="72">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs:72</a> 
-  ET.Fiber.Update () [0x0001d]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="126">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:126</a> 
-  ET.Fiber.Update () [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="144">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:144</a> 
-  ET.MainThreadScheduler.Update () [0x00034]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs" line="41">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs:41</a> 
-  ET.FiberManager.Update () [0x0000b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs" line="92">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs:92</a> 
-  ET.Init.Update () [0x00000]
-<a href=".\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs" line="50">.\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs:50</a> 
-UnityEngine.Debug:LogError (object)
-ET.UnityLogger:Error (string) (at ./Packages/cn.etetet.loader/Scripts/Loader/Client/UnityLogger.cs:51)
-ET.Log:Error (string) (at ./Packages/cn.etetet.core/Scripts/Core/Share/World/Log/Log.cs:91)
-ET.NPBehaveActionContextHelper:TryGetBlackboard (ET.EntityRef`1<ET.NPBehaveTreeChild>,ET.NPBehaveTreeChild&,NPBehave.Blackboard&,string,string,int) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Helper/NPBehaveActionContextHelper.cs:20)
-ET.NP_CommonBlackChangeValueDataSystem:ActionSuccess (ET.NP_CommonBlackChangeValueData) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Common/NPBehave/System/Common/Black/NP_CommonBlackChangeValueDataSystem.cs:56)
-NPBehave.Action:DoStart () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Task/Action.cs:152)
-NPBehave.Node:Start () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:111)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:57)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Succeeder:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Decorator/Succeeder.cs:25)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Composite:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Composite.cs:37)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:62)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiui<message truncated>
-NPBehaveActionContextHelper.TryGetBlackboard failed: tree is null or disposed. tree=<null> treeRef(default=False, hash=1010653) caller=ActionSuccess (NP_CommonBlackChangeValueDataSystem.cs:56).
-  ET.NPBehaveActionContextHelper.TryGetBlackboard (ET.EntityRef`1[T] treeRef, ET.NPBehaveTreeChild& tree, NPBehave.Blackboard& blackboard, System.String callerMemberName, System.String callerFilePath, System.Int32 callerLineNumber) [0x00018]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs" line="20">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs:20</a> 
-  ET.NP_CommonBlackChangeValueDataSystem.ActionSuccess (ET.NP_CommonBlackChangeValueData self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs" line="56">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs:56</a> 
-  NPBehave.Action.DoStart () [0x00008]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="152">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:152</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Succeeder.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs" line="25">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs:25</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Composite.Stopped (System.Boolean success) [0x0001e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs" line="37">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs:37</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0003e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="62">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:62</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.DoStart () [0x00013]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="153">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:153</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.OnUpdateFunc2 () [0x00046]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="220">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:220</a> 
-  NPBehave.Clock.FixedUpdate () [0x00081]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs" line="120">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs:120</a> 
-  NPBehave.SyncContext.FixedUpdate () [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs" line="70">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs:70</a> 
-  ET.BehaveSyncContextComponentSystem+BehaveSyncContextComponentFrameSystem.Frame (ET.BehaveSyncContextComponent self, System.UInt32 currentFrame) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs" line="36">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs:36</a> 
-  ET.FrameSystem`1[T].Event (T e, ET.FrameEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="35">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:35</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, System.Int32 sceneType, T t) [0x000af]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="105">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:105</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Scene scene, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="123">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:123</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Entity entity, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="129">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:129</a> 
-  ET.BehaveFrameComponentSystem.FrameUpdate (ET.BehaveFrameComponent self) [0x0000b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="72">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:72</a> 
-  ET.BehaveFrameComponentSystem+BehaveFrameComponentTimer.Run (ET.BehaveFrameComponent self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="81">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:81</a> 
-  ET.ATimer`1[T].Handle (ET.TimerCallback a) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs" line="7">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs:7</a> 
-  ET.EventSystem.Invoke[A] (System.Int64 type, A args) [0x0002f]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs" line="190">.\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs:190</a> 
-  ET.TimerComponentSystem.Run (ET.TimerComponent self, System.Int64 timerId) [0x000aa]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="140">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:140</a> 
-  ET.TimerComponentSystem.Update (ET.TimerComponent self) [0x00100]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="93">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:93</a> 
-  ET.TimerComponentSystem+ET_TimerComponent_UpdateSystem.Update (ET.TimerComponent self) [0x00000]
-<a href=".\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs" line="22">.\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs:22</a> 
-  ET.UpdateSystem`1[T].Event (T e, ET.UpdateEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs" line="18">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs:18</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.EntitySystem.Publish[T] (T t) [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs" line="72">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs:72</a> 
-  ET.Fiber.Update () [0x0001d]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="126">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:126</a> 
-  ET.Fiber.Update () [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="144">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:144</a> 
-  ET.MainThreadScheduler.Update () [0x00034]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs" line="41">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs:41</a> 
-  ET.FiberManager.Update () [0x0000b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs" line="92">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs:92</a> 
-  ET.Init.Update () [0x00000]
-<a href=".\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs" line="50">.\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs:50</a> 
-UnityEngine.Debug:LogError (object)
-ET.UnityLogger:Error (string) (at ./Packages/cn.etetet.loader/Scripts/Loader/Client/UnityLogger.cs:51)
-ET.Log:Error (string) (at ./Packages/cn.etetet.core/Scripts/Core/Share/World/Log/Log.cs:91)
-ET.NPBehaveActionContextHelper:TryGetBlackboard (ET.EntityRef`1<ET.NPBehaveTreeChild>,ET.NPBehaveTreeChild&,NPBehave.Blackboard&,string,string,int) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Helper/NPBehaveActionContextHelper.cs:20)
-ET.NP_CommonBlackChangeValueDataSystem:ActionSuccess (ET.NP_CommonBlackChangeValueData) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Common/NPBehave/System/Common/Black/NP_CommonBlackChangeValueDataSystem.cs:56)
-NPBehave.Action:DoStart () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Task/Action.cs:152)
-NPBehave.Node:Start () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:111)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:57)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Succeeder:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Decorator/Succeeder.cs:25)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Composite:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Composite.cs:37)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:62)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiui<message truncated>
-NPBehaveActionContextHelper.TryGetBlackboard failed: tree is null or disposed. tree=<null> treeRef(default=False, hash=1010543) caller=ActionSuccess (NP_CommonBlackChangeValueDataSystem.cs:56).
-  ET.NPBehaveActionContextHelper.TryGetBlackboard (ET.EntityRef`1[T] treeRef, ET.NPBehaveTreeChild& tree, NPBehave.Blackboard& blackboard, System.String callerMemberName, System.String callerFilePath, System.Int32 callerLineNumber) [0x00018]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs" line="20">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs:20</a> 
-  ET.NP_CommonBlackChangeValueDataSystem.ActionSuccess (ET.NP_CommonBlackChangeValueData self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs" line="56">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs:56</a> 
-  NPBehave.Action.DoStart () [0x00008]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="152">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:152</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Succeeder.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs" line="25">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs:25</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Composite.Stopped (System.Boolean success) [0x0001e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs" line="37">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs:37</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0003e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="62">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:62</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.DoStart () [0x00013]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="153">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:153</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.OnUpdateFunc2 () [0x00046]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="220">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:220</a> 
-  NPBehave.Clock.FixedUpdate () [0x00081]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs" line="120">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs:120</a> 
-  NPBehave.SyncContext.FixedUpdate () [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs" line="70">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs:70</a> 
-  ET.BehaveSyncContextComponentSystem+BehaveSyncContextComponentFrameSystem.Frame (ET.BehaveSyncContextComponent self, System.UInt32 currentFrame) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs" line="36">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs:36</a> 
-  ET.FrameSystem`1[T].Event (T e, ET.FrameEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="35">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:35</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, System.Int32 sceneType, T t) [0x000af]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="105">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:105</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Scene scene, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="123">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:123</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Entity entity, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="129">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:129</a> 
-  ET.BehaveFrameComponentSystem.FrameUpdate (ET.BehaveFrameComponent self) [0x0000b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="72">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:72</a> 
-  ET.BehaveFrameComponentSystem+BehaveFrameComponentTimer.Run (ET.BehaveFrameComponent self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="81">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:81</a> 
-  ET.ATimer`1[T].Handle (ET.TimerCallback a) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs" line="7">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs:7</a> 
-  ET.EventSystem.Invoke[A] (System.Int64 type, A args) [0x0002f]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs" line="190">.\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs:190</a> 
-  ET.TimerComponentSystem.Run (ET.TimerComponent self, System.Int64 timerId) [0x000aa]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="140">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:140</a> 
-  ET.TimerComponentSystem.Update (ET.TimerComponent self) [0x00100]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="93">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:93</a> 
-  ET.TimerComponentSystem+ET_TimerComponent_UpdateSystem.Update (ET.TimerComponent self) [0x00000]
-<a href=".\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs" line="22">.\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs:22</a> 
-  ET.UpdateSystem`1[T].Event (T e, ET.UpdateEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs" line="18">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs:18</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.EntitySystem.Publish[T] (T t) [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs" line="72">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs:72</a> 
-  ET.Fiber.Update () [0x0001d]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="126">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:126</a> 
-  ET.Fiber.Update () [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="144">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:144</a> 
-  ET.MainThreadScheduler.Update () [0x00034]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs" line="41">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs:41</a> 
-  ET.FiberManager.Update () [0x0000b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs" line="92">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs:92</a> 
-  ET.Init.Update () [0x00000]
-<a href=".\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs" line="50">.\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs:50</a> 
-UnityEngine.Debug:LogError (object)
-ET.UnityLogger:Error (string) (at ./Packages/cn.etetet.loader/Scripts/Loader/Client/UnityLogger.cs:51)
-ET.Log:Error (string) (at ./Packages/cn.etetet.core/Scripts/Core/Share/World/Log/Log.cs:91)
-ET.NPBehaveActionContextHelper:TryGetBlackboard (ET.EntityRef`1<ET.NPBehaveTreeChild>,ET.NPBehaveTreeChild&,NPBehave.Blackboard&,string,string,int) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Helper/NPBehaveActionContextHelper.cs:20)
-ET.NP_CommonBlackChangeValueDataSystem:ActionSuccess (ET.NP_CommonBlackChangeValueData) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Common/NPBehave/System/Common/Black/NP_CommonBlackChangeValueDataSystem.cs:56)
-NPBehave.Action:DoStart () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Task/Action.cs:152)
-NPBehave.Node:Start () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:111)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:57)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Succeeder:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Decorator/Succeeder.cs:25)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Composite:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Composite.cs:37)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:62)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiui<message truncated>
-NPBehaveActionContextHelper.TryGetBlackboard failed: tree is null or disposed. tree=<null> treeRef(default=False, hash=1010406) caller=ActionSuccess (NP_CommonBlackChangeValueDataSystem.cs:56).
-  ET.NPBehaveActionContextHelper.TryGetBlackboard (ET.EntityRef`1[T] treeRef, ET.NPBehaveTreeChild& tree, NPBehave.Blackboard& blackboard, System.String callerMemberName, System.String callerFilePath, System.Int32 callerLineNumber) [0x00018]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs" line="20">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Helper\NPBehaveActionContextHelper.cs:20</a> 
-  ET.NP_CommonBlackChangeValueDataSystem.ActionSuccess (ET.NP_CommonBlackChangeValueData self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs" line="56">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Common\NPBehave\System\Common\Black\NP_CommonBlackChangeValueDataSystem.cs:56</a> 
-  NPBehave.Action.DoStart () [0x00008]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="152">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:152</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Succeeder.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs" line="25">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Decorator\Succeeder.cs:25</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Composite.Stopped (System.Boolean success) [0x0001e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs" line="37">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Composite.cs:37</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0003e]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="62">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:62</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.DoStart () [0x00013]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="153">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:153</a> 
-  NPBehave.Node.Start () [0x00028]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="111">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:111</a> 
-  NPBehave.Sequence.ProcessChildren () [0x0002b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="57">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:57</a> 
-  NPBehave.Sequence.DoChildStopped (NPBehave.Node child, System.Boolean result) [0x00003]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs" line="39">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Composite\Sequence.cs:39</a> 
-  NPBehave.Container.ChildStopped (NPBehave.Node child, System.Boolean succeeded) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs" line="30">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Container.cs:30</a> 
-  NPBehave.Node.Stopped (System.Boolean success) [0x00042]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs" line="159">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Node.cs:159</a> 
-  NPBehave.Action.OnUpdateFunc2 () [0x00046]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs" line="220">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Task\Action.cs:220</a> 
-  NPBehave.Clock.FixedUpdate () [0x00081]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs" line="120">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\Clock.cs:120</a> 
-  NPBehave.SyncContext.FixedUpdate () [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs" line="70">.\Packages\cn.etetet.yiuibehave\Scripts\Model\Share\YIUIBehave\NPBehave\Base\Core\NPBehave\SyncContext.cs:70</a> 
-  ET.BehaveSyncContextComponentSystem+BehaveSyncContextComponentFrameSystem.Frame (ET.BehaveSyncContextComponent self, System.UInt32 currentFrame) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs" line="36">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Core\BehaveSyncContextComponentSystem.cs:36</a> 
-  ET.FrameSystem`1[T].Event (T e, ET.FrameEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="35">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:35</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, System.Int32 sceneType, T t) [0x000af]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="105">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:105</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Scene scene, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="123">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:123</a> 
-  ET.FrameSystemExtensions.FramePublish[T] (ET.EntitySystem self, ET.Entity entity, T t) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs" line="129">.\Packages\cn.etetet.yiuibehave\Scripts\Core\Share\YIUIBehave\Event\IFrameSystem.cs:129</a> 
-  ET.BehaveFrameComponentSystem.FrameUpdate (ET.BehaveFrameComponent self) [0x0000b]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="72">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:72</a> 
-  ET.BehaveFrameComponentSystem+BehaveFrameComponentTimer.Run (ET.BehaveFrameComponent self) [0x00000]
-<a href=".\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs" line="81">.\Packages\cn.etetet.yiuibehave\Scripts\Hotfix\Share\YIUIBehave\Frame\BehaveFrameComponentSystem.cs:81</a> 
-  ET.ATimer`1[T].Handle (ET.TimerCallback a) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs" line="7">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\ATimer.cs:7</a> 
-  ET.EventSystem.Invoke[A] (System.Int64 type, A args) [0x0002f]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs" line="190">.\Packages\cn.etetet.core\Scripts\Core\Share\World\EventSystem\EventSystem.cs:190</a> 
-  ET.TimerComponentSystem.Run (ET.TimerComponent self, System.Int64 timerId) [0x000aa]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="140">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:140</a> 
-  ET.TimerComponentSystem.Update (ET.TimerComponent self) [0x00100]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs" line="93">.\Packages\cn.etetet.core\Scripts\Core\Share\Timer\TimerComponentSystem.cs:93</a> 
-  ET.TimerComponentSystem+ET_TimerComponent_UpdateSystem.Update (ET.TimerComponent self) [0x00000]
-<a href=".\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs" line="22">.\ET.SourceGenerator\ET.ETSystemGenerator\ET.TimerComponentSystem.EntitySystems.g.cs:22</a> 
-  ET.UpdateSystem`1[T].Event (T e, ET.UpdateEvent t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs" line="18">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IUpdateSystem.cs:18</a> 
-  ET.EventSystem`2[E,T].Run (ET.Entity e, T t) [0x00000]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs" line="22">.\Packages\cn.etetet.core\Scripts\Core\Share\Entity\IEventSystem.cs:22</a> 
-  ET.EntitySystem.Publish[T] (T t) [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs" line="72">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\EntitySystem.cs:72</a> 
-  ET.Fiber.Update () [0x0001d]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="126">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:126</a> 
-  ET.Fiber.Update () [0x0008b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs" line="144">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\Fiber.cs:144</a> 
-  ET.MainThreadScheduler.Update () [0x00034]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs" line="41">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\MainThreadScheduler.cs:41</a> 
-  ET.FiberManager.Update () [0x0000b]
-<a href=".\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs" line="92">.\Packages\cn.etetet.core\Scripts\Core\Share\World\Fiber\FiberManager.cs:92</a> 
-  ET.Init.Update () [0x00000]
-<a href=".\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs" line="50">.\Packages\cn.etetet.loader\Scripts\Loader\Client\Init.cs:50</a> 
-UnityEngine.Debug:LogError (object)
-ET.UnityLogger:Error (string) (at ./Packages/cn.etetet.loader/Scripts/Loader/Client/UnityLogger.cs:51)
-ET.Log:Error (string) (at ./Packages/cn.etetet.core/Scripts/Core/Share/World/Log/Log.cs:91)
-ET.NPBehaveActionContextHelper:TryGetBlackboard (ET.EntityRef`1<ET.NPBehaveTreeChild>,ET.NPBehaveTreeChild&,NPBehave.Blackboard&,string,string,int) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Helper/NPBehaveActionContextHelper.cs:20)
-ET.NP_CommonBlackChangeValueDataSystem:ActionSuccess (ET.NP_CommonBlackChangeValueData) (at ./Packages/cn.etetet.yiuibehave/Scripts/Hotfix/Share/YIUIBehave/Common/NPBehave/System/Common/Black/NP_CommonBlackChangeValueDataSystem.cs:56)
-NPBehave.Action:DoStart () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Task/Action.cs:152)
-NPBehave.Node:Start () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:111)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:57)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Succeeder:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Decorator/Succeeder.cs:25)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Node.cs:159)
-NPBehave.Composite:Stopped (bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Composite.cs:37)
-NPBehave.Sequence:ProcessChildren () (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:62)
-NPBehave.Sequence:DoChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Composite/Sequence.cs:39)
-NPBehave.Container:ChildStopped (NPBehave.Node,bool) (at ./Packages/cn.etetet.yiuibehave/Scripts/Model/Share/YIUIBehave/NPBehave/Base/Core/NPBehave/Container.cs:30)
-NPBehave.Node:Stopped (bool) (at ./Packages/cn.etetet.yiui<message truncated>
+2026-03-12 21:45:04.823  7577-8220  ProfileInstaller        com.smssync.sms_sync_mobile          D  Installing profile for com.smssync.sms_sync_mobile
+2026-03-12 21:45:04.881  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  onReceive called with action: android.provider.Telephony.SMS_RECEIVED
+2026-03-12 21:45:04.881  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Incoming SMS action accepted: android.provider.Telephony.SMS_RECEIVED
+2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Number of PDUs: 1
+2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Format: 3gpp
+2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Processing PDU 0
+2026-03-12 21:45:04.887  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  From: 10686307700000000112
+2026-03-12 21:45:04.887  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Body: 【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:04.888  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for sms-receiver, queueing for background runtime
+2026-03-12 21:45:04.895  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=sms-receiver-no-channel
+2026-03-12 21:45:04.895  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from sms-receiver for background delivery
+2026-03-12 21:45:04.907  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  WebSocket onDone
+2026-03-12 21:45:04.907  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] disconnected
+2026-03-12 21:45:04.931  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:05.011  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connectToServer trigger=heartbeat-probe
+2026-03-12 21:45:05.012  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connecting
+2026-03-12 21:45:05.068  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
+2026-03-12 21:45:05.088  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
+2026-03-12 21:45:05.089  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:05.093  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:05.095  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:05.100  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:05.102  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
+2026-03-12 21:45:05.102  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:05.123  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:05.123  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:05.128  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connected
+2026-03-12 21:45:05.130  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:05.131  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:05.142  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:05.142  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:05.142  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:05.144  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:05.148  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:05.150  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:05.150  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:05.152  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:05.153  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:05.155  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:05.156  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:05.162  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:07.047  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 5 pending native SMS item(s), trigger=periodic
+2026-03-12 21:45:08.067  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=sms-receiver
+2026-03-12 21:45:08.081  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:08.081  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:08.086  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:08.090  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:08.090  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:08.090  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:08.094  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
+2026-03-12 21:45:08.094  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:08.098  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
+2026-03-12 21:45:08.098  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:08.102  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
+2026-03-12 21:45:09.075  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:10.089  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:11.107  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:12.127  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:15.885  7577-7590  sms_sync_mobile         com.smssync.sms_sync_mobile          I  Forcing GC for allocation-inactive process
+2026-03-12 21:45:15.924  7577-7590  sms_sync_mobile         com.smssync.sms_sync_mobile          I  Background concurrent copying GC freed 2493KB AllocSpace bytes, 75(2424KB) LOS objects, 74% free, 2072KB(1652KB_16KB)/8216KB, 2, itvl 21.478s, cpu 35.973ms, paused 87us,13us total 38.053ms
+2026-03-12 21:45:49.358  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
+2026-03-12 21:45:49.362  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:49.373  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
+2026-03-12 21:45:49.373  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:49.382  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:49.382  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:49.397  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:49.400  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:49.400  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:49.402  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:49.403  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:49.403  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:49.403  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:49.404  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:49.406  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:49.407  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:49.407  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:49.409  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:49.414  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:49.415  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:49.428  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=鹰角网络, body=【鹰角网络】验证码：838956。此验证码只用于鹰角账号登录使用，请勿将此信息以任何形式告知他人！30分钟内有效。
+2026-03-12 21:45:49.428  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:49.430  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:49.431  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:49.432  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:52.038  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 4 pending native SMS item(s), trigger=periodic
+2026-03-12 21:45:52.361  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:52.378  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:52.385  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
+2026-03-12 21:45:52.400  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:52.400  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:52.411  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-12 21:45:52.411  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:52.412  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
+2026-03-12 21:45:52.414  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
+2026-03-12 21:45:52.415  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
+2026-03-12 21:45:52.419  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
+2026-03-12 21:45:52.420  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-12 21:45:52.430  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-12 21:45:52.432  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-12 21:45:52.437  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-12 21:45:52.440  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
+2026-03-12 21:45:53.052  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:54.061  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:55.030  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=periodic
+2026-03-12 21:45:55.078  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:56.043  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-12 21:45:56.092  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
