@@ -14,6 +14,8 @@
 - WebSocket 服务器中转，支持跨网络同步
 - 同步密钥签名校验，使用 HMAC-SHA256
 - 移动端后台服务与前台通知常驻
+- 移动端短信先写入原生 Room Outbox，再交给后台运行时发送；服务端事件和桌面端 Inbox 均支持落盘恢复
+- WebSocket v2 提供 server-ack / delivery-ack，断线后按 2 秒至 30 分钟退避重试
 
 ## 同步密钥说明
 
@@ -32,6 +34,8 @@ node index.js
 ```
 
 默认端口为 `8004`，可通过环境变量 `PORT` 覆盖。
+
+服务端事件默认持久化到 `sms-sync/server/data/relay-events.json`，可通过 `RELAY_PERSISTENCE_PATH` 指定路径。生产环境请将该目录纳入备份。
 
 如果是线上服务器部署，服务端代码修改后需要同步到服务器，并按项目现有的 SSH 运维流程执行部署。可优先参考：
 
@@ -110,6 +114,7 @@ node index.js
 
 - Android 端需要授予短信、通知和后台运行相关权限。
 - 部分 ROM 会限制后台常驻，建议关闭电池优化。
+- 原生中继服务使用 `START_STICKY`、WorkManager 租约恢复和启动广播；用户在系统设置中“强行停止”应用后，Android 不允许应用自行重启，这是系统级限制。
 - `sms-sync/mobile` 使用 `dependency_overrides` 指向本地 `third_party/flutter_background_service_android`，修改时需要注意这是仓库内维护的定制依赖。
 - 服务端相关改动如果只停留在本地仓库，线上环境不会自动生效，部署时要同步走项目内已有的 SSH 流程。
 
