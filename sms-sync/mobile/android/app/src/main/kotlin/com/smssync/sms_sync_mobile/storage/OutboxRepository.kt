@@ -5,6 +5,9 @@ interface OutboxStore {
     suspend fun insertIfAbsent(message: OutboxMessage): Boolean
     suspend fun claim(messageId: String, leaseUntil: Long, now: Long): Boolean
     suspend fun recoverExpiredLeases(now: Long): Int
+    suspend fun findReady(now: Long, limit: Int = 50): List<OutboxMessage>
+    suspend fun markServerAcked(messageId: String, ackedAt: Long): Boolean
+    suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean
 }
 
 data class IngestResult(
@@ -42,6 +45,10 @@ class OutboxRepository(
 
     suspend fun recoverExpiredLeases(now: Long = nowMillis()): Int =
         store.recoverExpiredLeases(now)
+
+    suspend fun findReady(limit: Int = 50): List<OutboxMessage> = store.findReady(nowMillis(), limit)
+    suspend fun markServerAcked(messageId: String, ackedAt: Long = nowMillis()): Boolean = store.markServerAcked(messageId, ackedAt)
+    suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean = store.markRetry(messageId, nextAttemptAt, errorCode)
 }
 
 class RoomOutboxStore(private val dao: OutboxDao) : OutboxStore {
@@ -56,6 +63,9 @@ class RoomOutboxStore(private val dao: OutboxDao) : OutboxStore {
         dao.claim(messageId, leaseUntil, now) > 0
 
     override suspend fun recoverExpiredLeases(now: Long): Int = dao.recoverExpiredLeases(now)
+    override suspend fun findReady(now: Long, limit: Int): List<OutboxMessage> = dao.findReady(now, limit).map { it.toDomain() }
+    override suspend fun markServerAcked(messageId: String, ackedAt: Long): Boolean = dao.markServerAcked(messageId, ackedAt) > 0
+    override suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean = dao.markRetry(messageId, nextAttemptAt, errorCode) > 0
 }
 
 private fun OutboxMessage.toEntity() = OutboxMessageEntity(

@@ -60,4 +60,10 @@ private class FakeStore : OutboxStore {
     override suspend fun claim(messageId: String, leaseUntil: Long, now: Long) = false
 
     override suspend fun recoverExpiredLeases(now: Long) = 0
+
+    override suspend fun findReady(now: Long, limit: Int): List<OutboxMessage> = emptyList()
+
+    override suspend fun markServerAcked(messageId: String, ackedAt: Long): Boolean = false
+
+    override suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean = false
 }

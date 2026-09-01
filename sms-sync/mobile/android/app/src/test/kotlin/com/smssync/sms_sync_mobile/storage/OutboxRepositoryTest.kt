@@ -65,4 +65,17 @@ private class FakeOutboxStore : OutboxStore {
             .forEach { it.state = OutboxState.RETRY_WAIT }
         return items.count { it.state == OutboxState.RETRY_WAIT }
     }
+
+    override suspend fun findReady(now: Long, limit: Int): List<OutboxMessage> =
+        items.filter { (it.state == OutboxState.PENDING || it.state == OutboxState.RETRY_WAIT) && it.nextAttemptAt <= now }.take(limit)
+
+    override suspend fun markServerAcked(messageId: String, ackedAt: Long): Boolean {
+        val item = items.firstOrNull { it.messageId == messageId } ?: return false
+        item.state = OutboxState.SERVER_ACKED
+        item.serverAckedAt = ackedAt
+        return true
+    }
+
+    override suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean =
+        items.firstOrNull { it.messageId == messageId }?.let { it.state = OutboxState.RETRY_WAIT; true } ?: false
 }

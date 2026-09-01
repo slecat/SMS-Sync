@@ -8,6 +8,8 @@ import androidx.room.Transaction
 
 @Dao
 interface OutboxDao {
+    @Query("SELECT * FROM outbox_messages WHERE state IN ('PENDING', 'RETRY_WAIT') AND nextAttemptAt <= :now ORDER BY capturedAt ASC LIMIT :limit")
+    fun findReady(now: Long, limit: Int): List<OutboxMessageEntity>
     @Query("SELECT * FROM outbox_messages WHERE fingerprint = :fingerprint LIMIT 1")
     fun findEntityByFingerprint(fingerprint: String): OutboxMessageEntity?
 
@@ -45,4 +47,10 @@ interface OutboxDao {
             "WHERE state = 'SENDING' AND leaseUntil <= :now",
     )
     fun recoverExpiredLeases(now: Long): Int
+
+    @Query("UPDATE outbox_messages SET state = 'SERVER_ACKED', leaseUntil = 0, serverAckedAt = :ackedAt WHERE messageId = :messageId")
+    fun markServerAcked(messageId: String, ackedAt: Long): Int
+
+    @Query("UPDATE outbox_messages SET state = 'RETRY_WAIT', leaseUntil = 0, nextAttemptAt = :nextAttemptAt, lastErrorCode = :errorCode WHERE messageId = :messageId AND state = 'SENDING'")
+    fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Int
 }
