@@ -23,11 +23,17 @@ class NativeConfigStore(private val context: Context) {
                     ?: values[name]?.toString()?.trim()?.takeIf { it.isNotEmpty() }
                     ?: fallback
             return NativeRelayConfig(
-                serverUrl = value("serverUrl", ""),
+                serverUrl = normalizeServerUrl(value("serverUrl", "")),
                 groupId = value("groupId", "default"),
                 deviceName = value("deviceName", "手机端"),
                 syncSecret = value("syncSecret", ""),
             )
         }
+
+        private fun normalizeServerUrl(raw: String): String =
+            raw.trim().let { value ->
+                if (value.isEmpty() || value.startsWith("ws://") || value.startsWith("wss://")) value
+                else "ws://$value"
+            }
     }
 }

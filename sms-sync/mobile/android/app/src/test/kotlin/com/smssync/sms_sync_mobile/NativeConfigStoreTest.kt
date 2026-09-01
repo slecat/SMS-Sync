@@ -17,4 +17,10 @@ class NativeConfigStoreTest {
         assertEquals("Z10", config.deviceName)
         assertEquals("secret", config.syncSecret)
     }
+
+    @Test
+    fun normalizesBareServerAddress() {
+        val config = NativeConfigStore.parse(mapOf("serverUrl" to "111.228.32.128:8004"))
+        assertEquals("ws://111.228.32.128:8004", config.serverUrl)
+    }
 }
