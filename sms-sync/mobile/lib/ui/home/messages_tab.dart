@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'device_presence_status.dart';
 
-const int _deviceOnlineWindowMs = 8000;
-
 class MessagesTab extends StatelessWidget {
   const MessagesTab({
     super.key,
@@ -28,506 +26,94 @@ class MessagesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedDevices =
-        onlineDevices.values
-            .map((device) => Map<String, dynamic>.from(device))
-            .toList()
-          ..sort((a, b) {
-            final aTs = a['timestamp'] as int? ?? 0;
-            final bTs = b['timestamp'] as int? ?? 0;
-            return bTs.compareTo(aTs);
-          });
-
-    final nowMs = DateTime.now().millisecondsSinceEpoch;
-    final onlineCount = sortedDevices
-        .where(
-          (device) => isDeviceOnline(
-            device,
-            nowMs: nowMs,
-            timeoutMs: _deviceOnlineWindowMs,
-          ),
-        )
-        .length;
-    final runningHealthy = serverStatus == 'connected' || onlineCount > 0;
-    final serverLabel = switch (serverStatus) {
-      'connected' => '服务器已连接',
-      'connecting' => '服务器连接中',
-      _ => '服务器未连接',
-    };
-    final serverColor = switch (serverStatus) {
-      'connected' => const Color(0xFF10B981),
-      'connecting' => const Color(0xFFF59E0B),
-      _ => const Color(0xFFEF4444),
-    };
-
+    final isConnected = serverStatus == 'connected';
+    final online = onlineDevices.values.where((device) => isDeviceOnline(device, nowMs: DateTime.now().millisecondsSinceEpoch, timeoutMs: 8000)).length;
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '总览',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -1,
-                color: Colors.white,
-              ),
-            ),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
+        children: [
+          const Text('同步', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF173C36), letterSpacing: -0.8)),
+          const SizedBox(height: 6),
+          Text('短信会先保存在本机，再可靠送达其他设备。', style: TextStyle(color: Colors.black.withValues(alpha: .58), fontSize: 14)),
+          const SizedBox(height: 20),
+          _HealthCard(connected: isConnected, online: online),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(child: _Stat(label: '已接收', value: '$smsCount')),
+            const SizedBox(width: 10),
+            Expanded(child: _Stat(label: '验证码', value: '$verificationCodeCount')),
+            const SizedBox(width: 10),
+            Expanded(child: _Stat(label: '在线设备', value: '$online')),
+          ]),
+          const SizedBox(height: 22),
+          const Text('最近一条', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Color(0xFF173C36))),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE0DDD6))),
+            child: latestSmsBody == null
+                ? Text('还没有收到短信', style: TextStyle(color: Colors.black.withValues(alpha: .48)))
+                : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(latestSmsFrom ?? '未知号码', style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF173C36))),
+                    const SizedBox(height: 8),
+                    Text(latestSmsBody!, maxLines: 4, overflow: TextOverflow.ellipsis, style: const TextStyle(height: 1.45, color: Color(0xFF30332F))),
+                  ]),
+          ),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(child: FilledButton.icon(onPressed: onReadLatestSms, icon: const Icon(Icons.refresh, size: 18), label: const Text('读取最新'))),
+            const SizedBox(width: 10),
+            Expanded(child: OutlinedButton.icon(onPressed: onSendTest, icon: const Icon(Icons.send_outlined, size: 18), label: const Text('发送测试'))),
+          ]),
+          if (onlineDevices.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('设备', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Color(0xFF173C36))),
             const SizedBox(height: 8),
-            Text(
-              '先判断运行状态，再执行核心操作',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.5),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xFF111723),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color:
-                              (runningHealthy
-                                      ? const Color(0xFF10B981)
-                                      : const Color(0xFFEF4444))
-                                  .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          runningHealthy
-                              ? Icons.verified_rounded
-                              : Icons.error_outline_rounded,
-                          color: runningHealthy
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFEF4444),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              runningHealthy ? '运行正常' : '运行受限',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              serverLabel,
-                              style: TextStyle(
-                                color: serverColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _MetricTile(
-                          label: '在线设备',
-                          value: '$onlineCount',
-                          valueColor: const Color(0xFF22D3EE),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _MetricTile(
-                          label: '短信数',
-                          value: '$smsCount',
-                          valueColor: const Color(0xFFA78BFA),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _MetricTile(
-                          label: '验证码数',
-                          value: '$verificationCodeCount',
-                          valueColor: const Color(0xFFF59E0B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              '快捷操作',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: onReadLatestSms,
-                    icon: const Icon(Icons.refresh_rounded, size: 18),
-                    label: const Text(
-                      '读取最新',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: onSendTest,
-                    icon: const Icon(Icons.send_rounded, size: 18),
-                    label: const Text(
-                      '发送测试',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C3AED),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF161616),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
-              child: latestSmsFrom != null && latestSmsBody != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          latestSmsFrom!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          latestSmsBody!,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 13,
-                            height: 1.5,
-                            color: Colors.white.withValues(alpha: 0.78),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Text(
-                      '暂无短信内容，点击“读取最新”从系统短信中拉取。',
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.5,
-                        color: Colors.white.withValues(alpha: 0.56),
-                      ),
-                    ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              '设备状态 ${sortedDevices.isEmpty ? '' : '(${sortedDevices.length})'}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 10),
-            if (sortedDevices.isEmpty)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF161616),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '暂无在线设备，确保其他设备在同组且在线。',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.52),
-                  ),
-                ),
-              )
-            else
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: sortedDevices.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.25,
-                ),
-                itemBuilder: (_, index) {
-                  return _DeviceStatusCard(device: sortedDevices[index]);
-                },
-              ),
+            ...onlineDevices.values.map((device) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const CircleAvatar(backgroundColor: Color(0xFFDCE9E1), child: Icon(Icons.devices, color: Color(0xFF173C36))),
+              title: Text('${device['deviceName'] ?? device['deviceId'] ?? '设备'}', style: const TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text('${device['status'] ?? 'online'}'),
+            )),
           ],
-        ),
+        ],
       ),
     );
   }
 }
 
-class _MetricTile extends StatelessWidget {
-  const _MetricTile({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-  });
+class _HealthCard extends StatelessWidget {
+  const _HealthCard({required this.connected, required this.online});
+  final bool connected;
+  final int online;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(color: const Color(0xFF173C36), borderRadius: BorderRadius.circular(18)),
+    child: Row(children: [
+      const Icon(Icons.shield_outlined, color: Color(0xFFE5F0E9), size: 30),
+      const SizedBox(width: 14),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(connected ? '同步正常' : '等待连接', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 3),
+        Text(connected ? '服务器已连接 · $online 台设备在线' : '消息仍会保存在本机，连接恢复后自动发送', style: const TextStyle(color: Color(0xFFC5D9CE), fontSize: 12)),
+      ])),
+    ]),
+  );
+}
 
+class _Stat extends StatelessWidget {
+  const _Stat({required this.label, required this.value});
   final String label;
   final String value;
-  final Color valueColor;
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            value,
-            style: TextStyle(
-              color: valueColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DeviceStatusCard extends StatelessWidget {
-  const _DeviceStatusCard({required this.device});
-
-  final Map<String, dynamic> device;
-
-  @override
-  Widget build(BuildContext context) {
-    final timestamp = device['timestamp'] as int?;
-    final nowMs = DateTime.now().millisecondsSinceEpoch;
-    final isOnline = isDeviceOnline(
-      device,
-      nowMs: nowMs,
-      timeoutMs: _deviceOnlineWindowMs,
-    );
-    final sources = _resolveSources(device);
-    final statusColor = isOnline
-        ? const Color(0xFF22C55E)
-        : const Color(0xFFF97316);
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF151515),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isOnline
-              ? Colors.white.withValues(alpha: 0.08)
-              : statusColor.withValues(alpha: 0.6),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                isOnline ? Icons.radio_button_checked : Icons.warning_rounded,
-                size: 14,
-                color: statusColor,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                isOnline ? '在线' : '离线',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: statusColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            (device['deviceName'] as String?)?.trim().isNotEmpty == true
-                ? device['deviceName'] as String
-                : '未知设备',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _formatTimestamp(timestamp),
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.white.withValues(alpha: 0.5),
-            ),
-          ),
-          const Spacer(),
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: sources
-                .map(
-                  (source) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _sourceColor(source).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: Text(
-                      _sourceLabel(source),
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: _sourceColor(source),
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<String> _resolveSources(Map<String, dynamic> device) {
-    final raw = device['sources'];
-    if (raw is List && raw.isNotEmpty) {
-      final normalized = raw
-          .map((item) => item.toString() == 'server' ? 'server' : 'lan')
-          .toSet()
-          .toList();
-      normalized.sort(
-        (a, b) => _sourcePriority(a).compareTo(_sourcePriority(b)),
-      );
-      return normalized;
-    }
-    final source = device['source']?.toString() == 'server' ? 'server' : 'lan';
-    return [source];
-  }
-
-  int _sourcePriority(String source) {
-    if (source == 'server') {
-      return 0;
-    }
-    if (source == 'lan') {
-      return 1;
-    }
-    return 2;
-  }
-
-  String _sourceLabel(String source) {
-    return source == 'server' ? '服务器' : '局域网';
-  }
-
-  Color _sourceColor(String source) {
-    return source == 'server'
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFF10B981);
-  }
-
-  String _formatTimestamp(int? timestamp) {
-    if (timestamp == null) {
-      return '刚刚';
-    }
-
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final diff = now - timestamp;
-
-    if (diff < 60000) {
-      return '刚刚';
-    }
-    if (diff < 3600000) {
-      return '${(diff ~/ 60000)}分钟前';
-    }
-    if (diff < 86400000) {
-      return '${(diff ~/ 3600000)}小时前';
-    }
-    return '${(diff ~/ 86400000)}天前';
-  }
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: const Color(0xFFE0DDD6))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Color(0xFF173C36))),
+      const SizedBox(height: 3),
+      Text(label, style: TextStyle(fontSize: 12, color: Colors.black.withValues(alpha: .5))),
+    ]),
+  );
 }

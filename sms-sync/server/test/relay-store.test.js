@@ -1,5 +1,8 @@
 const test = require('node:test')
 const assert = require('node:assert/strict')
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 
 const { createRelayStore } = require('../src/lib/relay-store')
 
@@ -229,4 +232,17 @@ test('clearMessages removes cached relay and system events', () => {
   assert.equal(store.queryMessages({ limit: 10 }).total, 0)
   assert.equal(store.getOverview().totalEvents, 0)
   assert.deepEqual(store.queryMessages({ limit: 10 }).items, [])
+})
+
+test('relay events survive process restart through the persistence snapshot', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sms-sync-relay-'))
+  const persistencePath = path.join(directory, 'events.json')
+  const first = createRelayStore({ maxEvents: 20, persistencePath })
+  first.recordRelayEvent({ type: 'sms', groupId: 'g1', deviceId: 'a', content: 'durable', forwardedTo: [] })
+
+  const second = createRelayStore({ maxEvents: 20, persistencePath })
+  const result = second.queryMessages({ limit: 10 })
+  assert.equal(result.total, 1)
+  assert.equal(result.items[0].content, 'durable')
+  fs.rmSync(directory, { recursive: true, force: true })
 })

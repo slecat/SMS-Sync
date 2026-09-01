@@ -14,52 +14,36 @@ class HomeBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1115),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.08),
-            width: 1,
+    return NavigationBar(
+      selectedIndex: currentIndex,
+      onDestinationSelected: onTabSelected,
+      backgroundColor: Colors.white,
+      indicatorColor: const Color(0xFFDCE9E1),
+      destinations: [
+        NavigationDestination(
+          icon: Badge(
+            isLabelVisible: smsCount > 0,
+            label: Text(smsCount > 9 ? '9+' : '$smsCount'),
+            child: const Icon(Icons.inbox_outlined),
           ),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _HomeNavItem(
-                index: 0,
-                icon: Icons.dashboard_rounded,
-                label: '总览',
-                currentIndex: currentIndex,
-                badgeLabel: smsCount > 0
-                    ? (smsCount > 9 ? '9+' : '$smsCount')
-                    : null,
-                onTap: onTabSelected,
-              ),
-              _HomeNavItem(
-                index: 1,
-                icon: Icons.tune_rounded,
-                label: '配置',
-                currentIndex: currentIndex,
-                badgeLabel: null,
-                onTap: onTabSelected,
-              ),
-              _HomeNavItem(
-                index: 2,
-                icon: Icons.info_outline_rounded,
-                label: '关于',
-                currentIndex: currentIndex,
-                badgeLabel: null,
-                onTap: onTabSelected,
-              ),
-            ],
+          selectedIcon: Badge(
+            isLabelVisible: smsCount > 0,
+            label: Text(smsCount > 9 ? '9+' : '$smsCount'),
+            child: const Icon(Icons.inbox),
           ),
+          label: '同步',
         ),
-      ),
+        const NavigationDestination(
+          icon: Icon(Icons.tune_outlined),
+          selectedIcon: Icon(Icons.tune),
+          label: '连接',
+        ),
+        const NavigationDestination(
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings),
+          label: '设置',
+        ),
+      ],
     );
   }
 }

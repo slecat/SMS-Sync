@@ -11,16 +11,35 @@ class SmsSyncApp extends StatelessWidget {
       title: '短信同步',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6366F1),
-          brightness: Brightness.dark,
-        ),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(0xFFF4F1EB),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF173C36),
+          brightness: Brightness.light,
+          surface: const Color(0xFFF4F1EB),
+        ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0A0A0A),
+          backgroundColor: Color(0xFFF4F1EB),
+          foregroundColor: Color(0xFF173C36),
           elevation: 0,
-          centerTitle: true,
+          surfaceTintColor: Colors.transparent,
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide(color: Color(0xFFD8D4CC)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide(color: Color(0xFFD8D4CC)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide(color: Color(0xFF173C36), width: 1.5),
+          ),
         ),
       ),
       home: const HomePage(),

@@ -8,7 +8,9 @@ class MessagePayloadFactory {
   }) {
     return {
       'type': 'register',
+      'protocolVersion': 2,
       'deviceId': deviceId,
+      'platform': 'mobile',
       if (deviceName != null) 'deviceName': deviceName,
       'groupId': groupId,
     };
@@ -40,10 +42,12 @@ class MessagePayloadFactory {
   }) {
     return {
       'type': 'sms',
+      'protocolVersion': 2,
       'messageId': messageId,
       'from': from,
       'body': body,
       'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,
+      'receivedAt': timestamp ?? DateTime.now().millisecondsSinceEpoch,
       'groupId': groupId,
     };
   }

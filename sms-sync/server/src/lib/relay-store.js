@@ -109,13 +109,47 @@ function toPublicClient(client) {
   }
 }
 
-function createRelayStore({ maxEvents = 3000 } = {}) {
+const fs = require('fs')
+const path = require('path')
+
+function createRelayStore({ maxEvents = 3000, persistencePath = '' } = {}) {
   const sizeLimit = normalizeLimit(maxEvents, 3000, 100000)
   const createdAt = Date.now()
   const clients = new Map()
   const events = []
   const relayByType = new Map()
   let sequence = 0
+
+  const persistenceFile = persistencePath
+    ? path.resolve(process.cwd(), persistencePath)
+    : ''
+  if (persistenceFile) {
+    try {
+      const saved = JSON.parse(fs.readFileSync(persistenceFile, 'utf8'))
+      if (Array.isArray(saved)) events.push(...saved.slice(0, sizeLimit))
+    } catch (error) {
+      if (error.code !== 'ENOENT') console.warn(`[relay-store] load failed: ${error.message}`)
+    }
+  }
+
+  for (const event of events) {
+    if (event.kind === 'relay') {
+      const type = toSafeString(event.type, 'unknown')
+      relayByType.set(type, (relayByType.get(type) || 0) + 1)
+    }
+  }
+
+  function persistEvents() {
+    if (!persistenceFile) return
+    try {
+      fs.mkdirSync(path.dirname(persistenceFile), { recursive: true })
+      const tempFile = `${persistenceFile}.tmp`
+      fs.writeFileSync(tempFile, JSON.stringify(events), 'utf8')
+      fs.renameSync(tempFile, persistenceFile)
+    } catch (error) {
+      console.warn(`[relay-store] persist failed: ${error.message}`)
+    }
+  }
 
   function eventToPublic(event) {
     return { ...event }
@@ -129,6 +163,7 @@ function createRelayStore({ maxEvents = 3000 } = {}) {
   function pushEvent(event) {
     events.unshift(event)
     trimEvents()
+    persistEvents()
   }
 
   function addTypeCounter(type) {
@@ -274,6 +309,7 @@ function createRelayStore({ maxEvents = 3000 } = {}) {
       id: `${timestamp}-${sequence}`,
       kind,
       type: toSafeString(payload.type, 'unknown'),
+      messageId: toSafeString(payload.messageId, ''),
       groupId: normalizeGroup(payload.groupId),
       deviceId: toSafeString(payload.deviceId, ''),
       deviceName: toSafeString(payload.deviceName, ''),
@@ -310,6 +346,7 @@ function createRelayStore({ maxEvents = 3000 } = {}) {
   function clearMessages() {
     events.length = 0
     relayByType.clear()
+    persistEvents()
   }
 
   function queryMessages({

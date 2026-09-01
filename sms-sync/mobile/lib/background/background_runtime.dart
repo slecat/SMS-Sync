@@ -145,7 +145,7 @@ void onStart(ServiceInstance service) async {
       body: body,
       groupId: groupId,
       timestamp: timestamp,
-    );
+    )..['sourceDeviceId'] = localDeviceId;
     final signedSmsData = signOutgoingPayload(smsData);
 
     try {

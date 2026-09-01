@@ -1,4 +1,5 @@
 const WebSocket = require('ws')
+const { normalizeAck, normalizeRegister, normalizeSms } = require('./protocol/v2')
 
 function normalizeDeviceName(deviceName) {
   const normalizedName = String(deviceName || '').trim()
@@ -67,6 +68,7 @@ function broadcastPresence(store, senderDeviceId, groupId, payload, recipients) 
 
 function attachWsRelay(server, store) {
   const wss = new WebSocket.Server({ server })
+  const pendingByMessageId = new Map()
 
   wss.on('connection', (ws) => {
     let deviceId = null
@@ -78,13 +80,23 @@ function attachWsRelay(server, store) {
         const data = JSON.parse(message)
 
         if (data.type === 'register') {
-          const incomingId = String(data.deviceId || '').trim()
+          let registrationPayload
+          try {
+            registrationPayload = normalizeRegister({
+              ...data,
+              protocolVersion: data.protocolVersion || 2,
+              platform: data.platform || 'desktop',
+            })
+          } catch (_error) {
+            return
+          }
+          const incomingId = registrationPayload.deviceId
           if (!isAllowedDeviceId(incomingId)) return
 
           deviceId = incomingId
-          groupId = normalizeGroupId(data.groupId)
-          deviceName = normalizeDeviceName(data.deviceName)
-          const platform = normalizePlatform(data.platform)
+          groupId = normalizeGroupId(registrationPayload.groupId)
+          deviceName = normalizeDeviceName(registrationPayload.deviceName)
+          const platform = normalizePlatform(registrationPayload.platform)
           const now = Date.now()
 
           const registration = store.upsertClient(deviceId, {
@@ -140,6 +152,17 @@ function attachWsRelay(server, store) {
               })
             )
           }
+          return
+        }
+
+        if (data.type === 'server-ack' || data.type === 'delivery-ack') {
+          let ack
+          try { ack = normalizeAck({ ...data, protocolVersion: data.protocolVersion || 2 }) } catch (_error) { return }
+          const source = pendingByMessageId.get(ack.messageId)
+          if (source && canSend(source)) {
+            source.send(JSON.stringify({ ...ack, type: 'delivery-ack', protocolVersion: 2, persistedAt: Date.now() }))
+          }
+          if (data.type === 'delivery-ack') pendingByMessageId.delete(ack.messageId)
           return
         }
 
@@ -211,7 +234,20 @@ function attachWsRelay(server, store) {
             })
           }
 
-          const outbound = data
+          let outbound = data
+          if (data.type === 'sms') {
+            try {
+              outbound = normalizeSms({
+                ...data,
+                protocolVersion: data.protocolVersion || 2,
+                receivedAt: data.receivedAt || data.timestamp,
+                sourceDeviceId: data.sourceDeviceId || deviceId,
+              })
+            } catch (_error) {
+              return
+            }
+            pendingByMessageId.set(outbound.messageId, ws)
+          }
           const peers = store.listOnlineDevices({ groupId: senderGroup })
           for (const peer of peers) {
             if (peer.deviceId === deviceId) continue
@@ -229,11 +265,20 @@ function attachWsRelay(server, store) {
             phone: String(data.phone || ''),
             content: String(data.content || ''),
             forwardedTo: recipients,
-            timestamp: Number(data.timestamp) || Date.now(),
+            timestamp: Number(data.timestamp || data.receivedAt) || Date.now(),
+            messageId: outbound.messageId,
             metadata: {
               source: 'ws',
             },
           })
+          if (data.type === 'sms' && canSend(ws)) {
+            ws.send(JSON.stringify({
+              type: 'server-ack',
+              protocolVersion: 2,
+              messageId: outbound.messageId,
+              persistedAt: Date.now(),
+            }))
+          }
           return
         }
 

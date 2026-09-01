@@ -174,6 +174,16 @@ function handleSmsMessage(sms, source) {
     return;
   }
 
+  persistInboxMessage(sms, source);
+  if (source === 'websocket' && sms.messageId && wsClient) {
+    wsClient.send({
+      type: 'delivery-ack',
+      protocolVersion: 2,
+      messageId: sms.messageId,
+      persistedAt: Date.now(),
+    });
+  }
+
   if (state.mainWindow) {
     state.mainWindow.webContents.send('new-sms', sms);
   }
@@ -185,6 +195,21 @@ function handleSmsMessage(sms, source) {
     copyCode: code,
     context: `sms:${source}`,
   });
+}
+
+function persistInboxMessage(sms, source) {
+  const current = Array.isArray(store.get('inboxMessages')) ? store.get('inboxMessages') : [];
+  const messageId = sms.messageId || `${sms.from || 'unknown'}|${sms.timestamp || Date.now()}|${sms.body || ''}`;
+  if (current.some((item) => item.messageId === messageId)) return;
+  const next = [{
+    messageId,
+    from: String(sms.from || ''),
+    body: String(sms.body || ''),
+    receivedAt: Number(sms.receivedAt || sms.timestamp || Date.now()),
+    source,
+    persistedAt: Date.now(),
+  }, ...current].slice(0, 1000);
+  store.set('inboxMessages', next);
 }
 
 function handleTestMessage(test, source) {
