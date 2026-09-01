@@ -8,6 +8,7 @@ const {
   nativeImage,
   clipboard,
   screen,
+  Notification,
 } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
@@ -91,6 +92,18 @@ const inAppAlertService = new InAppAlertService({
     if (state.mainWindow) {
       state.mainWindow.webContents.send('code-copied', code);
     }
+  },
+  onSystemNotification: ({ title, body, copyCode = null }) => {
+    if (!Notification || !Notification.isSupported()) {
+      return;
+    }
+    const notification = new Notification({
+      title,
+      body: copyCode ? `${body}\n验证码：${copyCode}` : body,
+      silent: false,
+      urgency: 'critical',
+    });
+    notification.show();
   },
 });
 
