@@ -1,7 +1,7 @@
 name: sms_sync_mobile
 description: 短信同步应用 - 将手机短信同步到电脑
 publish_to: 'none'
-version: 1.2.2+5
+version: 1.2.3+6
 
 environment:
   sdk: ^3.9.2
