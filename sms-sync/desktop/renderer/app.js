@@ -3,6 +3,9 @@ const syncSecretInput = document.getElementById('syncSecret');
 const serverUrlInput = document.getElementById('serverUrl');
 const deviceNameInput = document.getElementById('deviceName');
 const saveBtn = document.getElementById('saveBtn');
+const forwardVerificationCodeOnlyToggle = document.getElementById(
+  'forwardVerificationCodeOnlyToggle'
+);
 const autoLaunchToggle = document.getElementById('autoLaunchToggle');
 const deviceListEl = document.getElementById('deviceList');
 const messageList = document.getElementById('messageList');
@@ -12,12 +15,26 @@ const testCountEl = document.getElementById('testCount');
 const messageCountEl = document.getElementById('messageCount');
 const toast = document.getElementById('toast');
 const serverStatus = document.getElementById('serverStatus');
+const updateCurrentVersionEl = document.getElementById('updateCurrentVersion');
+const updateStatusTextEl = document.getElementById('updateStatusText');
+const updateLatestVersionEl = document.getElementById('updateLatestVersion');
+const updateProgressRowEl = document.getElementById('updateProgressRow');
+const updateProgressFillEl = document.getElementById('updateProgressFill');
+const updateProgressTextEl = document.getElementById('updateProgressText');
+const checkUpdateBtn = document.getElementById('checkUpdateBtn');
+const downloadUpdateBtn = document.getElementById('downloadUpdateBtn');
+const downloadRouteModalEl = document.getElementById('downloadRouteModal');
+const downloadRouteBackdropEl = document.getElementById('downloadRouteBackdrop');
+const downloadRouteListEl = document.getElementById('downloadRouteList');
+const closeDownloadRouteBtn = document.getElementById('closeDownloadRouteBtn');
 const SERVER_URL_PREFIX = 'ws://';
 
 const messages = [];
 const MAX_MESSAGES = 300;
 let smsCount = 0;
 let testCount = 0;
+let currentUpdateState = null;
+let downloadRouteSelectionResolver = null;
 
 function toggleSection(sectionName) {
   const header = document.querySelector(`[data-section="${sectionName}"]`);
@@ -88,12 +105,12 @@ function renderMessages() {
     card.innerHTML = `
       <div class="message-header-row">
         <div>
-          <div class="message-sender">${msg.from}</div>
+          <div class="message-sender">${escapeHtml(msg.from || '未知来源')}</div>
           <div class="message-time">${time}</div>
         </div>
         <span class="message-badge ${badgeClass}">${badgeText}</span>
       </div>
-      <div class="message-body">${msg.body || '测试消息'}</div>
+      <div class="message-body">${escapeHtml(msg.body || '测试消息')}</div>
     `;
     messageList.appendChild(card);
   });
@@ -101,8 +118,7 @@ function renderMessages() {
 
 function renderDeviceList(devices) {
   if (devices.length === 0) {
-    deviceListEl.innerHTML =
-      '<div class="empty-devices">\u6682\u65e0\u5728\u7ebf\u8bbe\u5907</div>';
+    deviceListEl.innerHTML = '<div class="empty-devices">暂无在线设备</div>';
     return;
   }
 
@@ -122,7 +138,7 @@ function renderDeviceList(devices) {
     item.className = 'device-item';
     item.innerHTML = `
       <div class="device-indicator ${indicatorClass}"></div>
-      <div class="device-name">${escapeHtml(device.deviceName || '\u672a\u77e5\u8bbe\u5907')}</div>
+      <div class="device-name">${escapeHtml(device.deviceName || '未知设备')}</div>
       <div class="device-sources">${sourceTags}</div>
     `;
     deviceListEl.appendChild(item);
@@ -151,7 +167,7 @@ function sourcePriority(source) {
 }
 
 function sourceLabel(source) {
-  return source === 'server' ? '\u670d\u52a1\u5668' : '\u5c40\u57df\u7f51';
+  return source === 'server' ? '服务器' : '局域网';
 }
 
 function escapeHtml(value) {
@@ -172,6 +188,109 @@ function updateServerStatusUI(status, message) {
   serverStatus.style.display = 'flex';
   serverStatus.className = `server-status ${status}`;
   serverStatus.querySelector('.status-text').textContent = message;
+}
+
+function formatVersionLabel(version, buildNumber) {
+  const normalizedVersion = String(version || '').trim();
+  const normalizedBuild = Number(buildNumber || 0);
+  if (!normalizedVersion) {
+    return '-';
+  }
+  if (normalizedBuild > 0) {
+    return `v${normalizedVersion} (${normalizedBuild})`;
+  }
+  return `v${normalizedVersion}`;
+}
+
+function renderUpdateState(updateState) {
+  const state = updateState || {};
+  currentUpdateState = state;
+
+  updateCurrentVersionEl.textContent = `当前版本 ${formatVersionLabel(
+    state.currentVersion,
+    state.currentBuildNumber
+  )}`;
+
+  if (state.latestRelease) {
+    updateLatestVersionEl.textContent = `最新版本 ${formatVersionLabel(
+      state.latestRelease.version,
+      state.latestRelease.buildNumber
+    )}`;
+  } else {
+    updateLatestVersionEl.textContent = '';
+  }
+
+  const status = state.status || 'idle';
+  const statusText = {
+    idle: '未检查更新',
+    checking: '正在检查更新...',
+    available: '发现新版本，可选择下载路线并安装',
+    current: '当前已经是最新版本',
+    downloading: '正在下载更新包...',
+    ready: '安装包已下载，安装程序已启动',
+    error: state.message || '检查更新失败',
+  };
+
+  updateStatusTextEl.textContent = statusText[status] || state.message || '未检查更新';
+  checkUpdateBtn.disabled = status === 'checking' || status === 'downloading';
+
+  const progress = Number(state.downloadProgress || 0);
+  const showProgress = status === 'downloading' || progress > 0;
+  updateProgressRowEl.classList.toggle('hidden', !showProgress);
+  updateProgressFillEl.style.width = `${progress}%`;
+  updateProgressTextEl.textContent = `${progress}%`;
+
+  const shouldShowDownload =
+    state.isUpdateAvailable && (status === 'available' || status === 'downloading');
+  downloadUpdateBtn.classList.toggle('hidden', !shouldShowDownload);
+  downloadUpdateBtn.disabled = status === 'checking' || status === 'downloading';
+  downloadUpdateBtn.textContent = status === 'downloading' ? '下载中...' : '下载并安装';
+}
+
+function normalizeDownloadOptions(updateState) {
+  const options = Array.isArray(updateState?.latestRelease?.downloadOptions)
+    ? updateState.latestRelease.downloadOptions
+    : [];
+  return options.filter(
+    (option) => option && typeof option.url === 'string' && option.url.trim()
+  );
+}
+
+function closeDownloadRouteModal(selection = null) {
+  if (downloadRouteSelectionResolver) {
+    const resolver = downloadRouteSelectionResolver;
+    downloadRouteSelectionResolver = null;
+    resolver(selection);
+  }
+
+  downloadRouteListEl.innerHTML = '';
+  downloadRouteModalEl.classList.add('hidden');
+}
+
+function promptDownloadRoute(options) {
+  if (options.length === 1) {
+    return Promise.resolve(options[0]);
+  }
+
+  downloadRouteListEl.innerHTML = '';
+  options.forEach((option) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'route-option';
+    button.innerHTML = `
+      <div class="route-option-title">${escapeHtml(option.label || option.host || option.url)}</div>
+      <div class="route-option-url">${escapeHtml(option.url)}</div>
+    `;
+    button.addEventListener('click', () => {
+      closeDownloadRouteModal(option);
+    });
+    downloadRouteListEl.appendChild(button);
+  });
+
+  downloadRouteModalEl.classList.remove('hidden');
+  return new Promise((resolve) => {
+    downloadRouteSelectionResolver = resolve;
+  });
 }
 
 function stripServerProtocol(serverUrl) {
@@ -199,6 +318,9 @@ async function loadSettings() {
   syncSecretInput.value = settings.syncSecret || '';
   serverUrlInput.value = stripServerProtocol(settings.serverUrl || '');
   deviceNameInput.value = settings.deviceName || '桌面端';
+  forwardVerificationCodeOnlyToggle.checked = Boolean(
+    settings.forwardVerificationCodeOnly
+  );
 
   const autoLaunchEnabled = await window.electronAPI.getAutoLaunch();
   autoLaunchToggle.checked = autoLaunchEnabled;
@@ -252,6 +374,10 @@ window.electronAPI.onCodeCopied((code) => {
   showToast(`验证码 ${code} 已复制到剪贴板`);
 });
 
+window.electronAPI.onUpdateStateChange((updateState) => {
+  renderUpdateState(updateState);
+});
+
 saveBtn.addEventListener('click', async () => {
   const syncSecret = syncSecretInput.value.trim();
   if (!syncSecret) {
@@ -265,6 +391,7 @@ saveBtn.addEventListener('click', async () => {
     syncSecret,
     serverUrl: toServerUrl(serverUrlInput.value),
     deviceName: deviceNameInput.value || '桌面端',
+    forwardVerificationCodeOnly: forwardVerificationCodeOnlyToggle.checked,
   };
   const success = await window.electronAPI.saveSettings(settings);
   if (success) {
@@ -293,10 +420,51 @@ autoLaunchToggle.addEventListener('change', async () => {
   }
 });
 
+checkUpdateBtn.addEventListener('click', async () => {
+  const updateState = await window.electronAPI.checkForUpdates();
+  renderUpdateState(updateState);
+  if (updateState.status === 'current') {
+    showToast('当前已经是最新版本');
+  } else if (updateState.status === 'available') {
+    showToast('发现新版本，可以开始下载');
+  } else if (updateState.status === 'error') {
+    showToast(updateState.message || '检查更新失败');
+  }
+});
+
+downloadUpdateBtn.addEventListener('click', async () => {
+  const downloadOptions = normalizeDownloadOptions(currentUpdateState);
+  let selectedOption = null;
+
+  if (downloadOptions.length > 0) {
+    selectedOption = await promptDownloadRoute(downloadOptions);
+    if (!selectedOption) {
+      return;
+    }
+  }
+
+  const updateState = await window.electronAPI.downloadUpdate(selectedOption?.url);
+  renderUpdateState(updateState);
+  if (updateState.status === 'ready') {
+    showToast('安装包已下载，正在启动安装程序');
+  } else if (updateState.status === 'error') {
+    showToast(updateState.message || '下载更新失败');
+  }
+});
+
+downloadRouteBackdropEl.addEventListener('click', () => {
+  closeDownloadRouteModal(null);
+});
+
+closeDownloadRouteBtn.addEventListener('click', () => {
+  closeDownloadRouteModal(null);
+});
+
 async function initialize() {
   await loadSettings();
   await loadServerStatus();
   await loadDevices();
+  renderUpdateState(await window.electronAPI.getUpdateState());
 }
 
 initialize();

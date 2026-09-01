@@ -17,7 +17,8 @@ import androidx.core.content.ContextCompat;
 public class WatchdogReceiver extends BroadcastReceiver {
     private static final int QUEUE_REQUEST_ID = 111;
     private static final String ACTION_RESPAWN = "id.flutter.background_service.RESPAWN";
-    private static final int DEFAULT_CHECK_INTERVAL_MILLIS = 15000;
+    private static final int DEFAULT_CHECK_INTERVAL_MILLIS =
+            WatchdogSchedulePolicy.nextCheckIntervalMillis();
 
     public static void enqueue(Context context) {
         enqueue(context, DEFAULT_CHECK_INTERVAL_MILLIS);
@@ -76,7 +77,10 @@ public class WatchdogReceiver extends BroadcastReceiver {
         }
 
         final Config config = new Config(context);
-        if (config.isManuallyStopped()) {
+        if (!WatchdogSchedulePolicy.shouldSchedule(
+                config.isManuallyStopped(),
+                config.getBackgroundHandle()
+        )) {
             remove(context);
             return;
         }
@@ -103,6 +107,6 @@ public class WatchdogReceiver extends BroadcastReceiver {
         }
 
         // Keep checks recurring so silent process kills are detected later too.
-        enqueue(context);
+        enqueue(context, WatchdogSchedulePolicy.nextCheckIntervalMillis());
     }
 }

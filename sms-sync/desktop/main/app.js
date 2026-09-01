@@ -2,6 +2,7 @@ const {
   app,
   BrowserWindow,
   ipcMain,
+  shell,
   Tray,
   Menu,
   nativeImage,
@@ -9,22 +10,26 @@ const {
   screen,
 } = require('electron');
 const path = require('path');
-const crypto = require('crypto');
 const Store = require('electron-store');
 const AutoLaunch = require('auto-launch');
 const WebSocket = require('ws');
 const { registerIpcHandlers } = require('./ipc');
+const { DeviceIdentityService } = require('./services/device-identity');
 const { DeviceRegistry } = require('./services/device-registry');
 const { signPayload, verifyPayload } = require('./services/message-security');
 const {
   createMessageDeduper,
   extractVerificationCode,
+  isVerificationCodeMessage,
 } = require('./services/message-utils');
 const { getIconPath } = require('./services/icon-path');
 const { InAppAlertService } = require('./services/in-app-alert-service');
 const { normalizeServerUrl } = require('./services/server-url');
+const { UPDATE_API_BASE_URL, DESKTOP_UPDATE_SLUG } = require('./services/update-config');
+const { DesktopUpdateService } = require('./services/update-service');
 const { WebSocketClient } = require('./transport/websocket-client');
 const { UdpService } = require('./transport/udp-service');
+const desktopPackageMetadata = require('../package.json');
 
 app.setAppUserModelId('com.smsforward.app');
 
@@ -33,18 +38,29 @@ const DEFAULT_SETTINGS = {
   groupId: 'default',
   deviceName: '桌面端',
   syncSecret: '',
+  forwardVerificationCodeOnly: false,
 };
 const DEVICE_TIMEOUT = 30000;
 const LISTEN_PORT = 8888;
 const BROADCAST_PORTS = [8888, 8889];
 const RECONNECT_PROBE_INTERVAL_MS = 5000;
 const RECONNECT_PROBE_COOLDOWN_MS = 12000;
+const STARTUP_UPDATE_CHECK_DELAY_MS = 2500;
 
 const store = new Store();
 const autoLauncher = new AutoLaunch({ name: '短信转发', isHidden: true });
-const desktopDeviceId = crypto.randomUUID();
+const deviceIdentityService = new DeviceIdentityService({ store });
+const desktopDeviceId = deviceIdentityService.getOrCreateIdentity().deviceId;
+const desktopConnectionId = deviceIdentityService.createConnectionId();
 const deviceRegistry = new DeviceRegistry({ deviceTimeout: DEVICE_TIMEOUT });
 const isDuplicateMessage = createMessageDeduper(5000);
+const updateService = new DesktopUpdateService({
+  appVersion: desktopPackageMetadata.version,
+  appBuildNumber: Number(desktopPackageMetadata.buildNumber || 1),
+  softwareSlug: DESKTOP_UPDATE_SLUG,
+  apiBaseUrl: UPDATE_API_BASE_URL,
+  shellImpl: shell,
+});
 const state = {
   mainWindow: null,
   tray: null,
@@ -54,6 +70,7 @@ const state = {
   localServerUrl: DEFAULT_SETTINGS.serverUrl,
   localDeviceName: DEFAULT_SETTINGS.deviceName,
   localSyncSecret: DEFAULT_SETTINGS.syncSecret,
+  localForwardVerificationCodeOnly: DEFAULT_SETTINGS.forwardVerificationCodeOnly,
   serverStatus: {
     status: 'disconnected',
     message: '未配置服务器地址',
@@ -133,12 +150,25 @@ function updateDeviceList() {
   }
 }
 
+function emitUpdateState(updateState = updateService.getState()) {
+  if (state.mainWindow) {
+    state.mainWindow.webContents.send('update-state-change', updateState);
+  }
+}
+
 function connectToServer(serverUrl, trigger = 'unknown') {
   console.log(`[ServerStatus] connectToServer trigger=${trigger}`);
   wsClient.connect(normalizeServerUrl(serverUrl));
 }
 
 function handleSmsMessage(sms, source) {
+  if (
+    state.localForwardVerificationCodeOnly &&
+    !isVerificationCodeMessage(sms.body || '')
+  ) {
+    return;
+  }
+
   const dedupKey = sms.messageId || `sms_${sms.from}_${sms.body}`;
   if (isDuplicateMessage(dedupKey)) {
     return;
@@ -274,12 +304,14 @@ function loadSettings() {
     serverUrl: normalizeServerUrl(settings.serverUrl || DEFAULT_SETTINGS.serverUrl),
     deviceName: settings.deviceName || DEFAULT_SETTINGS.deviceName,
     syncSecret: (settings.syncSecret || '').trim(),
+    forwardVerificationCodeOnly: Boolean(settings.forwardVerificationCodeOnly),
   };
 
   state.localGroupId = normalizedSettings.groupId;
   state.localServerUrl = normalizedSettings.serverUrl;
   state.localDeviceName = normalizedSettings.deviceName;
   state.localSyncSecret = normalizedSettings.syncSecret;
+  state.localForwardVerificationCodeOnly = normalizedSettings.forwardVerificationCodeOnly;
 
   if (JSON.stringify(settings) !== JSON.stringify(normalizedSettings)) {
     store.set('settings', normalizedSettings);
@@ -383,6 +415,7 @@ async function refreshAutoLaunchEntry() {
 }
 
 function initServices() {
+  updateService.on('state-change', emitUpdateState);
   wsClient = new WebSocketClient({
     WebSocketImpl: WebSocket,
     onStatusChange: updateServerStatus,
@@ -396,16 +429,20 @@ function initServices() {
     getRegisterPayload: () => ({
       type: 'register',
       deviceId: desktopDeviceId,
+      connectionId: desktopConnectionId,
       deviceName: state.localDeviceName,
       groupId: state.localGroupId,
+      platform: 'desktop',
     }),
     getHeartbeatPayload: () =>
       signPayload(
         {
           type: 'device-presence',
           deviceId: desktopDeviceId,
+          connectionId: desktopConnectionId,
           deviceName: state.localDeviceName,
           groupId: state.localGroupId,
+          platform: 'desktop',
           timestamp: Date.now(),
         },
         state.localSyncSecret
@@ -424,6 +461,7 @@ function cleanupServices() {
   stopCleanupLoop();
   stopReconnectProbeLoop();
   inAppAlertService.closeAlert();
+  updateService.removeListener('state-change', emitUpdateState);
   wsClient.disconnect();
   udpService.stop();
 }
@@ -431,7 +469,7 @@ function cleanupServices() {
 function registerHandlers() {
   registerIpcHandlers({
     ipcMain,
-    getSettings: () => store.get('settings', DEFAULT_SETTINGS),
+    getSettings: () => loadSettings(),
     getServerStatus: () => state.serverStatus,
     saveSettings: (event, settings) => {
       const normalizedSettings = {
@@ -439,6 +477,7 @@ function registerHandlers() {
         serverUrl: normalizeServerUrl(settings.serverUrl || DEFAULT_SETTINGS.serverUrl),
         deviceName: settings.deviceName || DEFAULT_SETTINGS.deviceName,
         syncSecret: (settings.syncSecret || '').trim(),
+        forwardVerificationCodeOnly: Boolean(settings.forwardVerificationCodeOnly),
       };
       if (!normalizedSettings.syncSecret) {
         return false;
@@ -449,6 +488,8 @@ function registerHandlers() {
       state.localServerUrl = normalizedSettings.serverUrl;
       state.localDeviceName = normalizedSettings.deviceName;
       state.localSyncSecret = normalizedSettings.syncSecret;
+      state.localForwardVerificationCodeOnly =
+        normalizedSettings.forwardVerificationCodeOnly;
       connectToServer(normalizedSettings.serverUrl, 'manual-save-settings');
       return true;
     },
@@ -478,6 +519,10 @@ function registerHandlers() {
       }
     },
     getDevices: () => deviceRegistry.getCombinedDevices(),
+    getUpdateState: () => updateService.getState(),
+    checkForUpdates: async () => updateService.checkForUpdates(),
+    downloadUpdate: async (event, selectedUrl) =>
+      updateService.downloadUpdate(selectedUrl),
     minimizeToTray: () => {
       if (state.mainWindow) {
         state.mainWindow.hide();
@@ -524,9 +569,15 @@ function start() {
     createWindow();
     setupTray();
     refreshAutoLaunchEntry();
+    emitUpdateState();
 
     const settings = loadSettings();
     connectToServer(settings.serverUrl, 'startup');
+    setTimeout(() => {
+      updateService.checkForUpdates().catch((error) => {
+        console.error('Startup update check failed:', error);
+      });
+    }, STARTUP_UPDATE_CHECK_DELAY_MS);
     startReconnectProbeLoop();
     udpService.start({
       getPresencePayload: () =>
@@ -534,8 +585,10 @@ function start() {
           {
             type: 'device-presence',
             deviceId: desktopDeviceId,
+            connectionId: desktopConnectionId,
             deviceName: state.localDeviceName,
             groupId: state.localGroupId,
+            platform: 'desktop',
             timestamp: Date.now(),
           },
           state.localSyncSecret

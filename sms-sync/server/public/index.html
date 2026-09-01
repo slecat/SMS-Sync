@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ops SMS Sync Service Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <div class="shell" data-view="boot">
+      <section id="bootPanel" class="card boot-panel view-pane" aria-live="polite">
+        <p class="panel-note">加载中...</p>
+      </section>
+
+      <section id="authPanel" class="card auth-panel view-pane" aria-live="polite">
+        <p class="eyebrow">Admin Access</p>
+        <h1>Ops SMS Sync Service Console</h1>
+        <p class="subtext">登录后可查看短信中转状态、消息流和设备分组态势。</p>
+        <div id="authMessage" class="alert info">未检测到登录态，正在跳转统一登录...</div>
+        <button id="gotoLoginBtn" class="btn btn-primary" type="button">前往 Ops Console 登录</button>
+      </section>
+
+      <main id="dashboard" class="dashboard view-pane">
+        <section class="metrics">
+          <article class="card metric">
+            <p class="metric-label">在线设备</p>
+            <p id="metricOnline" class="metric-value">0</p>
+          </article>
+          <article class="card metric">
+            <p class="metric-label">活跃分组</p>
+            <p id="metricGroups" class="metric-value">0</p>
+          </article>
+          <article class="card metric">
+            <p class="metric-label">缓存事件</p>
+            <p id="metricEvents" class="metric-value">0</p>
+          </article>
+          <article class="card metric">
+            <p class="metric-label">转发总数</p>
+            <p id="metricForwarded" class="metric-value">0</p>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <div class="insight-row">
+            <article class="card panel insight-panel" aria-labelledby="groupTitle">
+              <div class="panel-head">
+                <h2 id="groupTitle">分组态势</h2>
+                <span class="chip chip-muted">在线 + 事件</span>
+              </div>
+              <div class="table-wrap compact-table panel-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Group</th>
+                      <th>在线</th>
+                      <th>中转</th>
+                      <th>最近</th>
+                    </tr>
+                  </thead>
+                  <tbody id="groupBody"></tbody>
+                </table>
+              </div>
+              <p id="groupEmpty" class="panel-note">暂无分组数据</p>
+            </article>
+
+            <article class="card panel insight-panel" aria-labelledby="deviceTitle">
+              <div class="panel-head">
+                <h2 id="deviceTitle">在线设备</h2>
+                <span id="deviceCountTag" class="chip chip-muted">0 台</span>
+              </div>
+              <div class="panel-scroll device-scroll">
+                <ul id="deviceList" class="device-list"></ul>
+              </div>
+              <p id="deviceEmpty" class="panel-note">暂无在线设备</p>
+            </article>
+          </div>
+
+          <article class="card panel message-workspace" aria-labelledby="filterTitle">
+            <div class="panel-head">
+              <h2 id="filterTitle">消息工作台</h2>
+              <div class="head-actions">
+                <div class="head-meta">
+                  <span id="lastUpdated" class="chip chip-muted">--</span>
+                </div>
+                <div id="workspaceFilterBar" class="workspace-filter-bar" aria-label="消息工作台筛选工具">
+                    <button
+                      id="clearFiltersBtn"
+                      class="icon-btn btn-ghost"
+                      type="button"
+                      aria-label="清空消息"
+                      title="清空消息"
+                    >
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path
+                        d="M3 3h10M6 3V2h4v1m-5 2v7m3-7v7m3-7v7M4 5h8l-.5 8.2a1 1 0 0 1-1 .8H5.5a1 1 0 0 1-1-.8L4 5Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.2"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="headerFilterDropdown" class="header-filter-dropdown" hidden>
+              <div id="headerFilterList" class="header-filter-list" role="listbox" aria-label="列筛选选项"></div>
+            </div>
+            <div class="table-wrap message-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="limit"><span>序号</span><span class="column-filter-value" data-filter-indicator="limit">50</span></button></th>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="timestamp"><span>时间</span><span class="column-filter-value" data-filter-indicator="timestamp">全部</span></button></th>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="type"><span>类型</span><span class="column-filter-value" data-filter-indicator="type">全部</span></button></th>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="groupId"><span>Group</span><span class="column-filter-value" data-filter-indicator="groupId">全部</span></button></th>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="deviceId"><span>设备</span><span class="column-filter-value" data-filter-indicator="deviceId">全部</span></button></th>
+                    <th>内容</th>
+                    <th><button class="column-filter-btn" type="button" data-filter-field="forwardedCount"><span>转发</span><span class="column-filter-value" data-filter-indicator="forwardedCount">全部</span></button></th>
+                  </tr>
+                </thead>
+                <tbody id="messageBody"></tbody>
+              </table>
+            </div>
+            <p id="messageEmpty" class="panel-note">没有匹配的消息</p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

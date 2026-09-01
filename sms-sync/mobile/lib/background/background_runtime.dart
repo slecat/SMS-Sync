@@ -8,7 +8,10 @@ import 'package:web_socket_channel/io.dart';
 
 import 'background_dependencies.dart';
 import '../platform/runtime_support.dart';
+import '../platform/channels.dart';
 import '../services/app_logger.dart';
+import '../services/message_routing_policy.dart';
+import '../services/verification_code_detector.dart';
 
 Future<void> initializeService() async {
   if (!supportsBackgroundService) {
@@ -30,6 +33,7 @@ Future<void> initializeService() async {
     iosConfiguration: IosConfiguration(autoStart: true, onForeground: onStart),
   );
   await service.startService();
+  await _ensureNativeKeepAliveActive();
 }
 
 Future<void> ensureServiceRunning() async {
@@ -41,6 +45,15 @@ Future<void> ensureServiceRunning() async {
   final isRunning = await service.isRunning();
   if (!isRunning) {
     await service.startService();
+  }
+  await _ensureNativeKeepAliveActive();
+}
+
+Future<void> _ensureNativeKeepAliveActive() async {
+  try {
+    await platformChannel.invokeMethod<bool>('ensureKeepAliveActive');
+  } catch (e) {
+    AppLogger.debug('ensureKeepAliveActive failed: $e');
   }
 }
 
@@ -61,12 +74,14 @@ void onStart(ServiceInstance service) async {
   var groupId = 'default';
   var deviceName = '手机端';
   var syncSecret = '';
+  var forwardVerificationCodeOnly = false;
   try {
     final settings = await dependencies.settingsRepository.loadSettings();
     serverUrl = settings.serverUrl;
     groupId = settings.groupId;
     deviceName = settings.deviceName;
     syncSecret = settings.syncSecret;
+    forwardVerificationCodeOnly = settings.forwardVerificationCodeOnly;
   } catch (e) {
     AppLogger.debug('loadSettings failed in background runtime: $e');
   }
@@ -86,7 +101,6 @@ void onStart(ServiceInstance service) async {
   StreamSubscription<dynamic>? socketSubscription;
   var currentConnectionEpoch = 0;
   String? lastNotifiedServerStatus;
-  var lastReconnectProbeAtMs = 0;
 
   bool isCurrentConnectionEpoch(int epoch) => epoch == currentConnectionEpoch;
 
@@ -114,6 +128,13 @@ void onStart(ServiceInstance service) async {
     required String source,
     bool requireServerAck = false,
   }) async {
+    if (forwardVerificationCodeOnly && !isVerificationCodeMessage(body)) {
+      AppLogger.debug(
+        'Skipped non-verification SMS, source=$source, filter=forwardVerificationCodeOnly',
+      );
+      return true;
+    }
+
     final requiresServerDelivery = serverUrl.trim().isNotEmpty;
 
     final messageId = '${localDeviceId}_$timestamp';
@@ -137,7 +158,19 @@ void onStart(ServiceInstance service) async {
       return true;
     }
 
-    if (requireServerAck) {
+    final deliveryMode = dependencies.messageRoutingPolicy
+        .resolveServerDeliveryMode(
+          serverUrl: serverUrl,
+          hasLiveChannel: channel != null,
+          requireServerAck: requireServerAck,
+        );
+
+    if (deliveryMode == ServerDeliveryMode.disabled) {
+      return true;
+    }
+
+    if (deliveryMode == ServerDeliveryMode.directConnection) {
+      final deliveryLabel = requireServerAck ? 'Pending SMS' : 'SMS';
       try {
         await dependencies.messageTransportService.sendViaDirectWebSocket(
           serverUrl: serverUrl,
@@ -149,17 +182,13 @@ void onStart(ServiceInstance service) async {
           payload: signedSmsData,
         );
         AppLogger.debug(
-          'Pending SMS delivered to server via direct socket, source=$source',
+          '$deliveryLabel delivered to server via direct socket, source=$source',
         );
         return true;
       } catch (e) {
-        AppLogger.debug('Pending SMS server send failed for $source: $e');
+        AppLogger.debug('$deliveryLabel server send failed for $source: $e');
         return false;
       }
-    }
-
-    if (channel == null) {
-      return true;
     }
 
     try {
@@ -270,21 +299,22 @@ void onStart(ServiceInstance service) async {
     return now;
   }
 
-  Future<void> broadcastLanPresence({String trigger = 'periodic'}) async {
+  Future<void> broadcastLanPresence({
+    required String status,
+    required String trigger,
+  }) async {
     try {
-      final latestSettings = await dependencies.settingsRepository
-          .loadSettings();
-      final latestDeviceName = latestSettings.deviceName;
       final signedPresence = dependencies.messageSecurityService.signPayload(
         dependencies.messagePayloadFactory.devicePresence(
           deviceId: localDeviceId,
-          deviceName: latestDeviceName,
+          deviceName: deviceName,
           groupId: groupId,
+          status: status,
         ),
         secret: syncSecret,
       );
       await dependencies.messageTransportService.broadcastUdp(signedPresence);
-      AppLogger.trace('LAN presence sent, trigger=$trigger');
+      AppLogger.trace('LAN presence sent, trigger=$trigger, status=$status');
     } catch (e) {
       AppLogger.debug('Device broadcast failed ($trigger): $e');
     }
@@ -389,7 +419,6 @@ void onStart(ServiceInstance service) async {
         return;
       }
 
-      rawSocket.pingInterval = const Duration(seconds: 10);
       newChannel = IOWebSocketChannel(rawSocket);
       channel = newChannel;
 
@@ -412,6 +441,9 @@ void onStart(ServiceInstance service) async {
                   ? '未知设备'
                   : rawName;
               final timestamp = resolveServerPresenceTimestamp(data);
+              final status = data['status']?.toString() == 'offline'
+                  ? 'offline'
+                  : 'online';
               final ageMs = nowMs() - timestamp;
               if (ageMs > 15000) {
                 AppLogger.debug(
@@ -420,12 +452,17 @@ void onStart(ServiceInstance service) async {
               }
               AppLogger.trace('Processing server device: $deviceId, $name');
 
-              lanDevices[deviceId] = {
-                'deviceId': deviceId,
-                'deviceName': name,
-                'timestamp': timestamp,
-                'source': 'server',
-              };
+              if (status == 'offline') {
+                lanDevices.remove(deviceId);
+              } else {
+                lanDevices[deviceId] = {
+                  'deviceId': deviceId,
+                  'deviceName': name,
+                  'timestamp': timestamp,
+                  'source': 'server',
+                  'status': status,
+                };
+              }
 
               try {
                 service.invoke('device-presence', {
@@ -433,6 +470,7 @@ void onStart(ServiceInstance service) async {
                   'deviceName': name,
                   'timestamp': timestamp,
                   'source': 'server',
+                  'status': status,
                 });
                 AppLogger.trace('device-presence event sent to UI');
               } catch (e, stackTrace) {
@@ -503,6 +541,7 @@ void onStart(ServiceInstance service) async {
               deviceId: localDeviceId,
               deviceName: newDeviceName,
               groupId: newGroupId,
+              status: 'online',
             ),
           ),
         ),
@@ -558,22 +597,31 @@ void onStart(ServiceInstance service) async {
               data['deviceId'] != localDeviceId &&
               data['groupId'] == groupId) {
             final now = DateTime.now().millisecondsSinceEpoch;
+            final status = data['status']?.toString() == 'offline'
+                ? 'offline'
+                : 'online';
             final deviceName = data['deviceName'] ?? '未知设备';
             AppLogger.trace(
               'Adding LAN device: ${data['deviceId']}, $deviceName',
             );
-            lanDevices[data['deviceId']] = {
-              'deviceId': data['deviceId'],
-              'deviceName': deviceName,
-              'timestamp': now,
-              'source': 'lan',
-            };
+            if (status == 'offline') {
+              lanDevices.remove(data['deviceId']);
+            } else {
+              lanDevices[data['deviceId']] = {
+                'deviceId': data['deviceId'],
+                'deviceName': deviceName,
+                'timestamp': now,
+                'source': 'lan',
+                'status': status,
+              };
+            }
             // Send event to UI
             service.invoke('device-presence', {
               'deviceId': data['deviceId'],
               'deviceName': deviceName,
               'timestamp': now,
               'source': 'lan',
+              'status': status,
             });
           } else if (data['type'] == 'sms') {
             if (dependencies.messageRoutingPolicy
@@ -597,80 +645,6 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
-  });
-
-  final cleanupTimer = Timer.periodic(const Duration(seconds: 3), (
-    timer,
-  ) async {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    lanDevices.removeWhere(
-      (id, device) => now - (device['timestamp'] as int) > 30000,
-    );
-
-    AppLogger.trace(
-      'Saving devices to SharedPreferences: ${lanDevices.values.toList()}',
-    );
-    await dependencies.settingsRepository.saveLastDevicePresence(
-      lanDevices.values.toList(),
-    );
-  });
-
-  final wsPresenceTimer = Timer.periodic(const Duration(seconds: 5), (
-    timer,
-  ) async {
-    if (channel != null) {
-      try {
-        await dependencies.messageTransportService.sendViaExistingChannel(
-          channel,
-          signOutgoingPayload(
-            dependencies.messagePayloadFactory.devicePresence(
-              deviceId: localDeviceId,
-              deviceName: deviceName,
-              groupId: groupId,
-            ),
-          ),
-        );
-      } catch (e) {
-        AppLogger.debug('WebSocket device presence failed: $e');
-        try {
-          channel?.sink.close();
-        } catch (_) {}
-        channel = null;
-        notifyServerStatus('disconnected');
-      }
-    }
-  });
-
-  // Heartbeat-style probe:
-  // keep attempts low-frequency and only when currently disconnected.
-  final reconnectProbeTimer = Timer.periodic(const Duration(seconds: 5), (
-    timer,
-  ) async {
-    if (serverUrl.trim().isEmpty) {
-      return;
-    }
-    if (channel != null || lastNotifiedServerStatus == 'connecting') {
-      return;
-    }
-    final now = nowMs();
-    // Probe every 12s at most to avoid aggressive reconnect storms.
-    if (now - lastReconnectProbeAtMs < 12000) {
-      return;
-    }
-    lastReconnectProbeAtMs = now;
-    await connectToServer(serverUrl, groupId, deviceName, 'heartbeat-probe');
-  });
-
-  final lanPresenceTimer = Timer.periodic(const Duration(seconds: 5), (
-    timer,
-  ) async {
-    await broadcastLanPresence();
-  });
-
-  final pendingNativeSmsTimer = Timer.periodic(const Duration(seconds: 3), (
-    timer,
-  ) async {
-    await flushPendingNativeSms(trigger: 'periodic');
   });
 
   // Listen for SMS from UI isolate via ServiceInstance
@@ -705,11 +679,14 @@ void onStart(ServiceInstance service) async {
       final newGroupId = newSettings.groupId;
       final newDeviceName = newSettings.deviceName;
       final newSyncSecret = newSettings.syncSecret;
+      final newForwardVerificationCodeOnly =
+          newSettings.forwardVerificationCodeOnly;
       // Update local variables
       serverUrl = newServerUrl;
       groupId = newGroupId;
       deviceName = newDeviceName;
       syncSecret = newSyncSecret;
+      forwardVerificationCodeOnly = newForwardVerificationCodeOnly;
 
       // Reconnect
       await connectToServer(
@@ -718,11 +695,20 @@ void onStart(ServiceInstance service) async {
         newDeviceName,
         'manual-reconnect-event',
       );
+      await broadcastLanPresence(status: 'online', trigger: 'manual-reconnect');
+      await flushPendingNativeSms(trigger: 'manual-reconnect');
     } catch (e, stackTrace) {
       AppLogger.debug('Error in reconnect-server handler: $e');
       AppLogger.debug('Stack trace: $stackTrace');
     }
   });
+
+  final nativeStartCommandSubscription = service
+      .on('native-start-command')
+      .listen((event) async {
+        final reason = event?['reason']?.toString() ?? 'native-start-command';
+        await flushPendingNativeSms(trigger: reason);
+      });
 
   final serverStatusRequestSubscription = service
       .on('request-server-status')
@@ -731,19 +717,33 @@ void onStart(ServiceInstance service) async {
       });
 
   unawaited(connectToServer(serverUrl, groupId, deviceName, 'startup'));
-  unawaited(broadcastLanPresence(trigger: 'startup'));
+  unawaited(broadcastLanPresence(status: 'online', trigger: 'startup'));
   unawaited(flushPendingNativeSms(trigger: 'startup'));
 
   late final StreamSubscription<dynamic> stopServiceSubscription;
   stopServiceSubscription = service.on('stopService').listen((event) async {
-    cleanupTimer.cancel();
-    wsPresenceTimer.cancel();
-    reconnectProbeTimer.cancel();
-    lanPresenceTimer.cancel();
-    pendingNativeSmsTimer.cancel();
+    await broadcastLanPresence(status: 'offline', trigger: 'stop-service');
+    if (channel != null) {
+      try {
+        await dependencies.messageTransportService.sendViaExistingChannel(
+          channel,
+          signOutgoingPayload(
+            dependencies.messagePayloadFactory.devicePresence(
+              deviceId: localDeviceId,
+              deviceName: deviceName,
+              groupId: groupId,
+              status: 'offline',
+            ),
+          ),
+        );
+      } catch (e) {
+        AppLogger.debug('Server offline presence failed: $e');
+      }
+    }
     await socketSubscription?.cancel();
     await smsReceivedSubscription.cancel();
     await reconnectSubscription.cancel();
+    await nativeStartCommandSubscription.cancel();
     await serverStatusRequestSubscription.cancel();
     await stopServiceSubscription.cancel();
     try {

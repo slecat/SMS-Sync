@@ -1,0 +1,174 @@
+const WebSocket = require('ws')
+
+function buildPresencePayload(deviceId, deviceName, groupId, timestamp = Date.now()) {
+  return {
+    type: 'device-presence',
+    deviceId,
+    deviceName: deviceName || '未知设备',
+    groupId: groupId || 'default',
+    timestamp,
+  }
+}
+
+function attachWsRelay(server, store) {
+  const wss = new WebSocket.Server({ server })
+
+  wss.on('connection', (ws) => {
+    let deviceId = null
+    let groupId = null
+    let deviceName = null
+
+    ws.on('message', (message) => {
+      try {
+        const data = JSON.parse(message)
+
+        if (data.type === 'register') {
+          const incomingId = String(data.deviceId || '').trim()
+          if (!incomingId) return
+
+          deviceId = incomingId
+          groupId = String(data.groupId || 'default').trim() || 'default'
+          deviceName = String(data.deviceName || '').trim() || '未知设备'
+
+          store.upsertClient(deviceId, {
+            ws,
+            groupId,
+            deviceName,
+            lastSeenAt: Date.now(),
+          })
+
+          store.recordSystemEvent({
+            type: 'register',
+            deviceId,
+            deviceName,
+            groupId,
+            content: 'device online',
+            timestamp: Date.now(),
+          })
+
+          const peers = store.listOnlineDevices({ groupId })
+          for (const peer of peers) {
+            if (peer.deviceId === deviceId) continue
+            if (ws.readyState !== WebSocket.OPEN) continue
+            ws.send(
+              JSON.stringify(
+                buildPresencePayload(
+                  peer.deviceId,
+                  peer.deviceName,
+                  groupId,
+                  peer.lastSeenAt || Date.now()
+                )
+              )
+            )
+          }
+
+          const selfPresence = buildPresencePayload(deviceId, deviceName, groupId, Date.now())
+          for (const peer of peers) {
+            if (peer.deviceId === deviceId) continue
+            const target = store.getClient(peer.deviceId)
+            if (!target || !target.ws || target.ws.readyState !== WebSocket.OPEN) continue
+            target.ws.send(JSON.stringify(selfPresence))
+          }
+          return
+        }
+
+        if (data.type === 'sms' || data.type === 'test' || data.type === 'device-presence') {
+          if (!groupId) {
+            groupId = String(data.groupId || 'default').trim() || 'default'
+          }
+
+          if (deviceId) {
+            store.touchClient(deviceId, {
+              groupId,
+              deviceName: data.deviceName,
+            })
+          }
+
+          const senderGroup = groupId
+          const recipients = []
+
+          const outbound = data.type === 'device-presence'
+            ? {
+              ...data,
+              timestamp: data.timestamp || Date.now(),
+            }
+            : data
+
+          const peers = store.listOnlineDevices({ groupId: senderGroup })
+          for (const peer of peers) {
+            if (peer.deviceId === deviceId) continue
+            const target = store.getClient(peer.deviceId)
+            if (!target || !target.ws || target.ws.readyState !== WebSocket.OPEN) continue
+            target.ws.send(JSON.stringify(outbound))
+            recipients.push(peer.deviceId)
+          }
+
+          if (data.type === 'device-presence') {
+            store.recordSystemEvent({
+              type: 'device-presence',
+              groupId: senderGroup,
+              deviceId: deviceId || String(data.deviceId || ''),
+              deviceName: String(data.deviceName || deviceName || ''),
+              content: 'device heartbeat',
+              forwardedTo: recipients,
+              timestamp: outbound.timestamp,
+            })
+          } else {
+            store.recordRelayEvent({
+              type: data.type,
+              groupId: senderGroup,
+              deviceId: deviceId || String(data.deviceId || ''),
+              deviceName: String(data.deviceName || deviceName || ''),
+              phone: String(data.phone || ''),
+              content: String(data.content || ''),
+              forwardedTo: recipients,
+              timestamp: Number(data.timestamp) || Date.now(),
+              metadata: {
+                source: 'ws',
+              },
+            })
+          }
+          return
+        }
+
+        store.recordSystemEvent({
+          type: 'ignored',
+          deviceId: deviceId || String(data.deviceId || ''),
+          deviceName: String(data.deviceName || deviceName || ''),
+          groupId: groupId || String(data.groupId || 'default'),
+          content: `unsupported type: ${String(data.type || 'unknown')}`,
+          timestamp: Date.now(),
+        })
+      } catch (error) {
+        store.recordSystemEvent({
+          type: 'invalid-json',
+          deviceId,
+          deviceName,
+          groupId: groupId || 'default',
+          content: error.message,
+          timestamp: Date.now(),
+        })
+      }
+    })
+
+    ws.on('close', () => {
+      if (deviceId) {
+        store.removeClient(deviceId)
+        store.recordSystemEvent({
+          type: 'disconnect',
+          deviceId,
+          deviceName,
+          groupId: groupId || 'default',
+          content: 'device offline',
+          timestamp: Date.now(),
+        })
+      }
+    })
+  })
+
+  return wss
+}
+
+module.exports = {
+  attachWsRelay,
+}

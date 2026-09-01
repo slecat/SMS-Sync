@@ -41,6 +41,7 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
     private static final String TAG = "BackgroundService";
     private static final String LOCK_NAME = BackgroundService.class.getName()
             + ".Lock";
+    private static final String EXTRA_START_REASON = "sms_sync_start_reason";
     public static volatile WakeLock lockStatic = null; // notice static
     AtomicBoolean isRunning = new AtomicBoolean(false);
     private FlutterEngine backgroundEngine;
@@ -105,10 +106,9 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
 
     @Override
     public void onDestroy() {
-        if (!isManuallyStopped) {
-            WatchdogReceiver.enqueue(this);
-        } else {
+        if (isManuallyStopped) {
             config.setManuallyStopped(true);
+            WatchdogReceiver.remove(getApplicationContext());
         }
         stopForeground(true);
         isRunning.set(false);
@@ -219,8 +219,14 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         config.setManuallyStopped(false);
-        WatchdogReceiver.enqueue(this);
+        if (WatchdogSchedulePolicy.shouldSchedule(false, config.getBackgroundHandle())) {
+            WatchdogReceiver.enqueue(
+                    getApplicationContext(),
+                    WatchdogSchedulePolicy.nextCheckIntervalMillis()
+            );
+        }
         runService();
+        dispatchStartReason(intent);
 
         return START_STICKY;
     }
@@ -287,10 +293,25 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         }
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        if (isRunning.get()) {
-            WatchdogReceiver.enqueue(getApplicationContext(), 1000);
+    private void dispatchStartReason(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        final String reason = intent.getStringExtra(EXTRA_START_REASON);
+        if (reason == null || reason.isEmpty()) {
+            return;
+        }
+
+        try {
+            JSONObject args = new JSONObject();
+            args.put("reason", reason);
+
+            JSONObject data = new JSONObject();
+            data.put("method", "native-start-command");
+            data.put("args", args);
+            receiveData(data);
+        } catch (JSONException e) {
+            Log.w(TAG, "Failed to dispatch start reason to background isolate", e);
         }
     }
 
@@ -342,7 +363,7 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
 
             if (method.equalsIgnoreCase("stopService")) {
                 isManuallyStopped = true;
-                WatchdogReceiver.remove(this);
+                WatchdogReceiver.remove(getApplicationContext());
                 stopSelf();
                 result.success(true);
                 return;

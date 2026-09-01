@@ -18,6 +18,7 @@ class MessagePayloadFactory {
     required String deviceId,
     required String deviceName,
     required String groupId,
+    String status = 'online',
     int? timestamp,
   }) {
     return {
@@ -25,6 +26,7 @@ class MessagePayloadFactory {
       'deviceId': deviceId,
       'deviceName': deviceName,
       'groupId': groupId,
+      'status': status,
       'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,
     };
   }

@@ -40,5 +40,18 @@ void main() {
         expect(restored.first['body'], 'code: 123456');
       },
     );
+
+    test(
+      'forward verification code only defaults to false and can be saved',
+      () async {
+        final defaults = await repository.loadSettings();
+        expect(defaults.forwardVerificationCodeOnly, isFalse);
+
+        await repository.saveForwardVerificationCodeOnly(true);
+
+        final updated = await repository.loadSettings();
+        expect(updated.forwardVerificationCodeOnly, isTrue);
+      },
+    );
   });
 }

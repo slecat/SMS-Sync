@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'device_presence_status.dart';
+
 class DevicesTab extends StatelessWidget {
   const DevicesTab({super.key, required this.onlineDevices});
 
@@ -14,7 +16,7 @@ class DevicesTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '在线设备',
+              'Devices',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -24,7 +26,7 @@ class DevicesTab extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '同一组 ID 的在线设备',
+              'Peers currently visible in this group',
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.white.withValues(alpha: 0.5),
@@ -48,7 +50,7 @@ class DevicesTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '暂无在线设备',
+                      'No visible devices',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -57,7 +59,7 @@ class DevicesTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '确保其他设备在同一组 ID 并在线',
+                      'Check that other devices use the same group ID and are running.',
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.3),
@@ -68,6 +70,11 @@ class DevicesTab extends StatelessWidget {
               )
             else
               ...onlineDevices.values.map((device) {
+                final isOnline = isDeviceOnline(
+                  device,
+                  nowMs: DateTime.now().millisecondsSinceEpoch,
+                  timeoutMs: 8000,
+                );
                 final sources = _resolveSources(device);
                 final isDualSource = sources.length > 1;
                 final iconColors = isDualSource
@@ -112,7 +119,7 @@ class DevicesTab extends StatelessWidget {
                                             .isNotEmpty ==
                                         true
                                     ? device['deviceName'] as String
-                                    : '未知设备',
+                                    : 'Unknown device',
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -168,17 +175,21 @@ class DevicesTab extends StatelessWidget {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFF10B981,
-                                ).withValues(alpha: 0.1),
+                                color:
+                                    (isOnline
+                                            ? const Color(0xFF10B981)
+                                            : const Color(0xFFF97316))
+                                        .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
-                                '在线',
+                              child: Text(
+                                isOnline ? 'Online' : 'Offline',
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF10B981),
+                                  color: isOnline
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFF97316),
                                 ),
                               ),
                             ),
@@ -197,21 +208,21 @@ class DevicesTab extends StatelessWidget {
 
   String _formatTimestamp(int? timestamp) {
     if (timestamp == null) {
-      return '刚刚';
+      return 'Just now';
     }
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final diff = now - timestamp;
     if (diff < 60000) {
-      return '刚刚';
+      return 'Just now';
     }
     if (diff < 3600000) {
-      return '${(diff ~/ 60000)}分钟前';
+      return '${(diff ~/ 60000)} min ago';
     }
     if (diff < 86400000) {
-      return '${(diff ~/ 3600000)}小时前';
+      return '${(diff ~/ 3600000)} h ago';
     }
-    return '${(diff ~/ 86400000)}天前';
+    return '${(diff ~/ 86400000)} d ago';
   }
 
   List<String> _resolveSources(Map<String, dynamic> device) {
@@ -241,7 +252,7 @@ class DevicesTab extends StatelessWidget {
   }
 
   String _sourceLabel(String source) {
-    return source == 'server' ? '服务器' : '局域网';
+    return source == 'server' ? 'Server' : 'LAN';
   }
 
   Color _sourceColor(String source) {

@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
@@ -57,6 +59,24 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "isNotificationListenerEnabled" -> result.success(isNotificationListenerEnabled())
                 "openNotificationListenerSettings" -> result.success(openNotificationListenerSettings())
+                "ensureKeepAliveActive" -> {
+                    SmsKeepAliveHelper.startMonitoringServices(
+                        applicationContext,
+                        "platform-ensure-keepalive",
+                    )
+                    result.success(true)
+                }
+                "getAppVersionInfo" -> result.success(getAppVersionInfo())
+                "canRequestPackageInstalls" -> result.success(canRequestPackageInstalls())
+                "openInstallUnknownAppSourcesSettings" -> result.success(openInstallUnknownAppSourcesSettings())
+                "installDownloadedApk" -> {
+                    val filePath = call.argument<String>("filePath")
+                    if (filePath.isNullOrBlank()) {
+                        result.success(false)
+                    } else {
+                        result.success(installDownloadedApk(filePath))
+                    }
+                }
                 "getDeviceId" -> result.success(resolveDeviceId())
                 else -> result.notImplemented()
             }
@@ -231,7 +251,10 @@ class MainActivity : FlutterActivity() {
                 "enabled_notification_listeners",
             ) ?: return false
             val component = ComponentName(this, SmsNotificationListenerService::class.java)
-            enabled.split(':').any { it.equals(component.flattenToString(), ignoreCase = true) }
+            NotificationListenerSupport.isComponentEnabled(
+                enabledListeners = enabled,
+                componentName = component.flattenToString(),
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error checking notification listener: ${e.message}", e)
             false
@@ -256,6 +279,66 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "Error getting device ID: ${e.message}", e)
             "unknown_device"
+        }
+    }
+
+    private fun getAppVersionInfo(): Map<String, Any> {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(0),
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, 0)
+        }
+
+        return mapOf(
+            "version" to (packageInfo.versionName ?: "0.0.0"),
+            "buildNumber" to getPackageBuildNumber(packageInfo),
+        )
+    }
+
+    private fun getPackageBuildNumber(packageInfo: PackageInfo): Long {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode.toLong()
+        }
+    }
+
+    private fun canRequestPackageInstalls(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return true
+        }
+
+        return !AppUpdateInstaller.requiresInstallPermission(
+            sdkInt = Build.VERSION.SDK_INT,
+            canRequestPackageInstalls = packageManager.canRequestPackageInstalls(),
+        )
+    }
+
+    private fun openInstallUnknownAppSourcesSettings(): Boolean {
+        return try {
+            startActivity(
+                AppUpdateInstaller.buildManageUnknownAppSourcesIntent(packageName),
+            )
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening install unknown apps settings: ${e.message}", e)
+            false
+        }
+    }
+
+    private fun installDownloadedApk(filePath: String): Boolean {
+        return try {
+            val contentUri = AppUpdateInstaller.resolveContentUri(this, filePath)
+            startActivity(AppUpdateInstaller.buildInstallIntent(contentUri))
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error installing downloaded apk: ${e.message}", e)
+            false
         }
     }
 

@@ -10,7 +10,13 @@ class DeviceRegistry {
   }
 
   updateServerPresence(data, selfDeviceId, now = Date.now()) {
-    return this.updatePresence(this.serverDevices, data, selfDeviceId, 'server', now);
+    return this.updatePresence(
+      this.serverDevices,
+      data,
+      selfDeviceId,
+      'server',
+      now
+    );
   }
 
   clearServer() {
@@ -25,6 +31,9 @@ class DeviceRegistry {
     let changed = false;
 
     for (const [deviceId, device] of this.lanDevices) {
+      if (device.status === 'online') {
+        continue;
+      }
       if (now - device.timestamp > this.deviceTimeout) {
         this.lanDevices.delete(deviceId);
         changed = true;
@@ -32,6 +41,9 @@ class DeviceRegistry {
     }
 
     for (const [deviceId, device] of this.serverDevices) {
+      if (device.status === 'online') {
+        continue;
+      }
       if (now - device.timestamp > this.deviceTimeout) {
         this.serverDevices.delete(deviceId);
         changed = true;
@@ -81,6 +93,7 @@ class DeviceRegistry {
         source: preferredSource,
         sources,
         sourceTimestamps,
+        status: this.mergeStatus(existing.status, device.status),
         timestamp: Math.max(existing.timestamp || 0, device.timestamp || 0),
       });
     };
@@ -107,21 +120,42 @@ class DeviceRegistry {
     }
 
     const normalizedName = String(data.deviceName || '').trim();
-    const deviceName = normalizedName || '未知设备';
+    const deviceName = normalizedName || 'Unknown device';
+    const status =
+      data.status === 'offline'
+        ? 'offline'
+        : data.status === 'online'
+          ? 'online'
+          : undefined;
     const existing = store.get(deviceId);
+
+    if (status === 'offline') {
+      const removed = store.delete(deviceId);
+      return removed;
+    }
 
     store.set(deviceId, {
       deviceId,
       deviceName,
-      // Always use local receive time to avoid remote clock skew.
       timestamp: now,
       source,
+      status,
     });
 
     if (!existing) {
       return true;
     }
-    return existing.deviceName !== deviceName;
+    return existing.deviceName !== deviceName || existing.status !== status;
+  }
+
+  mergeStatus(leftStatus, rightStatus) {
+    if (leftStatus === 'offline' || rightStatus === 'offline') {
+      return 'offline';
+    }
+    if (leftStatus === 'online' || rightStatus === 'online') {
+      return 'online';
+    }
+    return undefined;
   }
 }
 

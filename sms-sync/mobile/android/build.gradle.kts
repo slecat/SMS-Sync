@@ -14,6 +14,12 @@ val newBuildDir: Directory =
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
+    val projectRoot = project.projectDir.toPath().root?.toString()
+    val buildRoot = newBuildDir.asFile.toPath().root?.toString()
+    if (projectRoot == null || buildRoot == null || projectRoot != buildRoot) {
+        return@subprojects
+    }
+
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }

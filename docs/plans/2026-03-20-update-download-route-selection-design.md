@@ -11,8 +11,8 @@ Optimize desktop and mobile app updates so users can manually choose one of the 
 - Both clients continue using the Ops software download service as the update metadata source.
 - Route selection happens when the user starts a download, not in advance in settings.
 - Users choose manually every time a new version is downloaded.
-- Only Ops-provided mirror routes are shown to users.
-- `local` and any implicit default download source are not exposed as user-selectable routes.
+- Ops-provided download routes are shown to users, including `local` when Ops exposes it.
+- `local` remains selectable alongside mirror routes instead of being treated as an internal-only fallback.
 - If Ops does not provide a human-readable route name, clients may display the host or full URL.
 - Clients must not silently switch to another route if the selected route fails.
 
@@ -80,7 +80,7 @@ Normalization rules:
 
 1. Read candidate mirror routes from `download_sources` first when that field provides structured mirror items.
 2. Fall back to `download_urls` when only a plain URL list is available.
-3. Ignore `local` or other non-mirror default-source entries.
+3. Keep `local` when Ops exposes it as a download source so users can choose between the default package and mirrors.
 4. Filter invalid, empty, or duplicate URLs.
 5. If no display name exists, build the label from the URL host and keep the full URL available as secondary text.
 
@@ -139,7 +139,7 @@ Mobile fallback behavior:
 
 - Checking for updates still happens through the existing manual and startup flows.
 - Route selection is only shown when the user initiates a download for an available update.
-- Route selection lists only mirror routes from Ops.
+- Route selection lists Ops download routes, including the default `local` package when present.
 - Each route row shows:
   - a primary label
   - the full URL as secondary detail when useful
@@ -184,4 +184,4 @@ Mobile:
 - no server-side change to Ops download APIs
 - no persistent per-device default route preference
 - no automatic retry across multiple mirrors
-- no exposure of `local` or implicit default source as a user-facing route choice
+- no automatic hiding of Ops-provided download sources from the user

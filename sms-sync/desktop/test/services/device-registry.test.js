@@ -77,3 +77,57 @@ test('DeviceRegistry should treat timestamp-only refresh as unchanged', () => {
   assert.equal(firstChanged, true);
   assert.equal(secondChanged, false);
 });
+
+test('DeviceRegistry should keep lifecycle online devices after timeout', () => {
+  const now = Date.now();
+  const registry = new DeviceRegistry({ deviceTimeout: 1000 });
+
+  registry.updateServerPresence(
+    {
+      deviceId: 'mobile-1',
+      deviceName: 'mounted-phone',
+      timestamp: now - 5000,
+      status: 'online',
+    },
+    'self',
+    now - 5000
+  );
+
+  const changed = registry.cleanup(now);
+
+  assert.equal(changed, false);
+  const devices = registry.getCombinedDevices();
+  assert.equal(devices.length, 1);
+  assert.equal(devices[0].deviceId, 'mobile-1');
+  assert.equal(devices[0].status, 'online');
+});
+
+test('DeviceRegistry should remove device on explicit offline presence', () => {
+  const now = Date.now();
+  const registry = new DeviceRegistry({ deviceTimeout: 1000 });
+
+  registry.updateLanPresence(
+    {
+      deviceId: 'mobile-1',
+      deviceName: 'mounted-phone',
+      timestamp: now,
+      status: 'online',
+    },
+    'self',
+    now
+  );
+
+  const changed = registry.updateLanPresence(
+    {
+      deviceId: 'mobile-1',
+      deviceName: 'mounted-phone',
+      timestamp: now + 100,
+      status: 'offline',
+    },
+    'self',
+    now + 100
+  );
+
+  assert.equal(changed, true);
+  assert.deepEqual(registry.getCombinedDevices(), []);
+});

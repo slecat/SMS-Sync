@@ -1,9 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../app/service_registry.dart';
 import '../../platform/channels.dart';
 import '../../platform/runtime_support.dart';
+import '../../services/app_update_service.dart';
+import 'home_snack_bar.dart';
+import 'update_download_route_sheet.dart';
 
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key, required this.deviceId});
@@ -14,20 +19,30 @@ class SettingsTab extends StatefulWidget {
   State<SettingsTab> createState() => _SettingsTabState();
 }
 
-class _SettingsTabState extends State<SettingsTab>
-    with WidgetsBindingObserver {
+class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
+  final AppUpdateService _appUpdateService = appServices.appUpdateService;
+
   PermissionStatus _smsPermission = PermissionStatus.denied;
   PermissionStatus _notificationPermission = PermissionStatus.denied;
   PermissionStatus _batteryPermission = PermissionStatus.denied;
   bool _isNotificationListenerEnabled = false;
   bool _isRefreshing = true;
   bool _isOpeningNotificationListenerSettings = false;
+  bool _forwardVerificationCodeOnly = false;
+  bool _isSavingForwardingSetting = false;
+  bool _isCheckingUpdate = false;
+  bool _isInstallingUpdate = false;
+  AppUpdateState _updateState = AppUpdateState.initial();
+  AppVersionInfo? _currentVersionInfo;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _updateState = _appUpdateService.state;
+    _loadForwardingSettings();
     _refreshPermissions();
+    _runStartupUpdateCheck();
   }
 
   @override
@@ -41,6 +56,11 @@ class _SettingsTabState extends State<SettingsTab>
     if (state == AppLifecycleState.resumed) {
       _refreshPermissions();
     }
+  }
+
+  Future<void> _runStartupUpdateCheck() async {
+    await Future<void>.delayed(const Duration(milliseconds: 1200));
+    await _checkForUpdates(silent: true);
   }
 
   Future<void> _refreshPermissions() async {
@@ -92,6 +112,245 @@ class _SettingsTabState extends State<SettingsTab>
     });
   }
 
+  Future<void> _loadForwardingSettings() async {
+    try {
+      final settings = await appServices.settingsRepository.loadSettings();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _forwardVerificationCodeOnly = settings.forwardVerificationCodeOnly;
+      });
+    } catch (error) {
+      debugPrint('Failed to load forwarding settings: $error');
+    }
+  }
+
+  Future<AppVersionInfo> _loadCurrentVersionInfo() async {
+    if (_currentVersionInfo != null) {
+      return _currentVersionInfo!;
+    }
+
+    final result = await platformChannel.invokeMethod<Map<Object?, Object?>>(
+      'getAppVersionInfo',
+    );
+    final version = (result?['version'] ?? '').toString().trim();
+    final buildNumber =
+        int.tryParse((result?['buildNumber'] ?? '0').toString()) ?? 0;
+    if (version.isEmpty) {
+      throw StateError('无法读取当前应用版本');
+    }
+
+    _currentVersionInfo = AppVersionInfo(
+      version: version,
+      buildNumber: buildNumber,
+    );
+    return _currentVersionInfo!;
+  }
+
+  Future<void> _checkForUpdates({required bool silent}) async {
+    if (_isCheckingUpdate) {
+      return;
+    }
+
+    setState(() {
+      _isCheckingUpdate = true;
+    });
+
+    try {
+      final currentVersion = await _loadCurrentVersionInfo();
+      final nextState = await _appUpdateService.checkForUpdates(
+        currentVersion: currentVersion,
+      );
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _updateState = nextState;
+      });
+
+      if (!silent) {
+        _showUpdateCheckFeedback(nextState);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      final nextState = _updateState.copyWith(
+        status: AppUpdateStatus.error,
+        message: error.toString(),
+      );
+      setState(() {
+        _updateState = nextState;
+      });
+      if (!silent) {
+        HomeSnackBar.show(context, '检查更新失败', tone: HomeSnackBarTone.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCheckingUpdate = false;
+        });
+      }
+    }
+  }
+
+  void _showUpdateCheckFeedback(AppUpdateState state) {
+    if (state.status == AppUpdateStatus.upToDate) {
+      HomeSnackBar.show(context, '当前已经是最新版本');
+      return;
+    }
+    if (state.status == AppUpdateStatus.available) {
+      HomeSnackBar.show(context, '发现新版本，可以开始下载');
+      return;
+    }
+    if (state.status == AppUpdateStatus.error) {
+      HomeSnackBar.show(context, '检查更新失败', tone: HomeSnackBarTone.error);
+    }
+  }
+
+  Future<void> _downloadOrInstallUpdate() async {
+    if (_isInstallingUpdate || _isCheckingUpdate) {
+      return;
+    }
+
+    if (_updateState.status == AppUpdateStatus.readyToInstall &&
+        _updateState.downloadedFilePath != null) {
+      await _installDownloadedApk();
+      return;
+    }
+
+    final latestRelease = _updateState.latestRelease;
+    if (latestRelease == null) {
+      return;
+    }
+
+    final selectedOption = await _selectDownloadOption(latestRelease);
+    if (_updateState.status != AppUpdateStatus.readyToInstall &&
+        latestRelease.downloadOptions.isNotEmpty &&
+        selectedOption == null) {
+      return;
+    }
+
+    final nextState = await _appUpdateService.downloadUpdate(
+      release: latestRelease,
+      selectedOption: selectedOption,
+      onStateChanged: (state) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _updateState = state;
+        });
+      },
+    );
+
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _updateState = nextState;
+    });
+
+    if (nextState.status == AppUpdateStatus.readyToInstall) {
+      await _installDownloadedApk();
+      return;
+    }
+
+    if (nextState.status == AppUpdateStatus.error) {
+      HomeSnackBar.show(context, '下载更新失败', tone: HomeSnackBarTone.error);
+    }
+  }
+
+  Future<AppDownloadOption?> _selectDownloadOption(AppRelease release) async {
+    final options = release.downloadOptions
+        .where((option) => option.url.trim().isNotEmpty)
+        .toList(growable: false);
+
+    if (options.isEmpty) {
+      return null;
+    }
+
+    if (options.length == 1) {
+      return options.first;
+    }
+
+    return showModalBottomSheet<AppDownloadOption>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return UpdateDownloadRouteSheet(
+          options: options,
+          onSelected: (option) {
+            Navigator.of(context).pop(option);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _installDownloadedApk() async {
+    final downloadedFilePath = _updateState.downloadedFilePath;
+    if (downloadedFilePath == null || downloadedFilePath.isEmpty) {
+      return;
+    }
+    if (_isInstallingUpdate) {
+      return;
+    }
+
+    setState(() {
+      _isInstallingUpdate = true;
+    });
+
+    try {
+      final canInstall =
+          await platformChannel.invokeMethod<bool>(
+            'canRequestPackageInstalls',
+          ) ??
+          false;
+      if (!canInstall) {
+        await platformChannel.invokeMethod<bool>(
+          'openInstallUnknownAppSourcesSettings',
+        );
+        if (mounted) {
+          HomeSnackBar.show(
+            context,
+            '请允许安装未知应用后重试',
+            tone: HomeSnackBarTone.warning,
+          );
+        }
+        return;
+      }
+
+      final success =
+          await platformChannel.invokeMethod<bool>('installDownloadedApk', {
+            'filePath': downloadedFilePath,
+          }) ??
+          false;
+      if (!mounted) {
+        return;
+      }
+
+      if (success) {
+        HomeSnackBar.show(context, '已启动系统安装器');
+      } else {
+        HomeSnackBar.show(context, '启动安装失败', tone: HomeSnackBarTone.error);
+      }
+    } on PlatformException {
+      if (mounted) {
+        HomeSnackBar.show(context, '启动安装失败', tone: HomeSnackBarTone.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isInstallingUpdate = false;
+        });
+      }
+    }
+  }
+
   Future<void> _requestSmsPermission() async {
     await Permission.sms.request();
     await _refreshPermissions();
@@ -118,8 +377,11 @@ class _SettingsTabState extends State<SettingsTab>
       _isOpeningNotificationListenerSettings = true;
     });
     try {
-      await platformChannel.invokeMethod<bool>('openNotificationListenerSettings');
-    } on PlatformException {
+      await platformChannel.invokeMethod<bool>(
+        'openNotificationListenerSettings',
+      );
+    } on PlatformException catch (error) {
+      debugPrint('Failed to open notification listener settings: $error');
     } finally {
       if (mounted) {
         setState(() {
@@ -131,6 +393,52 @@ class _SettingsTabState extends State<SettingsTab>
 
   Future<void> _openSystemSettings() async {
     await openAppSettings();
+  }
+
+  Future<void> _setForwardVerificationCodeOnly(bool value) async {
+    if (_isSavingForwardingSetting) {
+      return;
+    }
+
+    final previousValue = _forwardVerificationCodeOnly;
+    setState(() {
+      _forwardVerificationCodeOnly = value;
+      _isSavingForwardingSetting = true;
+    });
+
+    try {
+      await appServices.settingsRepository.saveForwardVerificationCodeOnly(
+        value,
+      );
+
+      if (supportsAndroidSmsSyncRuntime) {
+        final service = FlutterBackgroundService();
+        final isRunning = await service.isRunning();
+        if (!isRunning) {
+          await service.startService();
+        }
+        service.invoke('reconnect-server');
+      }
+
+      if (!mounted) {
+        return;
+      }
+      HomeSnackBar.show(context, value ? '已开启只转发验证码消息' : '已关闭只转发验证码消息');
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _forwardVerificationCodeOnly = previousValue;
+      });
+      HomeSnackBar.show(context, '保存转发设置失败', tone: HomeSnackBarTone.error);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSavingForwardingSetting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -157,11 +465,107 @@ class _SettingsTabState extends State<SettingsTab>
             ),
             const SizedBox(height: 8),
             Text(
-              '权限状态、通知监听与设备信息',
+              '权限状态、版本更新与设备信息',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.55),
               ),
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: '应用更新',
+              icon: Icons.system_update_rounded,
+              trailing: IconButton(
+                onPressed: _isCheckingUpdate
+                    ? null
+                    : () {
+                        _checkForUpdates(silent: false);
+                      },
+                icon: _isCheckingUpdate
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(
+                        Icons.refresh_rounded,
+                        color: Color(0xFF60A5FA),
+                        size: 18,
+                      ),
+                tooltip: '检查更新',
+              ),
+              children: [
+                _UpdateSummary(
+                  currentVersionLabel: _formatVersionLabel(
+                    _updateState.currentVersion,
+                    _updateState.currentBuildNumber,
+                  ),
+                  latestVersionLabel: _formatVersionLabel(
+                    _updateState.latestRelease?.version,
+                    _updateState.latestRelease?.buildNumber ?? 0,
+                    emptyLabel: '尚未检测',
+                  ),
+                  statusText: _updateStatusText(),
+                  statusColor: _updateStatusColor(),
+                  progress: _updateState.downloadProgress,
+                  showProgress:
+                      _updateState.status == AppUpdateStatus.downloading ||
+                      _updateState.downloadProgress > 0,
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: _isCheckingUpdate
+                        ? null
+                        : () {
+                            _checkForUpdates(silent: false);
+                          },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF60A5FA),
+                      side: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Text(_isCheckingUpdate ? '检查中...' : '手动检查更新'),
+                  ),
+                ),
+                if (_shouldShowUpdateActionButton()) ...[
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed:
+                          (_updateState.status == AppUpdateStatus.downloading ||
+                              _isInstallingUpdate)
+                          ? null
+                          : _downloadOrInstallUpdate,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF2563EB),
+                      ),
+                      child: Text(_updateActionLabel()),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: '消息转发',
+              icon: Icons.sms_outlined,
+              children: [
+                _SwitchItem(
+                  icon: Icons.password_rounded,
+                  title: '只转发验证码消息',
+                  description: supportsAndroidSmsSyncRuntime
+                      ? '开启后，普通短信不会同步到其他设备。'
+                      : '当前平台不支持短信同步，该设置不会生效。',
+                  value: _forwardVerificationCodeOnly,
+                  onChanged: _isSavingForwardingSetting
+                      ? null
+                      : _setForwardVerificationCodeOnly,
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             _SectionCard(
@@ -192,7 +596,9 @@ class _SettingsTabState extends State<SettingsTab>
                   statusIcon: listenerVisual.icon,
                   actionLabel: _isNotificationListenerEnabled
                       ? '去设置'
-                      : (_isOpeningNotificationListenerSettings ? '打开中...' : '去开启'),
+                      : (_isOpeningNotificationListenerSettings
+                            ? '打开中...'
+                            : '去开启'),
                   onAction: _openNotificationListenerSettings,
                 ),
                 const SizedBox(height: 8),
@@ -216,7 +622,9 @@ class _SettingsTabState extends State<SettingsTab>
                   statusText: notificationVisual.label,
                   statusColor: notificationVisual.color,
                   statusIcon: notificationVisual.icon,
-                  actionLabel: _notificationPermission.isGranted ? '去设置' : '去授权',
+                  actionLabel: _notificationPermission.isGranted
+                      ? '去设置'
+                      : '去授权',
                   onAction: _notificationPermission.isGranted
                       ? _openSystemSettings
                       : _requestNotificationPermission,
@@ -279,6 +687,64 @@ class _SettingsTabState extends State<SettingsTab>
         ),
       ),
     );
+  }
+
+  bool _shouldShowUpdateActionButton() {
+    return _updateState.status == AppUpdateStatus.available ||
+        _updateState.status == AppUpdateStatus.downloading ||
+        _updateState.status == AppUpdateStatus.readyToInstall;
+  }
+
+  String _updateActionLabel() {
+    if (_isInstallingUpdate) {
+      return '安装中...';
+    }
+    if (_updateState.status == AppUpdateStatus.downloading) {
+      return '下载中...';
+    }
+    if (_updateState.status == AppUpdateStatus.readyToInstall) {
+      return '安装更新';
+    }
+    return '下载并安装';
+  }
+
+  String _formatVersionLabel(
+    String? version,
+    int buildNumber, {
+    String emptyLabel = '-',
+  }) {
+    final normalizedVersion = (version ?? '').trim();
+    if (normalizedVersion.isEmpty) {
+      return emptyLabel;
+    }
+    if (buildNumber > 0) {
+      return 'v$normalizedVersion ($buildNumber)';
+    }
+    return 'v$normalizedVersion';
+  }
+
+  String _updateStatusText() {
+    return switch (_updateState.status) {
+      AppUpdateStatus.idle => '尚未检查更新',
+      AppUpdateStatus.checking => '正在检查更新...',
+      AppUpdateStatus.available => '发现新版本，可以开始下载',
+      AppUpdateStatus.upToDate => '当前已经是最新版本',
+      AppUpdateStatus.downloading => '正在下载更新包...',
+      AppUpdateStatus.readyToInstall => '安装包已就绪，可以继续安装',
+      AppUpdateStatus.error =>
+        _updateState.message.isEmpty ? '更新失败，请稍后重试' : _updateState.message,
+    };
+  }
+
+  Color _updateStatusColor() {
+    return switch (_updateState.status) {
+      AppUpdateStatus.available => const Color(0xFF60A5FA),
+      AppUpdateStatus.upToDate => const Color(0xFF10B981),
+      AppUpdateStatus.downloading => const Color(0xFF60A5FA),
+      AppUpdateStatus.readyToInstall => const Color(0xFF10B981),
+      AppUpdateStatus.error => const Color(0xFFEF4444),
+      _ => Colors.white.withValues(alpha: 0.72),
+    };
   }
 
   _PermissionVisual _permissionVisual(PermissionStatus status) {
@@ -390,6 +856,111 @@ class _SectionCard extends StatelessWidget {
   }
 }
 
+class _UpdateSummary extends StatelessWidget {
+  const _UpdateSummary({
+    required this.currentVersionLabel,
+    required this.latestVersionLabel,
+    required this.statusText,
+    required this.statusColor,
+    required this.progress,
+    required this.showProgress,
+  });
+
+  final String currentVersionLabel;
+  final String latestVersionLabel;
+  final String statusText;
+  final Color statusColor;
+  final int progress;
+  final bool showProgress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F141C),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _InfoRow(label: '当前版本', value: currentVersionLabel),
+          const SizedBox(height: 8),
+          _InfoRow(label: '最新版本', value: latestVersionLabel),
+          const SizedBox(height: 10),
+          Text(
+            statusText,
+            style: TextStyle(
+              color: statusColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          if (showProgress) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress <= 0 ? 0 : progress / 100,
+                minHeight: 8,
+                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF60A5FA),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '$progress%',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.62),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 72,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.58),
+              fontSize: 12,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _PermissionItem extends StatelessWidget {
   const _PermissionItem({
     required this.icon,
@@ -481,6 +1052,74 @@ class _PermissionItem extends StatelessWidget {
               ),
               child: Text(actionLabel!),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SwitchItem extends StatelessWidget {
+  const _SwitchItem({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F141C),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2563EB).withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: const Color(0xFF60A5FA), size: 18),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.58),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Switch.adaptive(value: value, onChanged: onChanged),
         ],
       ),
     );

@@ -13,24 +13,25 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
-        val shouldStart = action == Intent.ACTION_USER_UNLOCKED
-
-        if (shouldStart) {
-            val config = Config(context)
-            val autoStart = config.isAutoStartOnBoot
-            val manuallyStopped = config.isManuallyStopped
-            val backgroundHandle = config.backgroundHandle
-
-            if (!autoStart || manuallyStopped || backgroundHandle <= 0) {
-                Log.d(
-                    TAG,
-                    "Skipped auto start: action=$action, autoStart=$autoStart, manuallyStopped=$manuallyStopped, handle=$backgroundHandle",
-                )
-                return
-            }
-
-            Log.d(TAG, "Auto start trigger received: $action")
-            BackgroundServiceStarter.ensureRunning(context, "boot-event:$action")
+        if (!SmsKeepAlivePolicy.isBootLikeAction(action)) {
+            return
         }
+
+        val config = Config(context)
+        val autoStart = config.isAutoStartOnBoot
+        val manuallyStopped = config.isManuallyStopped
+        val backgroundHandle = config.backgroundHandle
+
+        if (!SmsKeepAlivePolicy.shouldRestore(autoStart, manuallyStopped, backgroundHandle)) {
+            Log.d(
+                TAG,
+                "Skipped auto start: action=$action, autoStart=$autoStart, manuallyStopped=$manuallyStopped, handle=$backgroundHandle",
+            )
+            WatchdogReceiver.remove(context)
+            return
+        }
+
+        Log.d(TAG, "Auto start trigger received: $action")
+        SmsKeepAliveHelper.startMonitoringServices(context, "boot-event:$action")
     }
 }

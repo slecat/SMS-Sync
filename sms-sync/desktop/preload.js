@@ -19,4 +19,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getAutoLaunch: () => ipcRenderer.invoke('get-auto-launch'),
   setAutoLaunch: (enabled) => ipcRenderer.invoke('set-auto-launch', enabled),
   getDevices: () => ipcRenderer.invoke('get-devices'),
+  getUpdateState: () => ipcRenderer.invoke('get-update-state'),
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  downloadUpdate: (selectedUrl) => ipcRenderer.invoke('download-update', selectedUrl),
+  onUpdateStateChange: (callback) =>
+    ipcRenderer.on('update-state-change', (event, updateState) =>
+      callback(updateState)
+    ),
 });

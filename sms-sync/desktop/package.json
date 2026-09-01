@@ -1,6 +1,7 @@
 {
   "name": "sms-sync-desktop",
-  "version": "1.0.0",
+  "version": "1.2.4",
+  "buildNumber": 11,
   "main": "index.js",
   "scripts": {
     "start": "electron .",
@@ -31,10 +32,11 @@
     "appId": "com.smsforward.app",
     "productName": "短信转发",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "build"
     },
     "win": {
-      "signAndEditExecutable": false,
+      "icon": "build/icon.ico",
       "target": [
         "portable",
         "nsis"

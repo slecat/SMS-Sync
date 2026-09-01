@@ -218,6 +218,21 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
+    if (result.status == ReadLatestSmsStatus.filtered) {
+      setState(() {
+        _viewState = _viewState.withLatestSms(
+          from: result.from,
+          body: result.body,
+        );
+      });
+      HomeSnackBar.show(
+        context,
+        '最新短信不是验证码，已跳过转发',
+        tone: HomeSnackBarTone.warning,
+      );
+      return;
+    }
+
     if (result.status == ReadLatestSmsStatus.notFound) {
       HomeSnackBar.show(context, '没有找到短信', tone: HomeSnackBarTone.warning);
       return;

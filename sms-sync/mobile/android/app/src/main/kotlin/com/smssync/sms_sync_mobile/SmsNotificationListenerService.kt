@@ -11,6 +11,20 @@ class SmsNotificationListenerService : NotificationListenerService() {
         private var lastSignature: String? = null
     }
 
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        Log.d(TAG, "Notification listener connected")
+    }
+
+    override fun onListenerDisconnected() {
+        super.onListenerDisconnected()
+        Log.w(TAG, "Notification listener disconnected, requesting rebind")
+        SmsKeepAliveHelper.requestNotificationListenerRebind(
+            applicationContext,
+            "listener-disconnected",
+        )
+    }
+
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         if (sbn == null) {
             return

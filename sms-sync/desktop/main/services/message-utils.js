@@ -1,6 +1,25 @@
 const MESSAGE_DEDUP_TIME = 5000;
+const verificationCodeDigitsPattern = /(?<!\d)\d{4,8}(?!\d)/;
+const verificationCodeKeywordPattern =
+  /(验证码|校验码|动态码|otp|one[\s-]?time|verification\s*code|security\s*code|\bcode\b)/i;
+
+function isVerificationCodeMessage(text = '') {
+  const normalized = String(text).trim();
+  if (!normalized) {
+    return false;
+  }
+
+  return (
+    verificationCodeKeywordPattern.test(normalized) &&
+    verificationCodeDigitsPattern.test(normalized)
+  );
+}
 
 function extractVerificationCode(text = '') {
+  if (!isVerificationCodeMessage(text)) {
+    return null;
+  }
+
   const patterns = [
     /验证码[是：:]*\s*([0-9]{4,8})/i,
     /校验码[是：:]*\s*([0-9]{4,8})/i,
@@ -48,6 +67,7 @@ function createMessageDeduper(defaultDedupTime = MESSAGE_DEDUP_TIME) {
 
 module.exports = {
   MESSAGE_DEDUP_TIME,
+  isVerificationCodeMessage,
   extractVerificationCode,
   createMessageDeduper,
 };

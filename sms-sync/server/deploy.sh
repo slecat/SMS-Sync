@@ -33,18 +33,18 @@ echo ""
 
 # 3. 停止旧进程
 echo -e "${GREEN}[2/5] 停止旧进程...${NC}"
-pm2 stop sms-sync-server 2>/dev/null
-pm2 delete sms-sync-server 2>/dev/null
+pm2 stop "Ops SMS Sync Service" 2>/dev/null
+pm2 delete "Ops SMS Sync Service" 2>/dev/null
 echo -e "${GREEN}✓ 旧进程已清理${NC}"
 echo ""
 
 # 4. 启动新进程
 echo -e "${GREEN}[3/5] 启动服务...${NC}"
-pm2 start index.js --name sms-sync-server
+PORT=8004 pm2 start index.js --name "Ops SMS Sync Service"
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}服务启动失败！${NC}"
-    echo -e "${YELLOW}查看错误日志: pm2 logs sms-sync-server --err${NC}"
+    echo -e "${YELLOW}查看错误日志: pm2 logs \"Ops SMS Sync Service\" --err${NC}"
     exit 1
 fi
 
@@ -71,9 +71,9 @@ echo -e "服务地址: ${YELLOW}ws://$(curl -s ifconfig.me):8004${NC}"
 echo ""
 echo -e "常用命令："
 echo -e "  查看状态: ${YELLOW}pm2 status${NC}"
-echo -e "  查看日志: ${YELLOW}pm2 logs sms-sync-server --lines 100 -f${NC}"
-echo -e "  重启服务: ${YELLOW}pm2 restart sms-sync-server${NC}"
-echo -e "  停止服务: ${YELLOW}pm2 stop sms-sync-server${NC}"
+echo -e "  查看日志: ${YELLOW}pm2 logs \"Ops SMS Sync Service\" --lines 100 -f${NC}"
+echo -e "  重启服务: ${YELLOW}pm2 restart \"Ops SMS Sync Service\"${NC}"
+echo -e "  停止服务: ${YELLOW}pm2 stop \"Ops SMS Sync Service\"${NC}"
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo ""

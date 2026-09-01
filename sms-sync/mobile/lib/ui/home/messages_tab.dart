@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'device_presence_status.dart';
+
 const int _deviceOnlineWindowMs = 8000;
 
 class MessagesTab extends StatelessWidget {
@@ -36,7 +38,16 @@ class MessagesTab extends StatelessWidget {
             return bTs.compareTo(aTs);
           });
 
-    final onlineCount = sortedDevices.where(_isOnline).length;
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final onlineCount = sortedDevices
+        .where(
+          (device) => isDeviceOnline(
+            device,
+            nowMs: nowMs,
+            timeoutMs: _deviceOnlineWindowMs,
+          ),
+        )
+        .length;
     final runningHealthy = serverStatus == 'connected' || onlineCount > 0;
     final serverLabel = switch (serverStatus) {
       'connected' => '服务器已连接',
@@ -313,15 +324,6 @@ class MessagesTab extends StatelessWidget {
       ),
     );
   }
-
-  bool _isOnline(Map<String, dynamic> device) {
-    final timestamp = device['timestamp'] as int?;
-    if (timestamp == null) {
-      return false;
-    }
-    return DateTime.now().millisecondsSinceEpoch - timestamp <=
-        _deviceOnlineWindowMs;
-  }
 }
 
 class _MetricTile extends StatelessWidget {
@@ -378,8 +380,11 @@ class _DeviceStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final timestamp = device['timestamp'] as int?;
     final nowMs = DateTime.now().millisecondsSinceEpoch;
-    final isOnline =
-        timestamp != null && nowMs - timestamp <= _deviceOnlineWindowMs;
+    final isOnline = isDeviceOnline(
+      device,
+      nowMs: nowMs,
+      timeoutMs: _deviceOnlineWindowMs,
+    );
     final sources = _resolveSources(device);
     final statusColor = isOnline
         ? const Color(0xFF22C55E)

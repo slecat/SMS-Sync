@@ -1,9 +1,20 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
+  isVerificationCodeMessage,
   extractVerificationCode,
   createMessageDeduper,
 } = require('../../main/services/message-utils');
+
+test('isVerificationCodeMessage should detect otp messages conservatively', () => {
+  assert.equal(
+    isVerificationCodeMessage('【应用】您的验证码是 123456，5分钟内有效。'),
+    true
+  );
+  assert.equal(isVerificationCodeMessage('Your code is 246810.'), true);
+  assert.equal(isVerificationCodeMessage('物流单号 123456，请及时查收。'), false);
+  assert.equal(isVerificationCodeMessage(''), false);
+});
 
 test('extractVerificationCode should return expected code from common message formats', () => {
   assert.equal(
@@ -16,6 +27,7 @@ test('extractVerificationCode should return expected code from common message fo
 
 test('extractVerificationCode should return null when no code exists', () => {
   assert.equal(extractVerificationCode('这是一条普通消息，没有验证码。'), null);
+  assert.equal(extractVerificationCode('物流单号 123456，请及时查收。'), null);
 });
 
 test('createMessageDeduper should block duplicates within dedup window', async () => {

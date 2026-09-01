@@ -5,6 +5,63 @@ void main() {
   group('MessageRoutingPolicy', () {
     const policy = MessageRoutingPolicy();
 
+    test('server delivery should prefer live channel when available', () {
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: 'ws://example',
+          hasLiveChannel: true,
+          requireServerAck: true,
+        ),
+        ServerDeliveryMode.existingChannel,
+      );
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: 'ws://example',
+          hasLiveChannel: true,
+          requireServerAck: false,
+        ),
+        ServerDeliveryMode.existingChannel,
+      );
+    });
+
+    test('server delivery should fall back to direct connection without live channel', () {
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: 'ws://example',
+          hasLiveChannel: false,
+          requireServerAck: true,
+        ),
+        ServerDeliveryMode.directConnection,
+      );
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: 'ws://example',
+          hasLiveChannel: false,
+          requireServerAck: false,
+        ),
+        ServerDeliveryMode.directConnection,
+      );
+    });
+
+    test('server delivery should disable server sync without serverUrl', () {
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: '',
+          hasLiveChannel: true,
+          requireServerAck: true,
+        ),
+        ServerDeliveryMode.disabled,
+      );
+      expect(
+        policy.resolveServerDeliveryMode(
+          serverUrl: '',
+          hasLiveChannel: false,
+          requireServerAck: false,
+        ),
+        ServerDeliveryMode.disabled,
+      );
+    });
+
     test('live channel route should require serverUrl and live channel', () {
       expect(
         policy.shouldSendToServerWithLiveChannel(

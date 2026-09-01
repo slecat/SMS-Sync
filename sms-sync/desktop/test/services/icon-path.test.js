@@ -3,6 +3,33 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { getIconPath } = require('../../main/services/icon-path');
 
+test('getIconPath should prefer build ico icon inside desktop project', () => {
+  const baseDir = path.join('C:', 'repo', 'desktop', 'main');
+  const preferred = path.join(baseDir, '..', 'build', 'icon.ico');
+  const pngFallback = path.join(baseDir, '..', 'build', 'icon.png');
+  const desktopRootIcon = path.join(baseDir, '..', '..', 'desktop_icon.png');
+  const existing = new Set([preferred, pngFallback, desktopRootIcon]);
+
+  const result = getIconPath({
+    baseDir,
+    existsSync: (filePath) => existing.has(filePath),
+  });
+
+  assert.equal(result, preferred);
+});
+
+test('getIconPath should fallback to build png when ico is missing', () => {
+  const baseDir = path.join('C:', 'repo', 'desktop', 'main');
+  const fallback = path.join(baseDir, '..', 'build', 'icon.png');
+
+  const result = getIconPath({
+    baseDir,
+    existsSync: (filePath) => filePath === fallback,
+  });
+
+  assert.equal(result, fallback);
+});
+
 test('getIconPath should prefer desktop_icon in desktop directory', () => {
   const baseDir = path.join('C:', 'repo', 'desktop', 'main');
   const preferred = path.join(baseDir, '..', 'desktop_icon.png');

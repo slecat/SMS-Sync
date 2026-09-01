@@ -59,7 +59,20 @@ void main() {
       expect(payload['deviceId'], 'device-1');
       expect(payload['deviceName'], 'Phone A');
       expect(payload['groupId'], 'group-a');
+      expect(payload['status'], 'online');
       expect(payload['timestamp'], 67890);
+    });
+
+    test('devicePresence payload should preserve explicit offline status', () {
+      final payload = factory.devicePresence(
+        deviceId: 'device-1',
+        deviceName: 'Phone A',
+        groupId: 'group-a',
+        status: 'offline',
+        timestamp: 67890,
+      );
+
+      expect(payload['status'], 'offline');
     });
   });
 }

@@ -8,12 +8,14 @@ class SyncSettings {
     required this.serverUrl,
     required this.deviceName,
     required this.syncSecret,
+    required this.forwardVerificationCodeOnly,
   });
 
   final String groupId;
   final String serverUrl;
   final String deviceName;
   final String syncSecret;
+  final bool forwardVerificationCodeOnly;
 }
 
 class SettingsRepository {
@@ -25,6 +27,8 @@ class SettingsRepository {
   static const String lastDevicePresenceKey = 'lastDevicePresence';
   static const String serverConnectionStatusKey = 'serverConnectionStatus';
   static const String pendingNativeSmsQueueKey = 'pendingNativeSmsQueue';
+  static const String forwardVerificationCodeOnlyKey =
+      'forwardVerificationCodeOnly';
 
   Future<SharedPreferences> _prefs({bool reload = false}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -41,6 +45,8 @@ class SettingsRepository {
       serverUrl: prefs.getString(serverUrlKey) ?? '',
       deviceName: prefs.getString(deviceNameKey) ?? '手机端',
       syncSecret: prefs.getString(syncSecretKey) ?? '',
+      forwardVerificationCodeOnly:
+          prefs.getBool(forwardVerificationCodeOnlyKey) ?? false,
     );
   }
 
@@ -49,6 +55,7 @@ class SettingsRepository {
     required String serverUrl,
     required String deviceName,
     required String syncSecret,
+    bool? forwardVerificationCodeOnly,
   }) async {
     final prefs = await _prefs();
     await prefs.setString(groupIdKey, groupId);
@@ -58,6 +65,17 @@ class SettingsRepository {
       deviceName.isEmpty ? '手机端' : deviceName,
     );
     await prefs.setString(syncSecretKey, syncSecret);
+    if (forwardVerificationCodeOnly != null) {
+      await prefs.setBool(
+        forwardVerificationCodeOnlyKey,
+        forwardVerificationCodeOnly,
+      );
+    }
+  }
+
+  Future<void> saveForwardVerificationCodeOnly(bool enabled) async {
+    final prefs = await _prefs();
+    await prefs.setBool(forwardVerificationCodeOnlyKey, enabled);
   }
 
   Future<String?> getDeviceId() async {

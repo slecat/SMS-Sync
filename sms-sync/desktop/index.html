@@ -62,6 +62,16 @@
                   />
                 </div>
                 <div class="toggle-group">
+                  <div class="toggle-copy">
+                    <div class="toggle-label">只转发验证码消息</div>
+                    <div class="toggle-description">开启后，仅显示并提醒验证码短信。</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="forwardVerificationCodeOnlyToggle" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-group">
                   <span class="toggle-label">开机自启动</span>
                   <label class="toggle-switch">
                     <input type="checkbox" id="autoLaunchToggle" />
@@ -84,6 +94,47 @@
               <div class="section-content-inner">
                 <div id="deviceList">
                   <div class="empty-devices">暂无在线设备</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="updates-section">
+            <div class="section-header" data-section="updates">
+              <div class="section-title">应用更新</div>
+              <div class="section-toggle">
+                <span class="toggle-icon">▼</span>
+              </div>
+            </div>
+            <div class="section-content-wrapper" id="updatesContent">
+              <div class="section-content-inner">
+                <div class="update-panel">
+                  <div class="update-panel-header">
+                    <div>
+                      <div class="update-panel-title">桌面端更新</div>
+                      <div class="update-panel-subtitle" id="updateCurrentVersion">
+                        当前版本 -
+                      </div>
+                    </div>
+                    <button id="checkUpdateBtn" class="btn btn-secondary" type="button">
+                      检查更新
+                    </button>
+                  </div>
+                  <div class="update-status" id="updateStatusText">未检查更新</div>
+                  <div class="update-latest" id="updateLatestVersion"></div>
+                  <div class="update-progress-row hidden" id="updateProgressRow">
+                    <div class="update-progress-bar">
+                      <div class="update-progress-fill" id="updateProgressFill"></div>
+                    </div>
+                    <div class="update-progress-text" id="updateProgressText">0%</div>
+                  </div>
+                  <button
+                    id="downloadUpdateBtn"
+                    class="btn btn-primary hidden"
+                    type="button"
+                  >
+                    下载并安装
+                  </button>
                 </div>
               </div>
             </div>
@@ -132,6 +183,31 @@
     </div>
 
     <div class="toast" id="toast"></div>
+    <div class="route-modal hidden" id="downloadRouteModal">
+      <div class="route-modal-backdrop" id="downloadRouteBackdrop"></div>
+      <div
+        class="route-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="downloadRouteTitle"
+      >
+        <div class="route-modal-header">
+          <div>
+            <div class="route-modal-title" id="downloadRouteTitle">选择下载路线</div>
+            <div class="route-modal-subtitle">请选择默认安装包或 Ops 提供的镜像地址</div>
+          </div>
+          <button
+            id="closeDownloadRouteBtn"
+            class="route-modal-close"
+            type="button"
+            aria-label="关闭"
+          >
+            ×
+          </button>
+        </div>
+        <div class="route-list" id="downloadRouteList"></div>
+      </div>
+    </div>
 
     <script src="./renderer/app.js"></script>
   </body>

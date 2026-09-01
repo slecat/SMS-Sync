@@ -1,0 +1,412 @@
+const shell = document.querySelector('.shell')
+const authMessage = document.getElementById('authMessage')
+const gotoLoginBtn = document.getElementById('gotoLoginBtn')
+
+const filterForm = document.getElementById('filterForm')
+const rangeButtons = [...document.querySelectorAll('.range-btn')]
+
+const metricOnline = document.getElementById('metricOnline')
+const metricGroups = document.getElementById('metricGroups')
+const metricEvents = document.getElementById('metricEvents')
+const metricForwarded = document.getElementById('metricForwarded')
+const lastUpdated = document.getElementById('lastUpdated')
+
+const groupBody = document.getElementById('groupBody')
+const groupEmpty = document.getElementById('groupEmpty')
+const deviceList = document.getElementById('deviceList')
+const deviceEmpty = document.getElementById('deviceEmpty')
+const deviceCountTag = document.getElementById('deviceCountTag')
+const messageBody = document.getElementById('messageBody')
+const messageEmpty = document.getElementById('messageEmpty')
+const messageCountTag = document.getElementById('messageCountTag')
+
+const state = {
+  user: null,
+  timer: null,
+  filterTimer: null,
+  loginTimer: null,
+  loading: false,
+  rangePreset: 'all',
+  redirecting: false,
+}
+
+const RANGE_PRESETS = {
+  all: { label: '全部时间', durationMs: null },
+  '5m': { label: '近5分钟', durationMs: 5 * 60 * 1000 },
+  '1h': { label: '近1小时', durationMs: 60 * 60 * 1000 },
+  '24h': { label: '近24小时', durationMs: 24 * 60 * 60 * 1000 },
+}
+const FILTER_AUTO_REFRESH_DELAY = 260
+
+const VIEW = Object.freeze({
+  boot: 'boot',
+  auth: 'auth',
+  dashboard: 'dashboard',
+})
+
+function formatTime(timestamp) {
+  if (!timestamp) return '-'
+  return new Date(timestamp).toLocaleString('zh-CN', { hour12: false })
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
+
+async function api(path, options = {}) {
+  const response = await fetch(path, {
+    credentials: 'include',
+    ...options,
+    headers: {
+      'content-type': 'application/json',
+      ...(options.headers || {}),
+    },
+  })
+
+  const body = await response.json().catch(() => ({}))
+  if (!response.ok || body.success === false) {
+    const message = body.error || `请求失败(${response.status})`
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
+
+  return body
+}
+
+function setView(view) {
+  if (!shell) return
+  shell.dataset.view = view
+}
+
+function setAuthMessage(message) {
+  authMessage.textContent = message
+}
+
+function clearLoginRedirect() {
+  if (!state.loginTimer) return
+  window.clearTimeout(state.loginTimer)
+  state.loginTimer = null
+}
+
+function clearFilterRefreshTimer() {
+  if (!state.filterTimer) return
+  window.clearTimeout(state.filterTimer)
+  state.filterTimer = null
+}
+
+function scheduleFilterRefresh(immediate = false) {
+  if (!state.user) return
+  clearFilterRefreshTimer()
+
+  if (immediate) {
+    refreshDashboard()
+    return
+  }
+
+  state.filterTimer = window.setTimeout(() => {
+    state.filterTimer = null
+    refreshDashboard()
+  }, FILTER_AUTO_REFRESH_DELAY)
+}
+
+function showCheckingView() {
+  setView(VIEW.boot)
+}
+
+function showAuthView(message) {
+  clearDashboard()
+  setAuthMessage(message)
+  setView(VIEW.auth)
+}
+
+function showDashboardView() {
+  clearLoginRedirect()
+  setView(VIEW.dashboard)
+}
+
+function getFilters() {
+  const formData = new FormData(filterForm)
+  const query = new URLSearchParams()
+
+  for (const [key, rawValue] of formData.entries()) {
+    const value = String(rawValue || '').trim()
+    if (!value) continue
+    query.set(key, value)
+  }
+
+  const preset = RANGE_PRESETS[state.rangePreset] || RANGE_PRESETS.all
+  if (preset.durationMs) {
+    const now = Date.now()
+    query.set('since', String(now - preset.durationMs))
+    query.set('until', String(now))
+  }
+
+  return query.toString()
+}
+
+function clearDashboard() {
+  metricOnline.textContent = '0'
+  metricGroups.textContent = '0'
+  metricEvents.textContent = '0'
+  metricForwarded.textContent = '0'
+  groupBody.textContent = ''
+  groupEmpty.hidden = false
+  deviceList.textContent = ''
+  deviceEmpty.hidden = false
+  deviceCountTag.textContent = '0 台'
+  messageBody.textContent = ''
+  messageEmpty.hidden = false
+  messageCountTag.textContent = '0 条'
+  lastUpdated.textContent = '尚未刷新'
+}
+
+function applyRangePreset(preset) {
+  if (!RANGE_PRESETS[preset]) {
+    state.rangePreset = 'all'
+  } else {
+    state.rangePreset = preset
+  }
+
+  for (const btn of rangeButtons) {
+    const active = btn.dataset.range === state.rangePreset
+    btn.classList.toggle('is-active', active)
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+  }
+}
+
+function renderOverview(overview) {
+  metricOnline.textContent = String(overview.onlineDevices || 0)
+  metricGroups.textContent = String(overview.groups || 0)
+  metricEvents.textContent = String(overview.totalEvents || 0)
+  metricForwarded.textContent = String(overview.forwardedMessages || 0)
+}
+
+function renderGroups(groups) {
+  groupBody.textContent = ''
+
+  if (!Array.isArray(groups) || groups.length === 0) {
+    groupEmpty.hidden = false
+    return
+  }
+
+  groupEmpty.hidden = true
+
+  for (const group of groups) {
+    const row = document.createElement('tr')
+    row.innerHTML = `
+      <td>${escapeHtml(group.groupId)}</td>
+      <td>${Number(group.onlineDevices || 0)}</td>
+      <td>${Number(group.relayEvents || 0)}</td>
+      <td>${escapeHtml(formatTime(group.lastEventAt))}</td>
+    `
+    groupBody.append(row)
+  }
+}
+
+function renderDevices(devices) {
+  deviceList.textContent = ''
+
+  const list = Array.isArray(devices) ? devices : []
+  deviceCountTag.textContent = `${list.length} 台`
+
+  if (list.length === 0) {
+    deviceEmpty.hidden = false
+    return
+  }
+
+  deviceEmpty.hidden = true
+
+  for (const device of list) {
+    const item = document.createElement('li')
+    item.innerHTML = `
+      <div class="device-top">
+        <strong class="device-name">${escapeHtml(device.deviceName || '未知设备')}</strong>
+        <span class="device-meta">${escapeHtml(device.groupId || 'default')}</span>
+      </div>
+      <div class="device-meta">ID: ${escapeHtml(device.deviceId || '-')}</div>
+      <div class="device-meta">最后活动: ${escapeHtml(formatTime(device.lastSeenAt))}</div>
+    `
+    deviceList.append(item)
+  }
+}
+
+function renderMessages(result) {
+  messageBody.textContent = ''
+
+  const items = result && Array.isArray(result.items) ? result.items : []
+  messageCountTag.textContent = `${items.length} / ${result && result.total ? result.total : 0}`
+
+  if (items.length === 0) {
+    messageEmpty.hidden = false
+    return
+  }
+
+  messageEmpty.hidden = true
+
+  for (const item of items) {
+    const row = document.createElement('tr')
+    row.innerHTML = `
+      <td>${escapeHtml(formatTime(item.timestamp))}</td>
+      <td>${escapeHtml(item.type || '-')}</td>
+      <td>${escapeHtml(item.groupId || '-')}</td>
+      <td>${escapeHtml(item.deviceName || item.deviceId || '-')}</td>
+      <td>${escapeHtml(item.phone || '-')}</td>
+      <td title="${escapeHtml(item.content || '')}">${escapeHtml(item.content || '-')}</td>
+      <td>${Number(item.forwardedCount || 0)}</td>
+    `
+    messageBody.append(row)
+  }
+}
+
+function resolveOpsLoginUrl() {
+  const url = new URL(`${window.location.protocol}//${window.location.hostname}:8000/`)
+  url.searchParams.set('redirect', window.location.href)
+  return url.toString()
+}
+
+function gotoUnifiedLogin() {
+  clearLoginRedirect()
+  state.redirecting = true
+  window.location.replace(resolveOpsLoginUrl())
+}
+
+function scheduleLoginRedirect(delayMs = 1200) {
+  if (state.redirecting) return
+  clearLoginRedirect()
+  state.loginTimer = window.setTimeout(() => {
+    state.loginTimer = null
+    gotoUnifiedLogin()
+  }, delayMs)
+}
+
+function enterUnauthenticatedFlow(message, delayMs = 1200) {
+  state.user = null
+  clearFilterRefreshTimer()
+  stopAutoRefresh()
+  showAuthView(message)
+  scheduleLoginRedirect(delayMs)
+}
+
+async function refreshDashboard() {
+  if (!state.user || state.loading) return
+  state.loading = true
+
+  try {
+    const query = getFilters()
+    const [overviewRes, groupsRes, devicesRes, messagesRes] = await Promise.all([
+      api('/api/relay/overview'),
+      api('/api/relay/groups'),
+      api('/api/relay/devices'),
+      api(`/api/relay/messages${query ? `?${query}` : ''}`),
+    ])
+
+    renderOverview(overviewRes.data || {})
+    renderGroups(groupsRes.data || [])
+    renderDevices(devicesRes.data || [])
+    renderMessages(messagesRes.data || { total: 0, items: [] })
+    const rangeLabel = (RANGE_PRESETS[state.rangePreset] || RANGE_PRESETS.all).label
+    lastUpdated.textContent = `更新于 ${formatTime(Date.now())} · ${rangeLabel}`
+  } catch (error) {
+    if (error.status === 401) {
+      enterUnauthenticatedFlow('登录态已过期，正在跳转统一登录...', 800)
+      return
+    }
+
+    lastUpdated.textContent = `刷新失败: ${error.message}`
+  } finally {
+    state.loading = false
+  }
+}
+
+function startAutoRefresh() {
+  stopAutoRefresh()
+  state.timer = window.setInterval(() => {
+    refreshDashboard()
+  }, 6000)
+}
+
+function stopAutoRefresh() {
+  if (!state.timer) return
+  window.clearInterval(state.timer)
+  state.timer = null
+}
+
+async function checkAuth() {
+  showCheckingView()
+
+  let lastError = null
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const me = await api('/api/auth/me')
+      state.user = me.data || null
+      showDashboardView()
+      await refreshDashboard()
+      startAutoRefresh()
+      return
+    } catch (error) {
+      lastError = error
+      if (error && error.status === 401) break
+      if (attempt === 0) {
+        await new Promise((resolve) => {
+          window.setTimeout(resolve, 260)
+        })
+      }
+    }
+  }
+
+  if (lastError) {
+    console.warn('[sms-sync] auth check failed:', lastError.message)
+  }
+
+  if (lastError && lastError.status === 401) {
+    enterUnauthenticatedFlow('未检测到登录态，正在跳转统一登录...')
+  } else if (lastError) {
+    enterUnauthenticatedFlow(`登录态校验失败：${lastError.message}`, 1600)
+  } else {
+    enterUnauthenticatedFlow('未检测到登录态，正在跳转统一登录...')
+  }
+}
+
+filterForm.addEventListener('submit', async (event) => {
+  event.preventDefault()
+  clearFilterRefreshTimer()
+  await refreshDashboard()
+})
+
+filterForm.addEventListener('change', () => {
+  scheduleFilterRefresh(true)
+})
+
+for (const input of filterForm.querySelectorAll('input[type="text"]')) {
+  input.addEventListener('input', () => {
+    scheduleFilterRefresh()
+  })
+}
+
+window.addEventListener('beforeunload', () => {
+  clearFilterRefreshTimer()
+  stopAutoRefresh()
+  clearLoginRedirect()
+})
+
+for (const btn of rangeButtons) {
+  btn.addEventListener('click', async () => {
+    applyRangePreset(btn.dataset.range || 'all')
+    await refreshDashboard()
+  })
+}
+
+gotoLoginBtn.addEventListener('click', () => {
+  setAuthMessage('正在跳转统一登录...')
+  gotoUnifiedLogin()
+})
+
+applyRangePreset('all')
+checkAuth()

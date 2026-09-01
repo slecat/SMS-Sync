@@ -1,12 +1,7 @@
-class HomeViewState {
-  static final RegExp _verificationCodeDigitsPattern = RegExp(
-    r'(?<!\d)\d{4,8}(?!\d)',
-  );
-  static final RegExp _verificationCodeKeywordPattern = RegExp(
-    r'(验证码|校验码|动态码|otp|one[\s-]?time|verification\s*code|security\s*code)',
-    caseSensitive: false,
-  );
+import 'device_presence_status.dart';
+import '../../services/verification_code_detector.dart';
 
+class HomeViewState {
   const HomeViewState({
     required this.deviceId,
     required this.isLoading,
@@ -124,6 +119,11 @@ class HomeViewState {
     }
 
     final updated = Map<String, Map<String, dynamic>>.from(onlineDevices);
+    final normalizedStatus = normalizeDeviceStatus(device['status'] as String?);
+    if (normalizedStatus == 'offline') {
+      updated.remove(deviceId);
+      return copyWith(onlineDevices: updated);
+    }
     final existing = updated[deviceId];
     final normalizedSource = _normalizeSource(device['source'] as String?);
     final incomingTimestamp =
@@ -152,6 +152,7 @@ class HomeViewState {
       'source': sources.contains('server') ? 'server' : sources.first,
       'sources': sources,
       'sourceTimestamps': sourceTimestamps,
+      if (normalizedStatus != null) 'status': normalizedStatus,
       'timestamp': latestTimestamp,
     };
     return copyWith(onlineDevices: updated);
@@ -164,6 +165,10 @@ class HomeViewState {
     final updated = <String, Map<String, dynamic>>{};
     for (final entry in onlineDevices.entries) {
       final device = Map<String, dynamic>.from(entry.value);
+      if (isDeviceOnline(device, nowMs: nowMs, timeoutMs: timeoutMs)) {
+        updated[entry.key] = device;
+        continue;
+      }
       final sourceTimestamps = _extractSourceTimestamps(device);
       sourceTimestamps.removeWhere((_, ts) => nowMs - ts > timeoutMs);
       if (sourceTimestamps.isEmpty) {
@@ -242,11 +247,6 @@ class HomeViewState {
   }
 
   bool _looksLikeVerificationCode(String body) {
-    final normalized = body.trim();
-    if (normalized.isEmpty) {
-      return false;
-    }
-    return _verificationCodeKeywordPattern.hasMatch(normalized) &&
-        _verificationCodeDigitsPattern.hasMatch(normalized);
+    return isVerificationCodeMessage(body);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 import '../platform/channels.dart';
+import '../services/app_update_service.dart';
 import '../services/device_id_service.dart';
 import '../services/message_payload_factory.dart';
 import '../services/message_routing_policy.dart';
@@ -11,6 +12,7 @@ import '../services/settings_repository.dart';
 class AppServices {
   AppServices({
     required this.settingsRepository,
+    required this.appUpdateService,
     required this.deviceIdService,
     required this.messagePayloadFactory,
     required this.messageTransportService,
@@ -24,6 +26,10 @@ class AppServices {
     final settingsRepository = SettingsRepository();
     return AppServices(
       settingsRepository: settingsRepository,
+      appUpdateService: AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128:8002',
+      ),
       deviceIdService: DeviceIdService(platformChannel: platformChannel),
       messagePayloadFactory: MessagePayloadFactory(),
       messageTransportService: MessageTransportService(),
@@ -35,6 +41,7 @@ class AppServices {
   }
 
   final SettingsRepository settingsRepository;
+  final AppUpdateService appUpdateService;
   final DeviceIdService deviceIdService;
   final MessagePayloadFactory messagePayloadFactory;
   final MessageTransportService messageTransportService;

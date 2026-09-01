@@ -1,4 +1,5 @@
 import '../../services/app_logger.dart';
+import '../../services/verification_code_detector.dart';
 import 'home_dependencies.dart';
 
 enum SendTestStatus { success, localFailed, serverFailed }
@@ -10,7 +11,7 @@ class SendTestResult {
   final Object? error;
 }
 
-enum ReadLatestSmsStatus { success, notFound, invalidPayload, failed }
+enum ReadLatestSmsStatus { success, filtered, notFound, invalidPayload, failed }
 
 class ReadLatestSmsResult {
   const ReadLatestSmsResult({
@@ -125,6 +126,14 @@ class HomeActionCoordinator {
       final groupId = settings.groupId;
       final serverUrl = settings.serverUrl;
       final syncSecret = settings.syncSecret;
+      if (settings.forwardVerificationCodeOnly &&
+          !isVerificationCodeMessage(body)) {
+        return ReadLatestSmsResult(
+          status: ReadLatestSmsStatus.filtered,
+          from: from,
+          body: body,
+        );
+      }
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final messageId = '${deviceId}_$timestamp';
 

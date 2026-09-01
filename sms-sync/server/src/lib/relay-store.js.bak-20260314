@@ -1,0 +1,317 @@
+function toSafeString(value, fallback = '') {
+  const text = String(value ?? '').trim()
+  return text || fallback
+}
+
+function normalizeGroup(groupId) {
+  return toSafeString(groupId, 'default')
+}
+
+function normalizeLimit(limit, defaultValue = 50, max = 500) {
+  const parsed = Number(limit)
+  if (!Number.isFinite(parsed)) return defaultValue
+  const fixed = Math.trunc(parsed)
+  if (fixed <= 0) return defaultValue
+  return Math.min(fixed, max)
+}
+
+function normalizeOffset(offset) {
+  const parsed = Number(offset)
+  if (!Number.isFinite(parsed)) return 0
+  const fixed = Math.trunc(parsed)
+  return fixed < 0 ? 0 : fixed
+}
+
+function normalizeTimestamp(value) {
+  if (value === undefined || value === null || value === '') return null
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed) || parsed <= 0) return null
+  return parsed
+}
+
+function createRelayStore({ maxEvents = 3000 } = {}) {
+  const sizeLimit = normalizeLimit(maxEvents, 3000, 100000)
+  const createdAt = Date.now()
+  const clients = new Map()
+  const events = []
+  const relayByType = new Map()
+  let sequence = 0
+
+  function eventToPublic(event) {
+    return { ...event }
+  }
+
+  function trimEvents() {
+    if (events.length <= sizeLimit) return
+    events.length = sizeLimit
+  }
+
+  function pushEvent(event) {
+    events.unshift(event)
+    trimEvents()
+  }
+
+  function addTypeCounter(type) {
+    const key = toSafeString(type, 'unknown')
+    relayByType.set(key, (relayByType.get(key) || 0) + 1)
+  }
+
+  function upsertClient(deviceId, { ws = null, groupId = 'default', deviceName = '未知设备', lastSeenAt = Date.now() } = {}) {
+    const id = toSafeString(deviceId)
+    if (!id) return null
+
+    const existing = clients.get(id)
+    const record = {
+      ws: ws || (existing ? existing.ws : null),
+      deviceId: id,
+      groupId: normalizeGroup(groupId),
+      deviceName: toSafeString(deviceName, '未知设备'),
+      connectedAt: existing ? existing.connectedAt : Date.now(),
+      lastSeenAt: normalizeTimestamp(lastSeenAt) || Date.now(),
+    }
+
+    clients.set(id, record)
+    return { ...record }
+  }
+
+  function removeClient(deviceId) {
+    const id = toSafeString(deviceId)
+    if (!id) return false
+    return clients.delete(id)
+  }
+
+  function getClient(deviceId) {
+    const id = toSafeString(deviceId)
+    if (!id) return null
+    const client = clients.get(id)
+    return client ? { ...client } : null
+  }
+
+  function touchClient(deviceId, patch = {}) {
+    const id = toSafeString(deviceId)
+    if (!id) return null
+    if (!clients.has(id)) return null
+
+    const existing = clients.get(id)
+    const next = {
+      ...existing,
+      lastSeenAt: Date.now(),
+    }
+
+    if (patch.deviceName) {
+      next.deviceName = toSafeString(patch.deviceName, existing.deviceName || '未知设备')
+    }
+
+    if (patch.groupId) {
+      next.groupId = normalizeGroup(patch.groupId)
+    }
+
+    clients.set(id, next)
+    return { ...next }
+  }
+
+  function listOnlineDevices({ groupId } = {}) {
+    const groupFilter = groupId ? normalizeGroup(groupId) : null
+    const result = []
+
+    clients.forEach((client) => {
+      if (groupFilter && client.groupId !== groupFilter) return
+      result.push({
+        deviceId: client.deviceId,
+        deviceName: client.deviceName,
+        groupId: client.groupId,
+        connectedAt: client.connectedAt,
+        lastSeenAt: client.lastSeenAt,
+      })
+    })
+
+    result.sort((a, b) => b.lastSeenAt - a.lastSeenAt)
+    return result
+  }
+
+  function toEvent(payload, kind = 'relay') {
+    sequence += 1
+    const now = Date.now()
+    const timestamp = normalizeTimestamp(payload.timestamp) || now
+
+    return {
+      id: `${timestamp}-${sequence}`,
+      kind,
+      type: toSafeString(payload.type, 'unknown'),
+      groupId: normalizeGroup(payload.groupId),
+      deviceId: toSafeString(payload.deviceId, ''),
+      deviceName: toSafeString(payload.deviceName, ''),
+      phone: toSafeString(payload.phone, ''),
+      content: toSafeString(payload.content, ''),
+      forwardedTo: Array.isArray(payload.forwardedTo)
+        ? payload.forwardedTo.map((item) => String(item)).filter(Boolean)
+        : [],
+      forwardedCount: Array.isArray(payload.forwardedTo)
+        ? payload.forwardedTo.length
+        : 0,
+      timestamp,
+      createdAt: now,
+      metadata: payload.metadata && typeof payload.metadata === 'object' ? payload.metadata : {},
+    }
+  }
+
+  function recordRelayEvent(payload) {
+    const event = toEvent(payload, 'relay')
+    pushEvent(event)
+    addTypeCounter(event.type)
+    return eventToPublic(event)
+  }
+
+  function recordSystemEvent(payload) {
+    const event = toEvent(payload, 'system')
+    pushEvent(event)
+    return eventToPublic(event)
+  }
+
+  function queryMessages({
+    limit,
+    offset,
+    type,
+    groupId,
+    deviceId,
+    keyword,
+    since,
+    until,
+    kinds,
+  } = {}) {
+    const safeLimit = normalizeLimit(limit, 50, 500)
+    const safeOffset = normalizeOffset(offset)
+    const typeFilter = type ? toSafeString(type).toLowerCase() : ''
+    const groupFilter = groupId ? normalizeGroup(groupId).toLowerCase() : ''
+    const deviceFilter = deviceId ? toSafeString(deviceId).toLowerCase() : ''
+    const keywordFilter = keyword ? toSafeString(keyword).toLowerCase() : ''
+    const sinceTs = normalizeTimestamp(since)
+    const untilTs = normalizeTimestamp(until)
+
+    const kindFilterSet = Array.isArray(kinds)
+      ? new Set(kinds.map((item) => String(item).toLowerCase()))
+      : null
+
+    const filtered = events.filter((event) => {
+      if (kindFilterSet && !kindFilterSet.has(String(event.kind).toLowerCase())) return false
+      if (typeFilter && String(event.type).toLowerCase() !== typeFilter) return false
+      if (groupFilter && String(event.groupId).toLowerCase() !== groupFilter) return false
+      if (deviceFilter && String(event.deviceId).toLowerCase() !== deviceFilter) return false
+      if (sinceTs && event.timestamp < sinceTs) return false
+      if (untilTs && event.timestamp > untilTs) return false
+
+      if (keywordFilter) {
+        const haystack = [
+          event.type,
+          event.groupId,
+          event.deviceId,
+          event.deviceName,
+          event.phone,
+          event.content,
+        ]
+          .join(' ')
+          .toLowerCase()
+
+        if (!haystack.includes(keywordFilter)) return false
+      }
+
+      return true
+    })
+
+    return {
+      total: filtered.length,
+      limit: safeLimit,
+      offset: safeOffset,
+      items: filtered.slice(safeOffset, safeOffset + safeLimit).map(eventToPublic),
+    }
+  }
+
+  function getGroupStats() {
+    const map = new Map()
+
+    clients.forEach((client) => {
+      const key = normalizeGroup(client.groupId)
+      if (!map.has(key)) {
+        map.set(key, {
+          groupId: key,
+          onlineDevices: 0,
+          relayEvents: 0,
+          systemEvents: 0,
+          forwardedMessages: 0,
+          lastEventAt: null,
+        })
+      }
+
+      const row = map.get(key)
+      row.onlineDevices += 1
+    })
+
+    events.forEach((event) => {
+      const key = normalizeGroup(event.groupId)
+      if (!map.has(key)) {
+        map.set(key, {
+          groupId: key,
+          onlineDevices: 0,
+          relayEvents: 0,
+          systemEvents: 0,
+          forwardedMessages: 0,
+          lastEventAt: null,
+        })
+      }
+
+      const row = map.get(key)
+      if (event.kind === 'system') {
+        row.systemEvents += 1
+      } else {
+        row.relayEvents += 1
+        row.forwardedMessages += Number(event.forwardedCount) || 0
+      }
+
+      row.lastEventAt = row.lastEventAt ? Math.max(row.lastEventAt, event.timestamp) : event.timestamp
+    })
+
+    return [...map.values()].sort((a, b) => {
+      if (b.onlineDevices !== a.onlineDevices) return b.onlineDevices - a.onlineDevices
+      if (b.relayEvents !== a.relayEvents) return b.relayEvents - a.relayEvents
+      return a.groupId.localeCompare(b.groupId)
+    })
+  }
+
+  function getOverview() {
+    const byType = {}
+    relayByType.forEach((count, type) => {
+      byType[type] = count
+    })
+
+    const groups = getGroupStats()
+    const totalForwarded = events.reduce((sum, item) => sum + (item.forwardedCount || 0), 0)
+
+    return {
+      startedAt: createdAt,
+      uptimeSeconds: Math.max(0, Math.floor((Date.now() - createdAt) / 1000)),
+      onlineDevices: clients.size,
+      groups: groups.length,
+      totalEvents: events.length,
+      relayByType: byType,
+      forwardedMessages: totalForwarded,
+      lastEventAt: events[0] ? events[0].timestamp : null,
+    }
+  }
+
+  return {
+    upsertClient,
+    removeClient,
+    getClient,
+    touchClient,
+    listOnlineDevices,
+    recordRelayEvent,
+    recordSystemEvent,
+    queryMessages,
+    getGroupStats,
+    getOverview,
+  }
+}
+
+module.exports = {
+  createRelayStore,
+}
