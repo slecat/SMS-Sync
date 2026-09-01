@@ -52,7 +52,7 @@ async function createFixture() {
     await new Promise((resolve) => server.close(resolve))
   }
 
-  return { connect, close }
+  return { connect, close, port }
 }
 
 test('desktop reconnect replays offline SMS and ACKs each message once', async () => {
@@ -109,6 +109,50 @@ test('desktop reconnect replays offline SMS and ACKs each message once', async (
   } finally {
     for (const client of [phone, desktop]) {
       if (client?.socket && client.socket.readyState < WebSocket.CLOSING) client.socket.close()
+    }
+    await fixture.close()
+  }
+})
+
+test('temporary test sender falls back to envelope identity when register races', async () => {
+  const fixture = await createFixture()
+  let phone
+  let desktop
+  let temporary
+  try {
+    phone = await fixture.connect('phone-1', 'mobile')
+    desktop = await fixture.connect('desktop-1', 'desktop')
+
+    temporary = new WebSocket('ws://127.0.0.1:' + fixture.port)
+    const temporaryMessages = []
+    temporary.on('message', (data) => temporaryMessages.push(JSON.parse(data.toString())))
+    await new Promise((resolve, reject) => {
+      temporary.once('open', resolve)
+      temporary.once('error', reject)
+    })
+    temporary.send(JSON.stringify({
+      type: 'test',
+      deviceId: 'phone-1',
+      groupId: 'reliable-test',
+      messageId: 'test-race-1',
+      body: 'test',
+      timestamp: Date.now(),
+    }))
+
+    await waitFor(() => desktop.messages.some(
+      (message) => message.type === 'test' && message.messageId === 'test-race-1'
+    ))
+    assert.equal(
+      phone.messages.some((message) => message.type === 'test' && message.messageId === 'test-race-1'),
+      false,
+    )
+    assert.equal(
+      temporaryMessages.some((message) => message.type === 'test' && message.messageId === 'test-race-1'),
+      false,
+    )
+  } finally {
+    for (const client of [temporary, phone?.socket, desktop?.socket]) {
+      if (client && client.readyState < WebSocket.CLOSING) client.close()
     }
     await fixture.close()
   }

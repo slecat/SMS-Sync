@@ -54,6 +54,7 @@ class MessagePayloadFactory {
 
   Map<String, dynamic> test({
     required String messageId,
+    String? deviceId,
     required String from,
     required String body,
     required String groupId,
@@ -62,6 +63,8 @@ class MessagePayloadFactory {
     return {
       'type': 'test',
       'messageId': messageId,
+      if (deviceId != null && deviceId.isNotEmpty) 'deviceId': deviceId,
+      if (deviceId != null && deviceId.isNotEmpty) 'sourceDeviceId': deviceId,
       'from': from,
       'body': body,
       'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,

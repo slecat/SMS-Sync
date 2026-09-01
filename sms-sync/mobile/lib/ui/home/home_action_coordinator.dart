@@ -71,6 +71,7 @@ class HomeActionCoordinator {
     final testData = dependencies.messageSecurityService.signPayload(
       dependencies.messagePayloadFactory.test(
         messageId: messageId,
+        deviceId: deviceId,
         from: deviceName,
         body: '这是一条测试消息',
         groupId: groupId,

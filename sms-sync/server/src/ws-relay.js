@@ -181,6 +181,12 @@ function attachWsRelay(server, store) {
           }
 
           const senderGroup = groupId
+          // A temporary sender socket can race its register frame. Prefer the
+          // authenticated connection identity, but fall back to the envelope
+          // identity so a test/send payload is never echoed back to itself.
+          const senderDeviceId = deviceId || String(
+            data.sourceDeviceId || data.deviceId || ''
+          ).trim()
           const recipients = []
 
           if (data.type === 'device-presence') {
@@ -259,7 +265,7 @@ function attachWsRelay(server, store) {
           }
           const peers = store.listOnlineDevices({ groupId: senderGroup })
           for (const peer of peers) {
-            if (peer.deviceId === deviceId) continue
+            if (peer.deviceId === senderDeviceId) continue
             const target = store.getClient(peer.deviceId)
             if (!target || !canSend(target.ws)) continue
             target.ws.send(JSON.stringify(outbound))
@@ -269,7 +275,7 @@ function attachWsRelay(server, store) {
           store.recordRelayEvent({
             type: data.type,
             groupId: senderGroup,
-            deviceId: deviceId || String(data.deviceId || ''),
+            deviceId: senderDeviceId,
             deviceName: String(data.deviceName || deviceName || ''),
             phone: String(data.phone || ''),
             content: String(data.content || ''),

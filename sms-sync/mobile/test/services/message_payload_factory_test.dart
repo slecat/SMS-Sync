@@ -47,6 +47,20 @@ void main() {
       expect(payload['timestamp'], 12345);
     });
 
+    test('test payload carries its source device identity', () {
+      final payload = factory.test(
+        messageId: 'test-1',
+        deviceId: 'device-1',
+        from: 'Phone A',
+        body: 'hello',
+        groupId: 'group-a',
+        timestamp: 12345,
+      );
+
+      expect(payload['deviceId'], 'device-1');
+      expect(payload['sourceDeviceId'], 'device-1');
+    });
+
     test('devicePresence payload should use provided timestamp', () {
       final payload = factory.devicePresence(
         deviceId: 'device-1',
