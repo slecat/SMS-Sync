@@ -537,6 +537,25 @@ function createRelayStore({ maxEvents = 3000, persistencePath = '' } = {}) {
     }
   }
 
+  function getReplay({ groupId, limit = 100 } = {}) {
+    const group = groupId ? normalizeGroup(groupId) : null
+    const size = Math.min(Math.max(Math.trunc(Number(limit) || 100), 1), 500)
+    return events
+      .filter((event) => event.kind === 'relay' && event.type === 'sms' && (!group || event.groupId === group))
+      .slice(0, size)
+      .map((event) => ({
+        type: 'sms',
+        protocolVersion: 2,
+        messageId: event.messageId,
+        groupId: event.groupId,
+        sourceDeviceId: event.deviceId,
+        from: event.phone,
+        body: event.content,
+        receivedAt: event.timestamp,
+        timestamp: event.timestamp,
+      }))
+  }
+
   return {
     upsertClient,
     removeClient,
@@ -549,6 +568,7 @@ function createRelayStore({ maxEvents = 3000, persistencePath = '' } = {}) {
     queryMessages,
     getGroupStats,
     getOverview,
+    getReplay,
   }
 }
 

@@ -246,3 +246,12 @@ test('relay events survive process restart through the persistence snapshot', ()
   assert.equal(result.items[0].content, 'durable')
   fs.rmSync(directory, { recursive: true, force: true })
 })
+
+test('getReplay returns stable v2 SMS envelopes for reconnecting clients', () => {
+  const store = createRelayStore({ maxEvents: 20 })
+  store.recordRelayEvent({ type: 'sms', groupId: 'g1', deviceId: 'phone-1', phone: '95588', content: '验证码 123456', forwardedTo: [] })
+  const replay = store.getReplay({ groupId: 'g1' })
+  assert.equal(replay.length, 1)
+  assert.equal(replay[0].protocolVersion, 2)
+  assert.equal(replay[0].sourceDeviceId, 'phone-1')
+})

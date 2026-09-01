@@ -137,6 +137,15 @@ function attachWsRelay(server, store) {
             )
           }
 
+          // Replay persisted SMS envelopes on every reconnect. Desktop/mobile
+          // clients deduplicate by messageId, so reconnects are safe.
+          if (canSend(ws)) {
+            for (const replay of store.getReplay({ groupId, limit: 100 })) {
+              if (replay.sourceDeviceId === deviceId) continue
+              ws.send(JSON.stringify(replay))
+            }
+          }
+
           if (registration?.becameOnline) {
             broadcastPresence(
               store,
