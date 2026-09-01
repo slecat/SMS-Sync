@@ -51,6 +51,15 @@ class OutboxRepository(
     suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean = store.markRetry(messageId, nextAttemptAt, errorCode)
 }
 
+data class OutboxHealth(
+    val pending: Int,
+    val sending: Int,
+    val retrying: Int,
+    val acked: Int,
+    val oldestPendingAt: Long?,
+    val latestAckAt: Long?,
+)
+
 class RoomOutboxStore(private val dao: OutboxDao) : OutboxStore {
     override suspend fun findByFingerprint(fingerprint: String): OutboxMessage? =
         dao.findEntityByFingerprint(fingerprint)?.toDomain()

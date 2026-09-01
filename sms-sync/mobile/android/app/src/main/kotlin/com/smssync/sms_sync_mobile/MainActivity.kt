@@ -19,6 +19,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import com.smssync.sms_sync_mobile.ingest.NativeSmsIngestion
 import com.smssync.sms_sync_mobile.ingest.SmsPart
+import com.smssync.sms_sync_mobile.storage.OutboxDatabaseProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,6 +84,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "getDeviceId" -> result.success(resolveDeviceId())
+                "getRelayHealth" -> result.success(getRelayHealth())
                 else -> result.notImplemented()
             }
         }
@@ -286,6 +288,19 @@ class MainActivity : FlutterActivity() {
             Log.e(TAG, "Error getting device ID: ${e.message}", e)
             "unknown_device"
         }
+    }
+
+    private fun getRelayHealth(): Map<String, Any?> {
+        val dao = OutboxDatabaseProvider.get(applicationContext).outboxDao()
+        return mapOf(
+            "pending" to dao.countByState("PENDING"),
+            "sending" to dao.countByState("SENDING"),
+            "retrying" to dao.countByState("RETRY_WAIT"),
+            "acked" to dao.countByState("SERVER_ACKED"),
+            "oldestPendingAt" to dao.oldestPendingAt(),
+            "latestAckAt" to dao.latestServerAckAt(),
+            "latestErrorCode" to dao.latestErrorCode(),
+        )
     }
 
     private fun getAppVersionInfo(): Map<String, Any> {

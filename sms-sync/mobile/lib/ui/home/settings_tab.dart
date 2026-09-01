@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../app/service_registry.dart';
 import '../../platform/channels.dart';
+import '../../platform/native_relay_channel.dart';
 import '../../platform/runtime_support.dart';
 import '../../services/app_update_service.dart';
 import 'home_snack_bar.dart';
@@ -34,6 +35,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
   bool _isInstallingUpdate = false;
   AppUpdateState _updateState = AppUpdateState.initial();
   AppVersionInfo? _currentVersionInfo;
+  NativeRelayHealth? _relayHealth;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
     _updateState = _appUpdateService.state;
     _loadForwardingSettings();
     _refreshPermissions();
+    _refreshRelayHealth();
     _runStartupUpdateCheck();
   }
 
@@ -55,6 +58,23 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _refreshPermissions();
+      _refreshRelayHealth();
+    }
+  }
+
+  Future<void> _refreshRelayHealth() async {
+    if (!supportsAndroidSmsSyncRuntime) {
+      return;
+    }
+    try {
+      final health = await const NativeRelayChannel().readHealth();
+      if (mounted) {
+        setState(() {
+          _relayHealth = health;
+        });
+      }
+    } catch (error) {
+      debugPrint('Failed to read native relay health: $error');
     }
   }
 
@@ -460,7 +480,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -1,
-                color: Colors.white,
+                color: Color(0xFF173C36),
               ),
             ),
             const SizedBox(height: 8),
@@ -468,7 +488,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
               '权限状态、版本更新与设备信息',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.55),
+                color: const Color(0xFF173C36).withValues(alpha: 0.58),
               ),
             ),
             const SizedBox(height: 12),
@@ -489,7 +509,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                       )
                     : const Icon(
                         Icons.refresh_rounded,
-                        color: Color(0xFF60A5FA),
+                        color: Color(0xFF2F7658),
                         size: 18,
                       ),
                 tooltip: '检查更新',
@@ -522,10 +542,8 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                             _checkForUpdates(silent: false);
                           },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF60A5FA),
-                      side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.12),
-                      ),
+                      foregroundColor: const Color(0xFF2F7658),
+                      side: BorderSide(color: const Color(0xFFD8D4CC)),
                     ),
                     child: Text(_isCheckingUpdate ? '检查中...' : '手动检查更新'),
                   ),
@@ -541,7 +559,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                           ? null
                           : _downloadOrInstallUpdate,
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: const Color(0xFF2F7658),
                       ),
                       child: Text(_updateActionLabel()),
                     ),
@@ -581,7 +599,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                       )
                     : const Icon(
                         Icons.refresh_rounded,
-                        color: Color(0xFF60A5FA),
+                        color: Color(0xFF2F7658),
                         size: 18,
                       ),
                 tooltip: '刷新状态',
@@ -653,11 +671,9 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                   width: double.infinity,
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F141C),
+                    color: const Color(0xFFF8F7F3),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.08),
-                    ),
+                    border: Border.all(color: const Color(0xFFD8D4CC)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -665,7 +681,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                       Text(
                         '设备 ID',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Color(0xFF173C36).withValues(alpha: 0.58),
                           fontSize: 12,
                         ),
                       ),
@@ -674,7 +690,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                         widget.deviceId,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Color(0xFFA5B4FC),
+                          color: Color(0xFF2F7658),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -682,6 +698,21 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            _SectionCard(
+              title: '可靠性诊断',
+              icon: Icons.monitor_heart_outlined,
+              trailing: IconButton(
+                onPressed: _refreshRelayHealth,
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  color: Color(0xFF2F7658),
+                  size: 18,
+                ),
+                tooltip: '刷新队列状态',
+              ),
+              children: [_RelayHealthSummary(health: _relayHealth)],
             ),
           ],
         ),
@@ -738,12 +769,12 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
 
   Color _updateStatusColor() {
     return switch (_updateState.status) {
-      AppUpdateStatus.available => const Color(0xFF60A5FA),
+      AppUpdateStatus.available => const Color(0xFF2F7658),
       AppUpdateStatus.upToDate => const Color(0xFF10B981),
-      AppUpdateStatus.downloading => const Color(0xFF60A5FA),
+      AppUpdateStatus.downloading => const Color(0xFF2F7658),
       AppUpdateStatus.readyToInstall => const Color(0xFF10B981),
       AppUpdateStatus.error => const Color(0xFFEF4444),
-      _ => Colors.white.withValues(alpha: 0.72),
+      _ => const Color(0xFF173C36).withValues(alpha: 0.72),
     };
   }
 
@@ -785,6 +816,93 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
   }
 }
 
+class _RelayHealthSummary extends StatelessWidget {
+  const _RelayHealthSummary({required this.health});
+
+  final NativeRelayHealth? health;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = health;
+    if (value == null) {
+      return const Text(
+        '正在读取原生队列状态…',
+        style: TextStyle(color: Color(0xFF173C36), fontSize: 13),
+      );
+    }
+    final status = value.inFlight == 0 ? '队列已清空' : '有消息等待发送';
+    final statusColor = value.inFlight == 0
+        ? const Color(0xFF2F7658)
+        : const Color(0xFF9A6A2F);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              value.inFlight == 0 ? Icons.check_circle_outline : Icons.schedule,
+              color: statusColor,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              status,
+              style: TextStyle(color: statusColor, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _HealthChip(label: '待发送', value: value.pending),
+            _HealthChip(label: '发送中', value: value.sending),
+            _HealthChip(label: '待重试', value: value.retrying),
+            _HealthChip(label: '已确认', value: value.acked),
+          ],
+        ),
+        if (value.latestErrorCode != null &&
+            value.latestErrorCode!.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Text(
+            '最近错误：${value.latestErrorCode}',
+            style: TextStyle(
+              color: const Color(0xFF173C36).withValues(alpha: .58),
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _HealthChip extends StatelessWidget {
+  const _HealthChip({required this.label, required this.value});
+
+  final String label;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: const Color(0xFFE0DDD6)),
+    ),
+    child: Text(
+      '$label $value',
+      style: const TextStyle(
+        color: Color(0xFF173C36),
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
+}
+
 class _PermissionVisual {
   const _PermissionVisual({
     required this.label,
@@ -816,9 +934,9 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF151A25),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: const Color(0xFFE0DDD6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -829,17 +947,17 @@ class _SectionCard extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2563EB).withValues(alpha: 0.18),
+                  color: const Color(0xFFDCE9E1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: const Color(0xFF60A5FA), size: 18),
+                child: Icon(icon, color: const Color(0xFF2F7658), size: 18),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF173C36),
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -879,9 +997,9 @@ class _UpdateSummary extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F141C),
+        color: const Color(0xFFF8F7F3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: const Color(0xFFE0DDD6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -905,9 +1023,9 @@ class _UpdateSummary extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress <= 0 ? 0 : progress / 100,
                 minHeight: 8,
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                backgroundColor: const Color(0xFFE6E2DA),
                 valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF60A5FA),
+                  Color(0xFF2F7658),
                 ),
               ),
             ),
@@ -915,7 +1033,7 @@ class _UpdateSummary extends StatelessWidget {
             Text(
               '$progress%',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.62),
+                color: const Color(0xFF173C36).withValues(alpha: 0.62),
                 fontSize: 12,
               ),
             ),
@@ -941,7 +1059,7 @@ class _InfoRow extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.58),
+              color: const Color(0xFF173C36).withValues(alpha: 0.58),
               fontSize: 12,
             ),
           ),
@@ -950,7 +1068,7 @@ class _InfoRow extends StatelessWidget {
           child: Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF173C36),
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -988,9 +1106,9 @@ class _PermissionItem extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F141C),
+        color: const Color(0xFFF8F7F3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: const Color(0xFFE0DDD6)),
       ),
       child: Row(
         children: [
@@ -998,10 +1116,10 @@ class _PermissionItem extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withValues(alpha: 0.18),
+              color: const Color(0xFFDCE9E1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xFF60A5FA), size: 18),
+            child: Icon(icon, color: const Color(0xFF2F7658), size: 18),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1011,7 +1129,7 @@ class _PermissionItem extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF173C36),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1020,7 +1138,7 @@ class _PermissionItem extends StatelessWidget {
                 Text(
                   description,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.58),
+                    color: const Color(0xFF173C36).withValues(alpha: 0.58),
                     fontSize: 12,
                   ),
                 ),
@@ -1048,7 +1166,7 @@ class _PermissionItem extends StatelessWidget {
                 onAction!();
               },
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF60A5FA),
+                foregroundColor: const Color(0xFF2F7658),
               ),
               child: Text(actionLabel!),
             ),
@@ -1079,9 +1197,9 @@ class _SwitchItem extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F141C),
+        color: const Color(0xFFF8F7F3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: const Color(0xFFE0DDD6)),
       ),
       child: Row(
         children: [
@@ -1089,10 +1207,10 @@ class _SwitchItem extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withValues(alpha: 0.18),
+              color: const Color(0xFFDCE9E1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xFF60A5FA), size: 18),
+            child: Icon(icon, color: const Color(0xFF2F7658), size: 18),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1102,7 +1220,7 @@ class _SwitchItem extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF173C36),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1111,7 +1229,7 @@ class _SwitchItem extends StatelessWidget {
                 Text(
                   description,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.58),
+                    color: const Color(0xFF173C36).withValues(alpha: 0.58),
                     fontSize: 12,
                   ),
                 ),

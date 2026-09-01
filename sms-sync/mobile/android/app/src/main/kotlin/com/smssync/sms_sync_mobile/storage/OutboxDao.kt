@@ -8,6 +8,21 @@ import androidx.room.Transaction
 
 @Dao
 interface OutboxDao {
+    @Query("SELECT COUNT(*) FROM outbox_messages WHERE state = :state")
+    fun countByState(state: String): Int
+
+    @Query("SELECT MAX(serverAckedAt) FROM outbox_messages WHERE state = 'SERVER_ACKED'")
+    fun latestServerAckAt(): Long?
+
+    @Query("SELECT MIN(capturedAt) FROM outbox_messages WHERE state IN ('PENDING', 'SENDING', 'RETRY_WAIT')")
+    fun oldestPendingAt(): Long?
+
+    @Query("SELECT lastErrorCode FROM outbox_messages WHERE lastErrorCode IS NOT NULL ORDER BY capturedAt DESC LIMIT 1")
+    fun latestErrorCode(): String?
+
+    @Query("DELETE FROM outbox_messages WHERE state = 'SERVER_ACKED' AND serverAckedAt IS NOT NULL AND serverAckedAt < :before")
+    fun deleteAckedBefore(before: Long): Int
+
     @Query("SELECT * FROM outbox_messages WHERE state IN ('PENDING', 'RETRY_WAIT') AND nextAttemptAt <= :now ORDER BY capturedAt ASC LIMIT :limit")
     fun findReady(now: Long, limit: Int): List<OutboxMessageEntity>
     @Query("SELECT * FROM outbox_messages WHERE fingerprint = :fingerprint LIMIT 1")
