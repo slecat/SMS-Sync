@@ -16,11 +16,11 @@
 - 修改：`sms-sync/desktop/main/services/in-app-alert-service.js`
 - 创建：`sms-sync/desktop/test/in-app-alert-service.test.js`
 
-- [ ] 编写失败测试：连续 `showAlert` 只保留一个窗口、旧 timer 不关闭新窗口、窗口加载失败触发回退、复制回调异常后服务仍可关闭。
-- [ ] 运行 `npm test -- test/in-app-alert-service.test.js`，确认因当前实现缺少注入和 token 校验而失败。
-- [ ] 实现最小单实例状态机、窗口 token、统一计时器清理和系统通知回退注入。
-- [ ] 重跑该测试并确认通过。
-- [ ] 提交 `test: cover desktop alert lifecycle`。
+- [x] 编写失败测试：连续 `showAlert` 只保留一个窗口、旧 timer 不关闭新窗口、窗口加载失败触发回退、复制回调异常后服务仍可关闭。
+- [x] 运行 `npm test -- test/in-app-alert-service.test.js`，确认因当前实现缺少注入和 token 校验而失败。
+- [x] 实现最小单实例状态机、窗口 token、统一计时器清理和系统通知回退注入。
+- [x] 重跑该测试并确认通过。
+- [x] 提交 `test: cover desktop alert lifecycle`。
 
 ### 任务 2：弹窗视觉与交互
 
@@ -29,11 +29,11 @@
 - 修改：`sms-sync/desktop/main/ipc.js`（如需新增复制 IPC）
 - 修改：`sms-sync/desktop/main/app.js`（如需接入系统通知回退）
 
-- [ ] 编写失败测试：生成的 data URL 包含暖灰/白卡片、墨绿强调色、验证码等宽块、Esc 关闭和复制按钮。
-- [ ] 运行针对性测试确认失败。
-- [ ] 实现新的弹窗 HTML、CSP、复制 IPC、Esc/关闭按钮和无焦点显示。
-- [ ] 重跑测试确认通过。
-- [ ] 提交 `feat: redesign desktop alert surface`。
+- [x] 编写失败测试：生成的 data URL 包含暖灰/白卡片、墨绿强调色、验证码等宽块、Esc 关闭和复制按钮。
+- [x] 运行针对性测试确认失败。
+- [x] 实现新的弹窗 HTML、CSP、复制 IPC、Esc/关闭按钮和无焦点显示。
+- [x] 重跑测试确认通过。
+- [x] 与生命周期实现一并提交（`test: cover desktop alert lifecycle`）。
 
 ### 任务 3：双栏桌面工作区
 
@@ -42,18 +42,18 @@
 - 修改：`sms-sync/desktop/renderer/styles.css`
 - 修改：`sms-sync/desktop/test/renderer-layout.test.js`（若已有则扩展）
 
-- [ ] 编写失败测试：页面包含四项侧栏导航、消息工作区、连接状态和移动端令牌；消息列表为内部滚动。
-- [ ] 运行测试确认失败。
-- [ ] 实现左栏导航、右侧消息工作区、暖灰/墨绿令牌、响应式断点和焦点样式。
-- [ ] 重跑渲染测试确认通过。
-- [ ] 提交 `feat: align desktop workspace with mobile ui`。
+- [x] 编写失败测试：页面包含四项侧栏导航、消息工作区、连接状态和移动端令牌；消息列表为内部滚动。
+- [x] 运行测试确认失败。
+- [x] 实现左栏导航、右侧消息工作区、暖灰/墨绿令牌、响应式断点和焦点样式。
+- [x] 重跑渲染测试确认通过。
+- [x] 提交 `feat: align desktop workspace with mobile ui`。
 
 ### 任务 4：完整验证与打包
 
 **文件：**
 - 修改：必要时更新 `README.md` 或桌面端文档。
 
-- [ ] 运行 `npm test`、`npm run lint`。
-- [ ] 运行 `npm run dist:win` 生成 Windows 安装包并检查产物存在。
+- [x] 运行 `npm test`、`npm run lint`。
+- [x] 运行 `npm run dist:win` 生成 Windows 安装包并检查产物存在。
 - [ ] 启动打包应用，验证弹窗连续消息、复制、托盘恢复和窗口关闭。
 - [ ] 提交 `chore: verify desktop ui release`。
