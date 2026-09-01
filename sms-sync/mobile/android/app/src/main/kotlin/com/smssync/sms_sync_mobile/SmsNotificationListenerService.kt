@@ -4,11 +4,15 @@ import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import com.smssync.sms_sync_mobile.ingest.NativeSmsIngestion
+import com.smssync.sms_sync_mobile.ingest.SmsPart
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SmsNotificationListenerService : NotificationListenerService() {
     companion object {
         private const val TAG = "SmsNotifListener"
-        private var lastSignature: String? = null
     }
 
     override fun onListenerConnected() {
@@ -57,24 +61,26 @@ class SmsNotificationListenerService : NotificationListenerService() {
 
         val timestamp = sbn.postTime.takeIf { it > 0 }
             ?: System.currentTimeMillis()
-        val signature = "$sourcePackage|${candidate.from}|${candidate.body.hashCode()}"
-        if (signature == lastSignature) {
-            Log.d(TAG, "Skipped duplicate notification candidate from $sourcePackage")
-            return
-        }
-        lastSignature = signature
-
         Log.d(
             TAG,
             "Accepted notification SMS pkg=$sourcePackage, from=${candidate.from}, body=${preview(candidate.body)}",
         )
-        NativeSmsRelay.deliver(
-            context = applicationContext,
-            from = candidate.from,
-            body = candidate.body,
-            timestamp = timestamp,
-            source = "notification-listener",
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            runCatching {
+                NativeSmsIngestion.persistAndRelay(
+                    context = applicationContext,
+                    parts = listOf(
+                        SmsPart(
+                            from = candidate.from,
+                            body = candidate.body,
+                            receivedAt = timestamp,
+                            sequence = 0,
+                        ),
+                    ),
+                    source = "notification-listener",
+                )
+            }.onFailure { error -> Log.e(TAG, "Failed to persist notification SMS", error) }
+        }
     }
 
     private fun preview(value: String): String {

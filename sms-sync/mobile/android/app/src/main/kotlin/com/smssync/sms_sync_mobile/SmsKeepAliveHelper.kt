@@ -9,6 +9,7 @@ import android.service.notification.NotificationListenerService
 import android.util.Log
 import androidx.core.content.ContextCompat
 import id.flutter.flutter_background_service.Config
+import com.smssync.sms_sync_mobile.reliability.ReliableRelayService
 
 object SmsKeepAliveHelper {
     private const val TAG = "SmsKeepAlive"
@@ -33,8 +34,18 @@ object SmsKeepAliveHelper {
         }
 
         requestBackgroundServiceStart(appContext, reason, config)
+        requestReliableRelayStart(appContext, reason)
         ensureNotificationListenerActive(appContext, reason)
         WatchdogReceiver.enqueue(appContext)
+    }
+
+    private fun requestReliableRelayStart(context: Context, reason: String) {
+        val intent = Intent(context, ReliableRelayService::class.java).putExtra("reason", reason)
+        try {
+            ContextCompat.startForegroundService(context, intent)
+        } catch (error: Exception) {
+            Log.e(TAG, "Failed to start native relay, reason=$reason", error)
+        }
     }
 
     fun ensureNotificationListenerActive(context: Context, reason: String) {

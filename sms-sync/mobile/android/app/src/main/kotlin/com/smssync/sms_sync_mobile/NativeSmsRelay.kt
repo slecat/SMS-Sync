@@ -46,6 +46,14 @@ object NativeSmsRelay {
             return
         }
 
+        // Always persist the hand-off first. The Flutter isolate may be killed
+        // immediately after a broadcast; the background runtime drains this
+        // queue only after transport succeeds.
+        enqueuePendingSms(
+            context = context,
+            sms = PendingSms(from = from, body = body, timestamp = timestamp, source = source),
+        )
+
         val smsData = mapOf(
             "from" to from,
             "body" to body,
@@ -58,12 +66,8 @@ object NativeSmsRelay {
             return
         }
 
-        Log.d(TAG, "Method channel unavailable for $source, queueing for background runtime")
+        Log.d(TAG, "Method channel unavailable for $source, waiting for background runtime")
         BackgroundServiceStarter.ensureRunning(context, "$source-no-channel")
-        enqueuePendingSms(
-            context = context,
-            sms = PendingSms(from = from, body = body, timestamp = timestamp, source = source),
-        )
     }
 
     private fun shouldSkipDuplicate(from: String, body: String, timestamp: Long): Boolean {

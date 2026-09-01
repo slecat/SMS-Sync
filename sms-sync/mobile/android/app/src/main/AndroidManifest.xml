@@ -51,6 +51,12 @@
             android:stopWithTask="false"
             tools:replace="android:exported" />
 
+        <service
+            android:name=".reliability.ReliableRelayService"
+            android:exported="false"
+            android:foregroundServiceType="remoteMessaging"
+            android:stopWithTask="false" />
+
         <receiver
             android:name=".SmsReceiver"
             android:enabled="true"

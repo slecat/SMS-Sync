@@ -49,17 +49,7 @@ class RoomOutboxStore(private val dao: OutboxDao) : OutboxStore {
         dao.findEntityByFingerprint(fingerprint)?.toDomain()
 
     override suspend fun insertIfAbsent(message: OutboxMessage): Boolean {
-        val messageInserted = dao.insertMessage(message.toEntity()) != -1L
-        if (messageInserted) {
-            dao.insertFingerprint(
-                IngestFingerprintEntity(
-                    fingerprint = message.fingerprint,
-                    messageId = message.messageId,
-                    createdAt = message.capturedAt,
-                ),
-            )
-        }
-        return messageInserted
+        return dao.insertBundle(message.toEntity())
     }
 
     override suspend fun claim(messageId: String, leaseUntil: Long, now: Long): Boolean =

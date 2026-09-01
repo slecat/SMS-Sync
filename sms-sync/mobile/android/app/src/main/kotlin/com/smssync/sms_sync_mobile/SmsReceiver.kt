@@ -5,56 +5,46 @@ import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
 import android.util.Log
+import com.smssync.sms_sync_mobile.ingest.SmsIngestor
+import com.smssync.sms_sync_mobile.ingest.NativeSmsIngestion
+import com.smssync.sms_sync_mobile.ingest.SmsPart
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+/** Receives system SMS and persists it before handing it to Flutter. */
 class SmsReceiver : BroadcastReceiver() {
-    companion object {
-        const val TAG = "SmsReceiver"
-    }
+    companion object { const val TAG = "SmsReceiver" }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(TAG, "onReceive called with action: ${intent.action}")
-
-        if (intent.action != "android.provider.Telephony.SMS_RECEIVED") {
-            Log.d(TAG, "Ignoring unsupported SMS action: ${intent.action}")
-            return
-        }
-
-        Log.d(TAG, "Incoming SMS action accepted: ${intent.action}")
-
-        val bundle = intent.extras
-        if (bundle == null) {
-            Log.d(TAG, "Bundle is null")
-            return
-        }
-
-        val pdus = bundle.get("pdus") as? Array<*>
-        val format = bundle.getString("format") ?: "3gpp"
-
-        Log.d(TAG, "Number of PDUs: ${pdus?.size}")
-        Log.d(TAG, "Format: $format")
-
-        pdus?.forEachIndexed { index, pdu ->
+        if (intent.action != "android.provider.Telephony.SMS_RECEIVED") return
+        val pendingResult = goAsync()
+        val appContext = context.applicationContext
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d(TAG, "Processing PDU $index")
-                val message = SmsMessage.createFromPdu(pdu as ByteArray, format)
-                val from = message?.originatingAddress
-                val body = message?.messageBody
-
-                Log.d(TAG, "From: $from")
-                Log.d(TAG, "Body: $body")
-
-                if (from != null && body != null) {
-                    NativeSmsRelay.deliver(
-                        context = context,
-                        from = from,
-                        body = body,
-                        timestamp = message.timestampMillis,
-                        source = "sms-receiver",
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error parsing SMS PDU $index: ${e.message}", e)
+                val parts = parseParts(intent)
+                if (parts.isEmpty()) return@launch
+                val results = NativeSmsIngestion.persistAndRelay(appContext, parts, "sms-receiver")
+                Log.d(TAG, "SMS persisted: count=${results.size}, duplicates=${results.count { it.isDuplicate }}, parts=${parts.size}")
+            } catch (error: Throwable) {
+                Log.e(TAG, "Failed to persist incoming SMS", error)
+            } finally {
+                pendingResult.finish()
             }
+        }
+    }
+
+    private fun parseParts(intent: Intent): List<SmsPart> {
+        val extras = intent.extras ?: return emptyList()
+        val pdus = extras.get("pdus") as? Array<*> ?: return emptyList()
+        val format = extras.getString("format") ?: "3gpp"
+        return pdus.mapIndexedNotNull { index, rawPdu ->
+            runCatching {
+                val message = SmsMessage.createFromPdu(rawPdu as ByteArray, format)
+                val from = message.originatingAddress ?: return@runCatching null
+                val body = message.messageBody ?: return@runCatching null
+                SmsPart(from, body, message.timestampMillis, index)
+            }.getOrNull()
         }
     }
 }

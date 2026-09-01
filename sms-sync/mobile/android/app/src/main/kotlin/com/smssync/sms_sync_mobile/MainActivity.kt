@@ -17,6 +17,11 @@ import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import com.smssync.sms_sync_mobile.ingest.NativeSmsIngestion
+import com.smssync.sms_sync_mobile.ingest.SmsPart
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "sms_sync_channel"
@@ -91,12 +96,13 @@ class MainActivity : FlutterActivity() {
 
         smsObserver = SmsObserver(this) { from, body, timestamp ->
             Log.d(TAG, "SmsObserver received SMS: From=$from")
-            val smsData = mapOf(
-                "from" to from,
-                "body" to body,
-                "timestamp" to timestamp
-            )
-            methodChannel.invokeMethod("onSmsReceived", smsData)
+            CoroutineScope(Dispatchers.IO).launch {
+                NativeSmsIngestion.persistAndRelay(
+                    context = applicationContext,
+                    parts = listOf(SmsPart(from, body, timestamp, 0)),
+                    source = "content-observer",
+                )
+            }
         }
 
         contentResolver.registerContentObserver(
