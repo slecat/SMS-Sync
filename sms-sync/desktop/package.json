@@ -1,7 +1,7 @@
 {
   "name": "sms-sync-desktop",
-  "version": "1.2.6",
-  "buildNumber": 13,
+  "version": "1.2.7",
+  "buildNumber": 14,
   "main": "index.js",
   "scripts": {
     "start": "electron .",
@@ -42,10 +42,18 @@
         "nsis"
       ]
     },
+    "portable": {
+      "artifactName": "sms-sync-desktop-${version}-portable.${ext}"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "perMachine": false
+      "perMachine": false,
+      "artifactName": "sms-sync-desktop-${version}-setup.${ext}",
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "短信转发"
     }
   }
 }
