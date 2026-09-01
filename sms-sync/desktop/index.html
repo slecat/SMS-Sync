@@ -1,214 +1,69 @@
 <!doctype html>
-<html>
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>短信转发</title>
     <link rel="stylesheet" href="./renderer/styles.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="content">
-        <div class="sidebar">
-          <div class="settings-section">
-            <div class="section-header" data-section="settings">
-              <div class="section-title">设置</div>
-              <div class="section-toggle">
-                <span class="toggle-icon">▼</span>
-              </div>
-            </div>
-            <div class="section-content-wrapper" id="settingsContent">
-              <div class="section-content-inner">
-                <div class="input-group">
-                  <label class="input-label" for="groupId">组 ID</label>
-                  <input
-                    type="text"
-                    id="groupId"
-                    class="input-field"
-                    placeholder="默认：default"
-                  />
-                </div>
-                <div class="input-group">
-                  <label class="input-label" for="syncSecret">同步密钥</label>
-                  <input
-                    type="password"
-                    id="syncSecret"
-                    class="input-field"
-                    placeholder="必填，所有设备保持一致"
-                  />
-                </div>
-                <div class="input-group">
-                  <label class="input-label" for="serverUrl">服务器地址（可选）</label>
-                  <div class="input-with-prefix">
-                    <span class="input-prefix">ws://</span>
-                    <input
-                      type="text"
-                      id="serverUrl"
-                      class="input-field input-field-prefixed"
-                      placeholder="your-server:3000"
-                    />
-                  </div>
-                  <div id="serverStatus" class="server-status">
-                    <span class="status-dot"></span>
-                    <span class="status-text"></span>
-                  </div>
-                </div>
-                <div class="input-group">
-                  <label class="input-label" for="deviceName">设备名称</label>
-                  <input
-                    type="text"
-                    id="deviceName"
-                    class="input-field"
-                    placeholder="桌面端"
-                  />
-                </div>
-                <div class="toggle-group">
-                  <div class="toggle-copy">
-                    <div class="toggle-label">只转发验证码消息</div>
-                    <div class="toggle-description">开启后，仅显示并提醒验证码短信。</div>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="forwardVerificationCodeOnlyToggle" />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <div class="toggle-group">
-                  <span class="toggle-label">开机自启动</span>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="autoLaunchToggle" />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <button id="saveBtn" class="btn btn-primary">保存设置</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="devices-section">
-            <div class="section-header" data-section="devices">
-              <div class="section-title">在线设备</div>
-              <div class="section-toggle">
-                <span class="toggle-icon">▼</span>
-              </div>
-            </div>
-            <div class="section-content-wrapper" id="devicesContent">
-              <div class="section-content-inner">
-                <div id="deviceList">
-                  <div class="empty-devices">暂无在线设备</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="updates-section">
-            <div class="section-header" data-section="updates">
-              <div class="section-title">应用更新</div>
-              <div class="section-toggle">
-                <span class="toggle-icon">▼</span>
-              </div>
-            </div>
-            <div class="section-content-wrapper" id="updatesContent">
-              <div class="section-content-inner">
-                <div class="update-panel">
-                  <div class="update-panel-header">
-                    <div>
-                      <div class="update-panel-title">桌面端更新</div>
-                      <div class="update-panel-subtitle" id="updateCurrentVersion">
-                        当前版本 -
-                      </div>
-                    </div>
-                    <button id="checkUpdateBtn" class="btn btn-secondary" type="button">
-                      检查更新
-                    </button>
-                  </div>
-                  <div class="update-status" id="updateStatusText">未检查更新</div>
-                  <div class="update-latest" id="updateLatestVersion"></div>
-                  <div class="update-progress-row hidden" id="updateProgressRow">
-                    <div class="update-progress-bar">
-                      <div class="update-progress-fill" id="updateProgressFill"></div>
-                    </div>
-                    <div class="update-progress-text" id="updateProgressText">0%</div>
-                  </div>
-                  <button
-                    id="downloadUpdateBtn"
-                    class="btn btn-primary hidden"
-                    type="button"
-                  >
-                    下载并安装
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="app-shell">
+      <aside class="app-nav" aria-label="主导航">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">S</div>
+          <div><div class="brand-name">短信转发</div><div class="brand-caption">可靠同步工作台</div></div>
         </div>
-
-        <div class="main-content">
-          <div class="message-header">
-            <div class="message-title">消息</div>
-            <div class="header-right">
-              <button id="clearBtn" class="btn-icon" title="清空消息">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
-                  ></path>
-                </svg>
-              </button>
-              <div class="message-count" id="messageCount">0 条消息</div>
-            </div>
-          </div>
-          <div class="stats-bar">
-            <div class="stat-item-inline">
-              <span class="stat-label-inline">短信数量</span>
-              <span class="stat-value-inline" id="smsCount">0</span>
-            </div>
-            <div class="stat-item-inline">
-              <span class="stat-label-inline">测试消息</span>
-              <span class="stat-value-inline" id="testCount">0</span>
-            </div>
-          </div>
-          <div class="message-list" id="messageList">
-            <div class="empty-state">
-              <div class="empty-icon">📱</div>
-              <div class="empty-text">暂无消息，等待接收中...</div>
-            </div>
-          </div>
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" data-view="messages"><span class="nav-icon">▤</span><span>消息</span></button>
+          <button class="nav-item" type="button" data-view="devices"><span class="nav-icon">◌</span><span>设备</span></button>
+          <button class="nav-item" type="button" data-view="settings"><span class="nav-icon">◈</span><span>设置</span></button>
+          <button class="nav-item" type="button" data-view="updates"><span class="nav-icon">↻</span><span>更新</span></button>
+        </nav>
+        <div class="nav-footer">
+          <div class="connection-card" id="connectionSummary"><span class="status-dot"></span><div><div class="connection-label">连接状态</div><div class="connection-text">等待配置</div></div></div>
+          <button class="tray-action" type="button" onclick="window.electronAPI.minimizeToTray()">收起到托盘</button>
         </div>
-      </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="workspace-panel messages-panel active" data-panel="messages">
+          <header class="message-header">
+            <div><div class="eyebrow">收件箱</div><h1 class="message-title">消息</h1><p class="page-subtitle">来自已连接设备的最新短信</p></div>
+            <div class="header-right"><button id="clearBtn" class="btn btn-ghost" title="清空消息" type="button">清空</button><div class="message-count" id="messageCount">0 条消息</div></div>
+          </header>
+          <div class="stats-bar"><div class="stat-item-inline"><span class="stat-label-inline">短信</span><span class="stat-value-inline" id="smsCount">0</span></div><div class="stat-item-inline"><span class="stat-label-inline">测试</span><span class="stat-value-inline" id="testCount">0</span></div><div class="stat-item-inline stat-status"><span class="status-dot"></span><span class="stat-label-inline">实时同步</span></div></div>
+          <div class="message-list" id="messageList"><div class="empty-state"><div class="empty-mark" aria-hidden="true">—</div><div class="empty-text">暂无消息，等待接收中…</div><div class="empty-hint">手机端收到短信后会自动出现在这里</div></div></div>
+        </section>
+
+        <section class="workspace-panel config-panel" data-panel="settings">
+          <header class="panel-heading"><div><div class="eyebrow">工作区</div><h1>连接设置</h1><p class="page-subtitle">让手机与桌面端保持同一组密钥</p></div></header>
+          <div class="config-grid">
+            <div class="devices-section" data-section="devices" aria-hidden="true"></div>
+            <div class="settings-section card-section"><div class="section-header" data-section="settings"><div class="section-title">同步配置</div><span class="toggle-icon">⌄</span></div><div class="section-content-wrapper" id="settingsContent"><div class="section-content-inner">
+              <div class="input-group"><label class="input-label" for="groupId">组 ID</label><input type="text" id="groupId" class="input-field" placeholder="默认：default" /></div>
+              <div class="input-group"><label class="input-label" for="syncSecret">同步密钥</label><input type="password" id="syncSecret" class="input-field" placeholder="所有设备保持一致" /></div>
+              <div class="input-group"><label class="input-label" for="serverUrl">服务器地址（可选）</label><div class="input-with-prefix"><span class="input-prefix">ws://</span><input type="text" id="serverUrl" class="input-field input-field-prefixed" placeholder="your-server:3000" /></div><div id="serverStatus" class="server-status"><span class="status-dot"></span><span class="status-text"></span></div></div>
+              <div class="input-group"><label class="input-label" for="deviceName">设备名称</label><input type="text" id="deviceName" class="input-field" placeholder="桌面端" /></div>
+              <div class="toggle-group"><div class="toggle-copy"><div class="toggle-label">只转发验证码消息</div><div class="toggle-description">仅显示并提醒验证码短信</div></div><label class="toggle-switch"><input type="checkbox" id="forwardVerificationCodeOnlyToggle" /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-group"><span class="toggle-label">开机自启动</span><label class="toggle-switch"><input type="checkbox" id="autoLaunchToggle" /><span class="toggle-slider"></span></label></div>
+              <button id="saveBtn" class="btn btn-primary" type="button">保存设置</button>
+            </div></div></div>
+            <div class="card-section device-card"><div class="section-header" data-section="devices"><div class="section-title">在线设备</div><span class="toggle-icon">⌄</span></div><div class="section-content-wrapper" id="devicesContent"><div class="section-content-inner"><div id="deviceList"><div class="empty-devices">暂无在线设备</div></div></div></div></div>
+          </div>
+        </section>
+
+        <section class="workspace-panel updates-panel" data-panel="updates">
+          <div class="updates-section" data-section="updates" id="updatesContent" aria-hidden="true"></div>
+          <header class="panel-heading"><div><div class="eyebrow">维护</div><h1>应用更新</h1><p class="page-subtitle">从官方或 Gitee 镜像获取最新版本</p></div></header>
+          <div class="update-panel"><div class="update-panel-header"><div><div class="update-panel-title">桌面端</div><div class="update-panel-subtitle" id="updateCurrentVersion">当前版本 -</div></div><button id="checkUpdateBtn" class="btn btn-secondary" type="button">检查更新</button></div><div class="update-status" id="updateStatusText">未检查更新</div><div class="update-latest" id="updateLatestVersion"></div><div class="update-progress-row hidden" id="updateProgressRow"><div class="update-progress-bar"><div class="update-progress-fill" id="updateProgressFill"></div></div><div class="update-progress-text" id="updateProgressText">0%</div></div><button id="downloadUpdateBtn" class="btn btn-primary hidden" type="button">下载并安装</button></div>
+        </section>
+
+        <section class="workspace-panel devices-panel" data-panel="devices"><header class="panel-heading"><div><div class="eyebrow">设备</div><h1>在线设备</h1><p class="page-subtitle">查看当前组内的手机与桌面端</p></div></header><div class="device-list-large" id="deviceListLarge"><div class="empty-devices">暂无在线设备</div></div></section>
+      </main>
     </div>
 
     <div class="toast" id="toast"></div>
-    <div class="route-modal hidden" id="downloadRouteModal">
-      <div class="route-modal-backdrop" id="downloadRouteBackdrop"></div>
-      <div
-        class="route-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="downloadRouteTitle"
-      >
-        <div class="route-modal-header">
-          <div>
-            <div class="route-modal-title" id="downloadRouteTitle">选择下载路线</div>
-            <div class="route-modal-subtitle">请选择默认安装包或 Ops 提供的镜像地址</div>
-          </div>
-          <button
-            id="closeDownloadRouteBtn"
-            class="route-modal-close"
-            type="button"
-            aria-label="关闭"
-          >
-            ×
-          </button>
-        </div>
-        <div class="route-list" id="downloadRouteList"></div>
-      </div>
-    </div>
-
+    <div class="route-modal hidden" id="downloadRouteModal"><div class="route-modal-backdrop" id="downloadRouteBackdrop"></div><div class="route-modal-card" role="dialog" aria-modal="true" aria-labelledby="downloadRouteTitle"><div class="route-modal-header"><div><div class="route-modal-title" id="downloadRouteTitle">选择下载路线</div><div class="route-modal-subtitle">请选择默认安装包或 Gitee 镜像地址</div></div><button id="closeDownloadRouteBtn" class="route-modal-close" type="button" aria-label="关闭">×</button></div><div class="route-list" id="downloadRouteList"></div></div></div>
     <script src="./renderer/app.js"></script>
   </body>
 </html>

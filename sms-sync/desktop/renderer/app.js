@@ -15,6 +15,8 @@ const testCountEl = document.getElementById('testCount');
 const messageCountEl = document.getElementById('messageCount');
 const toast = document.getElementById('toast');
 const serverStatus = document.getElementById('serverStatus');
+const connectionSummary = document.getElementById('connectionSummary');
+const deviceListLarge = document.getElementById('deviceListLarge');
 const updateCurrentVersionEl = document.getElementById('updateCurrentVersion');
 const updateStatusTextEl = document.getElementById('updateStatusText');
 const updateLatestVersionEl = document.getElementById('updateLatestVersion');
@@ -35,6 +37,18 @@ let smsCount = 0;
 let testCount = 0;
 let currentUpdateState = null;
 let downloadRouteSelectionResolver = null;
+
+document.querySelectorAll('.nav-item').forEach((item) => {
+  item.addEventListener('click', () => {
+    const view = item.dataset.view;
+    document.querySelectorAll('.nav-item').forEach((navItem) => {
+      navItem.classList.toggle('active', navItem === item);
+    });
+    document.querySelectorAll('.workspace-panel').forEach((panel) => {
+      panel.classList.toggle('active', panel.dataset.panel === view);
+    });
+  });
+});
 
 function toggleSection(sectionName) {
   const header = document.querySelector(`[data-section="${sectionName}"]`);
@@ -78,8 +92,9 @@ function renderMessages() {
   if (messages.length === 0) {
     messageList.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">📱</div>
-        <div class="empty-text">暂无消息，等待接收中...</div>
+        <div class="empty-mark" aria-hidden="true">—</div>
+        <div class="empty-text">暂无消息，等待接收中…</div>
+        <div class="empty-hint">手机端收到短信后会自动出现在这里</div>
       </div>
     `;
     return;
@@ -117,12 +132,17 @@ function renderMessages() {
 }
 
 function renderDeviceList(devices) {
+  const targetLists = [deviceListEl, deviceListLarge].filter(Boolean);
   if (devices.length === 0) {
-    deviceListEl.innerHTML = '<div class="empty-devices">暂无在线设备</div>';
+    targetLists.forEach((target) => {
+      target.innerHTML = '<div class="empty-devices">暂无在线设备</div>';
+    });
     return;
   }
 
-  deviceListEl.innerHTML = '';
+  targetLists.forEach((target) => {
+    target.innerHTML = '';
+  });
   devices.forEach((device) => {
     const sources = normalizeDeviceSources(device);
     const indicatorClass =
@@ -134,15 +154,24 @@ function renderDeviceList(devices) {
       )
       .join('');
 
-    const item = document.createElement('div');
-    item.className = 'device-item';
-    item.innerHTML = `
-      <div class="device-indicator ${indicatorClass}"></div>
-      <div class="device-name">${escapeHtml(device.deviceName || '未知设备')}</div>
-      <div class="device-sources">${sourceTags}</div>
-    `;
-    deviceListEl.appendChild(item);
+    targetLists.forEach((target) => {
+      const item = document.createElement('div');
+      item.className = 'device-item';
+      item.innerHTML = `
+        <div class="device-indicator ${indicatorClass}"></div>
+        <div class="device-name">${escapeHtml(device.deviceName || '未知设备')}</div>
+        <div class="device-sources">${sourceTags}</div>
+      `;
+      target.appendChild(item);
+    });
   });
+}
+
+function updateConnectionSummary(status, message) {
+  if (!connectionSummary) return;
+  connectionSummary.className = `connection-card ${status}`;
+  const text = connectionSummary.querySelector('.connection-text');
+  if (text) text.textContent = message || '未连接';
 }
 
 function normalizeDeviceSources(device) {
@@ -180,6 +209,7 @@ function escapeHtml(value) {
 }
 
 function updateServerStatusUI(status, message) {
+  updateConnectionSummary(status, message);
   if (!serverUrlInput.value) {
     serverStatus.style.display = 'none';
     return;
