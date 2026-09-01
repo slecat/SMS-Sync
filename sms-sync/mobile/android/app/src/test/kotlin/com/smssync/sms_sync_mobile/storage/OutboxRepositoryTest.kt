@@ -29,6 +29,15 @@ class OutboxRepositoryTest {
         assertEquals(OutboxState.RETRY_WAIT, store.items.single().state)
     }
 
+    @Test
+    fun `server acknowledgement is terminal and retry cannot resurrect it`() = runBlocking {
+        val item = repository.ingest(sampleSms("fp-3")).message!!
+        repository.claim(item.messageId, leaseUntil = 10_000L)
+        assertTrue(repository.markServerAcked(item.messageId, ackedAt = 2_000L))
+        assertFalse(repository.markRetry(item.messageId, nextAttemptAt = 3_000L, errorCode = "late"))
+        assertEquals(OutboxState.SERVER_ACKED, store.items.single().state)
+    }
+
     private fun sampleSms(fingerprint: String) = IncomingSms(
         messageId = "message-$fingerprint",
         fingerprint = fingerprint,
@@ -77,5 +86,10 @@ private class FakeOutboxStore : OutboxStore {
     }
 
     override suspend fun markRetry(messageId: String, nextAttemptAt: Long, errorCode: String?): Boolean =
-        items.firstOrNull { it.messageId == messageId }?.let { it.state = OutboxState.RETRY_WAIT; true } ?: false
+        items.firstOrNull { it.messageId == messageId && it.state == OutboxState.SENDING }?.let {
+            it.state = OutboxState.RETRY_WAIT
+            it.nextAttemptAt = nextAttemptAt
+            it.lastErrorCode = errorCode
+            true
+        } ?: false
 }
