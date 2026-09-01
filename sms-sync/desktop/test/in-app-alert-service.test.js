@@ -125,6 +125,7 @@ test('alert data URL uses the calm desktop palette and accessible controls', () 
   assert.match(html, /#173C36/i);
   assert.match(html, /123456/);
   assert.match(html, /复制验证码/);
+  assert.match(html, /关闭/);
   assert.match(html, /Escape/);
   assert.match(html, /Content-Security-Policy/);
   assert.doesNotMatch(html, /应用内通知，自动关闭/);

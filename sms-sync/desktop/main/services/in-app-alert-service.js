@@ -73,6 +73,12 @@ class InAppAlertService {
         this.closeAlert();
       }
     });
+    alertWindow.webContents.on('before-input-event', (event, input) => {
+      if (input && input.type === 'keyDown' && input.key === 'Escape') {
+        event.preventDefault();
+        this.closeAlert();
+      }
+    });
     alertWindow.webContents.on('did-fail-load', () => {
       if (this.alertWindow !== alertWindow) return;
       try {
@@ -183,6 +189,9 @@ class InAppAlertService {
       .copy-btn { border: 0; border-radius: 10px; padding: 9px 13px; background: #007F73; color: #FFFFFF; font-size: 13px; font-weight: 700; cursor: pointer; }
       .copy-btn:hover { background: #00665D; }
       .copy-btn:focus-visible { outline: 3px solid rgba(0, 127, 115, .28); outline-offset: 2px; }
+      .close-btn { border: 1px solid #DDD9D1; border-radius: 10px; padding: 8px 11px; background: transparent; color: #38534D; font-size: 12px; cursor: pointer; }
+      .close-btn:hover { background: #F4F1EB; }
+      .close-btn:focus-visible { outline: 3px solid rgba(0, 127, 115, .28); outline-offset: 2px; }
       .hint { margin-left: auto; color: #7B8984; font-size: 11px; }
     </style>
   </head>
@@ -192,7 +201,7 @@ class InAppAlertService {
       <div class="title">${safeTitle}</div>
       <div class="body">${safeBody}</div>
       ${hasCode ? `<div class="code" aria-label="验证码">${escapeHtml(copyCode)}</div>` : ''}
-      <div class="actions">${actionHtml}<div class="hint">按 Esc 关闭</div></div>
+      <div class="actions">${actionHtml}<button class="close-btn" type="button" onclick="window.close()">关闭</button><div class="hint">按 Esc 关闭</div></div>
     </main>
     <script>window.addEventListener('keydown', (event) => { if (event.key === 'Escape') window.close(); });</script>
   </body>
