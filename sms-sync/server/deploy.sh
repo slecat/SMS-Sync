@@ -31,6 +31,13 @@ fi
 echo -e "${GREEN}✓ 依赖安装完成${NC}"
 echo ""
 
+# 2.5 备份可靠中继事件快照，避免发布时丢失未完成的投递记录
+if [ -f "data/relay-events.json" ]; then
+    mkdir -p data/backups
+    cp "data/relay-events.json" "data/backups/relay-events-$(date +%Y%m%d-%H%M%S).json"
+    echo -e "${GREEN}✓ 已备份 relay-events.json${NC}"
+fi
+
 # 3. 停止旧进程
 echo -e "${GREEN}[2/5] 停止旧进程...${NC}"
 pm2 stop "Ops SMS Sync Service" 2>/dev/null
@@ -40,7 +47,7 @@ echo ""
 
 # 4. 启动新进程
 echo -e "${GREEN}[3/5] 启动服务...${NC}"
-PORT=8004 pm2 start index.js --name "Ops SMS Sync Service"
+PORT=8004 RELAY_PERSISTENCE_PATH=./data/relay-events.json pm2 start index.js --name "Ops SMS Sync Service"
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}服务启动失败！${NC}"
