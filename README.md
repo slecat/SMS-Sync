@@ -14,7 +14,7 @@
 - WebSocket 服务器中转，支持跨网络同步
 - 同步密钥签名校验，使用 HMAC-SHA256
 - 移动端后台服务与前台通知常驻
-- 移动端短信先写入原生 Room Outbox，再交给后台运行时发送；服务端事件和桌面端 Inbox 均支持落盘恢复
+- 移动端短信先写入原生 Room Outbox，再由原生前台中继通过 ACK WebSocket 发送；Flutter isolate 不再参与短信交付，服务端事件和桌面端 Inbox 均支持落盘恢复
 - WebSocket v2 提供 server-ack / delivery-ack，断线后按 2 秒至 30 分钟退避重试
 
 ## 同步密钥说明

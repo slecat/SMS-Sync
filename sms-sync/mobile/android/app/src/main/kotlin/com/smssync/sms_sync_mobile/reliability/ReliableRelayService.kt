@@ -16,10 +16,12 @@ import com.smssync.sms_sync_mobile.storage.OutboxMessage
 import com.smssync.sms_sync_mobile.storage.OutboxRepository
 import com.smssync.sms_sync_mobile.storage.RoomOutboxStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -27,9 +29,10 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
 import android.provider.Settings
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
-/** Small native foreground anchor. Flutter remains responsible for socket I/O. */
+/** Durable native foreground relay. Flutter is only the configuration/UI client. */
 class ReliableRelayService : Service() {
     companion object {
         private const val TAG = "ReliableRelayService"
@@ -41,6 +44,9 @@ class ReliableRelayService : Service() {
     private val client = OkHttpClient.Builder().pingInterval(20, TimeUnit.SECONDS).build()
     private var socket: WebSocket? = null
     private var repository: OutboxRepository? = null
+    private var activeGroupId: String = "default"
+    private var activeDeviceId: String = "unknown_device"
+    private val pendingAcks = ConcurrentHashMap<String, CompletableDeferred<Boolean>>()
 
     override fun onCreate() {
         super.onCreate()
@@ -60,13 +66,20 @@ class ReliableRelayService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "relay service started: reason=${intent?.getStringExtra(EXTRA_REASON)}")
         scheduleRecovery()
-        connect()
+        val currentSocket = socket
+        if (ReliableRelayPolicy.shouldDrainExistingConnection(currentSocket != null)) {
+            drain(currentSocket!!, activeGroupId, activeDeviceId)
+        } else {
+            connect()
+        }
         return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        pendingAcks.values.forEach { it.complete(false) }
+        pendingAcks.clear()
         socket?.close(1000, "service stopped")
         socket = null
         scope.cancel()
@@ -79,6 +92,8 @@ class ReliableRelayService : Service() {
         val url = config.serverUrl.trim()
         if (url.isEmpty() || socket != null) return
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID) ?: Build.ID
+        activeGroupId = config.groupId
+        activeDeviceId = deviceId
         val request = runCatching { Request.Builder().url(url).build() }.getOrNull() ?: return
         socket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -93,7 +108,10 @@ class ReliableRelayService : Service() {
                 val payload = runCatching { JSONObject(text) }.getOrNull() ?: return
                 if (payload.optString("type") == "server-ack") {
                     val messageId = payload.optString("messageId")
-                    if (messageId.isNotEmpty()) scope.launch { repository?.markServerAcked(messageId) }
+                    if (messageId.isNotEmpty()) {
+                        pendingAcks.remove(messageId)?.complete(true)
+                        scope.launch { repository?.markServerAcked(messageId) }
+                    }
                 }
             }
 
@@ -109,17 +127,23 @@ class ReliableRelayService : Service() {
             while (socket != null) {
                 val message = repo.findReady(1).firstOrNull() ?: break
                 if (!repo.claim(message.messageId, System.currentTimeMillis() + 45_000L)) continue
+                val ack = CompletableDeferred<Boolean>()
+                pendingAcks[message.messageId] = ack
                 val sent = webSocket.send(JSONObject().apply {
                     put("type", "sms"); put("protocolVersion", 2); put("messageId", message.messageId)
                     put("groupId", groupId); put("sourceDeviceId", deviceId); put("from", message.from)
                     put("body", message.body); put("receivedAt", message.receivedAt); put("timestamp", message.receivedAt)
                 }.toString())
                 if (!sent) {
+                    pendingAcks.remove(message.messageId)
                     repo.markRetry(message.messageId, System.currentTimeMillis() + ReliableRelayPolicy.retryDelayMillis(message.attemptCount + 1), "socket_send_failed")
                     break
                 }
-                kotlinx.coroutines.delay(5_000L)
-                repo.markRetry(message.messageId, System.currentTimeMillis() + ReliableRelayPolicy.retryDelayMillis(message.attemptCount + 1), "ack_timeout")
+                val acknowledged = withTimeoutOrNull(8_000L) { ack.await() } == true
+                pendingAcks.remove(message.messageId)
+                if (!acknowledged) {
+                    repo.markRetry(message.messageId, System.currentTimeMillis() + ReliableRelayPolicy.retryDelayMillis(message.attemptCount + 1), "ack_timeout")
+                }
             }
         }
     }

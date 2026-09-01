@@ -221,10 +221,6 @@ class HomeRuntimeCoordinator {
     required void Function(String from, String body, int timestamp)
     onSmsReceived,
   }) {
-    final service = dependencies.supportsBackgroundService
-        ? dependencies.createBackgroundService()
-        : null;
-
     dependencies.smsMethodChannel.setMethodCallHandler((call) async {
       if (call.method == 'onSmsReceived') {
         try {
@@ -246,11 +242,9 @@ class HomeRuntimeCoordinator {
           }
 
           onSmsReceived(from, body, timestamp);
-          service?.invoke('smsReceived', {
-            'from': from,
-            'body': body,
-            'timestamp': timestamp,
-          });
+          // Incoming SMS is already persisted in the native Room Outbox.
+          // Do not mirror it into the Flutter background isolate: that would
+          // create a second sender and race the native ACK-driven relay.
         } catch (e) {
           AppLogger.debug('Error in UI SMS listener: $e');
         }

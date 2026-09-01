@@ -11,4 +11,10 @@ class ReliableRelayPolicyTest {
         assertEquals(1_800_000L, ReliableRelayPolicy.retryDelayMillis(99))
         assertEquals(true, ReliableRelayPolicy.shouldRestart(startId = 3))
     }
+
+    @Test
+    fun a_live_connection_is_woken_for_new_outbox_items() {
+        assertEquals(true, ReliableRelayPolicy.shouldDrainExistingConnection(hasLiveSocket = true))
+        assertEquals(false, ReliableRelayPolicy.shouldDrainExistingConnection(hasLiveSocket = false))
+    }
 }

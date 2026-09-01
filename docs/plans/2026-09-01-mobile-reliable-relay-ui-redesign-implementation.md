@@ -10,7 +10,8 @@
 
 ## 当前实施进度（2026-09-01）
 
-- 已完成：v2 协议校验、Android Room Outbox、multipart/跨入口去重、短信广播与通知监听的先落盘、原生 `START_STICKY` 中继、OkHttp WebSocket ACK 发送、WorkManager 租约恢复。
+- 已完成：v2 协议校验、Android Room Outbox、multipart/跨入口去重、短信广播与通知监听的先落盘、原生 `START_STICKY` 中继、OkHttp WebSocket ACK 发送、在线连接唤醒发送、WorkManager 租约恢复。
+- 已完成：短信交付已收口到原生 Outbox，中止 Flutter isolate 的重复发送路径；Flutter 仅保留 UI、设备状态和配置职责。
 - 已完成：服务端事件快照持久化、server-ack/delivery-ack 闭环、桌面端 Inbox 落盘；移动端 A 方向暖灰/墨绿 UI 首版。
 - 验证：Android 原生定向测试、Flutter 全量测试、Node 服务端全量测试、桌面端全量测试均通过；Flutter analyze 仅保留仓库内第三方依赖的既有 lint 提示。
 - 后续增强：补齐设置/诊断原生桥接、Outbox 清理策略及真机长时间保活压测；服务端 replay 已支持最近 100 条短信。
