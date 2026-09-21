@@ -1,108 +1,213 @@
-2026-03-12 21:45:04.823  7577-8220  ProfileInstaller        com.smssync.sms_sync_mobile          D  Installing profile for com.smssync.sms_sync_mobile
-2026-03-12 21:45:04.881  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  onReceive called with action: android.provider.Telephony.SMS_RECEIVED
-2026-03-12 21:45:04.881  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Incoming SMS action accepted: android.provider.Telephony.SMS_RECEIVED
-2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Number of PDUs: 1
-2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Format: 3gpp
-2026-03-12 21:45:04.883  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Processing PDU 0
-2026-03-12 21:45:04.887  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  From: 10686307700000000112
-2026-03-12 21:45:04.887  7577-7577  SmsReceiver             com.smssync.sms_sync_mobile          D  Body: 【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:04.888  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for sms-receiver, queueing for background runtime
-2026-03-12 21:45:04.895  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=sms-receiver-no-channel
-2026-03-12 21:45:04.895  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from sms-receiver for background delivery
-2026-03-12 21:45:04.907  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  WebSocket onDone
-2026-03-12 21:45:04.907  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] disconnected
-2026-03-12 21:45:04.931  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:05.011  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connectToServer trigger=heartbeat-probe
-2026-03-12 21:45:05.012  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connecting
-2026-03-12 21:45:05.068  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
-2026-03-12 21:45:05.088  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
-2026-03-12 21:45:05.089  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:05.093  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:05.095  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:05.100  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:05.102  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
-2026-03-12 21:45:05.102  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:05.123  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:05.123  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:05.128  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connected
-2026-03-12 21:45:05.130  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:05.131  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:05.142  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:05.142  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:05.142  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:05.144  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:05.148  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:05.150  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:05.150  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:05.152  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:05.153  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:05.155  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:05.156  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:05.162  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:07.047  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 5 pending native SMS item(s), trigger=periodic
-2026-03-12 21:45:08.067  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=sms-receiver
-2026-03-12 21:45:08.081  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:08.081  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:08.086  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:08.090  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:08.090  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:08.090  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:08.094  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
-2026-03-12 21:45:08.094  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:08.098  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
-2026-03-12 21:45:08.098  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:08.102  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
-2026-03-12 21:45:09.075  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:10.089  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:11.107  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:12.127  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:15.885  7577-7590  sms_sync_mobile         com.smssync.sms_sync_mobile          I  Forcing GC for allocation-inactive process
-2026-03-12 21:45:15.924  7577-7590  sms_sync_mobile         com.smssync.sms_sync_mobile          I  Background concurrent copying GC freed 2493KB AllocSpace bytes, 75(2424KB) LOS objects, 74% free, 2072KB(1652KB_16KB)/8216KB, 2, itvl 21.478s, cpu 35.973ms, paused 87us,13us total 38.053ms
-2026-03-12 21:45:49.358  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
-2026-03-12 21:45:49.362  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:49.373  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
-2026-03-12 21:45:49.373  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:49.382  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:49.382  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:49.397  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:49.400  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:49.400  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:49.402  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:49.403  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:49.403  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:49.403  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:49.404  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:49.406  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:49.407  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:49.407  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:49.409  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:49.414  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:49.415  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:49.428  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=鹰角网络, body=【鹰角网络】验证码：838956。此验证码只用于鹰角账号登录使用，请勿将此信息以任何形式告知他人！30分钟内有效。
-2026-03-12 21:45:49.428  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:49.430  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:49.431  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:49.432  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:52.038  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 4 pending native SMS item(s), trigger=periodic
-2026-03-12 21:45:52.361  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:52.378  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码595247，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:52.385  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=阿里云, text=【阿里云】您正在进行短信登录，验证码101436，切勿将验证码泄露于他人，本条验证码有效期15分钟。
-2026-03-12 21:45:52.400  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 365864 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:52.400  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:52.411  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 135106 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
-2026-03-12 21:45:52.411  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:52.412  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Skipped duplicate notification candidate from com.android.mms.service
-2026-03-12 21:45:52.414  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=BOSS直聘, body=【BOSS直聘】登录验证码：031822，30分钟内有效。工作人员不会向您索要验证码，切勿将验证码提供给他人，谨防被骗。
-2026-03-12 21:45:52.415  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Skipped duplicate SMS from notification-listener
-2026-03-12 21:45:52.419  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=ToDesk, body=【ToDesk远控】验证码为：431839，您正在登录，若非本人操作，请勿泄漏。
-2026-03-12 21:45:52.420  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
-2026-03-12 21:45:52.430  7577-7577  BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
-2026-03-12 21:45:52.432  7577-7577  NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
-2026-03-12 21:45:52.437  7577-7577  BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
-2026-03-12 21:45:52.440  7577-7577  SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.android.mms.service, title=鹰角网络, text=【鹰角网络】《明日方舟：终末地》「新潮起·故渊离」版本开启！启程福利追加，参与新活动可得「特许寻访凭证」×10！新区域、...
-2026-03-12 21:45:53.052  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:54.061  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:55.030  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=periodic
-2026-03-12 21:45:55.078  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:56.043  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
-2026-03-12 21:45:56.092  7577-7577  flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via temporary socket, source=notification-listener
+2026-03-14 02:04:05.266  2003-2987  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.945  2003-2840  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.965  2003-2186  ActivityTaskManager     system_server                        I  Displayed com.smssync.sms_sync_mobile/.MainActivity for user 0: +1s104ms
+2026-03-14 02:04:05.967  2003-2186  ActivityTaskManager     system_server                        I  Fully drawn com.smssync.sms_sync_mobile/.MainActivity: +1s104ms
+2026-03-14 02:05:04.240  2003-2792  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: -1, arg2: -1, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.767 24145-24145 sms_sync_mobile         zygote64                             I  Late-enabling -Xcheck:jni
+2026-03-14 02:05:05.782 24145-24145 sms_sync_mobile         zygote64                             I  Using CollectorTypeCC GC.
+2026-03-14 02:05:05.791 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init Processname  com.smssync.sms_sync_mobile  
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init hasGetProcessName  com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+2026-03-14 02:05:05.845 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Configuring clns-9 for other apk /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64:/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.849 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          I  AssetManager2(0xb400007289512938) locale list changing from [] to [zh-CN]
+2026-03-14 02:05:05.854 24145-24145 ShaderCache             com.smssync.sms_sync_mobile          I  Parse coeffs for /com.smssync.sms_sync_mobile with space syetem(version 3)
+2026-03-14 02:05:05.854 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  Currently set values for:
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_values=[angle, native, native, native]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in per-application setting
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  ANGLE allowlist from config: 
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in ANGLE allowlist or settings, returning default
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  App is not on the allowlist for updatable production driver.
+2026-03-14 02:05:05.866 24145-24145 SmsApplication          com.smssync.sms_sync_mobile          D  SmsApplication onCreate
+2026-03-14 02:05:05.887 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Starting flutter engine for background service
+2026-03-14 02:05:05.895 24145-24145 DisplayManager          com.smssync.sms_sync_mobile          I  Implicitly registering for refresh rate
+2026-03-14 02:05:05.898 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  Beginning load of flutter...
+2026-03-14 02:05:05.899 24145-24166 ResourceExtractor       com.smssync.sms_sync_mobile          I  Found extracted resources res_timestamp-2-1773424773253
+2026-03-14 02:05:05.926 24145-24165 nativeloader            com.smssync.sms_sync_mobile          D  Load /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libflutter.so using class loader ns clns-9 (caller=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk): ok
+2026-03-14 02:05:05.927 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  flutter (null) was loaded normally!
+2026-03-14 02:05:05.937 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          W  type=1400 audit(0.0:13073909): avc:  denied  { read } for  name="max_map_count" dev="proc" ino=34880375 scontext=u:r:untrusted_app:s0:c173,c257,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.950 24145-24168 GameManager             com.smssync.sms_sync_mobile          I  __progname=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64'
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a'
+2026-03-14 02:05:05.968 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  added global layer 'VK_LAYER_KHRONOS_validation' from library '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libVkLayer_khronos_validation.so'
+2026-03-14 02:05:05.977 24145-24168 MMUD                    com.smssync.sms_sync_mobile          D  mtk_memory_debug_init com.smssync.sms_sync_mobile 0xb4000073a749e210
+2026-03-14 02:05:05.978 24145-24168 MMUD                    com.smssync.sms_sync_mobile          I  [MEMPROF] Memory instrumentation via debugfs (Experimental) enabled 0
+2026-03-14 02:05:05.988 24145-24168 flutter                 com.smssync.sms_sync_mobile          I  [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+2026-03-14 02:05:06.052 24145-24186 flutter                 com.smssync.sms_sync_mobile          I  The Dart VM service is listening on http://127.0.0.1:42993/0U-SR5XeqTI=/
+2026-03-14 02:05:06.087 24145-24181 MMUD                    com.smssync.sms_sync_mobile          D  get_leak_baseline 3246391296
+2026-03-14 02:05:06.403 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  `flutter_background_service_android` threw an error: Exception: This class should only be used in the main isolate (UI App). The app may not function as expected until you remove this plugin from pubspec.yaml
+2026-03-14 02:05:06.467 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+2026-03-14 02:05:06.487 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connectToServer trigger=startup
+2026-03-14 02:05:06.515 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connecting
+2026-03-14 02:05:06.664 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.665 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.741 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connected
+2026-03-14 02:05:06.814 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=5b0263b4-f569-4bbb-9a57-cf23934315dc ageMs=119009
+2026-03-14 02:05:06.816 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=aa08e4e7-d2c8-4913-8633-e548bbe69226 ageMs=979682
+2026-03-14 02:05:11.155 24145-24194 ProfileInstaller        com.smssync.sms_sync_mobile          D  Installing profile for com.smssync.sms_sync_mobile
+2026-03-14 02:05:27.266 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Forcing GC for allocation-inactive process
+2026-03-14 02:05:27.305 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Background concurrent copying GC freed 908KB AllocSpace bytes, 9(344KB) LOS objects, 75% free, 2015KB(1652KB_8192B)/8159KB, 2, itvl 21.484s, cpu 36.253ms, paused 100us,10us total 38.209ms
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  onReceive called with action: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Incoming SMS action accepted: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Number of PDUs: 1
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Format: 3gpp
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Processing PDU 0
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  From: 10684041130051156615
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Body: 【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码。
+2026-03-14 02:05:28.001 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for sms-receiver, queueing for background runtime
+2026-03-14 02:05:28.003 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=sms-receiver-no-channel
+2026-03-14 02:05:28.004 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from sms-receiver for background delivery
+2026-03-14 02:05:28.004 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.028 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=sms-receiver-no-channel
+2026-03-14 02:05:28.902 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-14 02:05:28.902 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-14 02:05:28.904 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-14 02:05:28.904 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-14 02:05:28.904 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.925 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=notification-listener-no-channel
+2026-03-14 02:05:29.045 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=sms-receiver
+2026-03-14 02:05:29.934 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=notification-listener
+2026-03-14 02:04:05.266  2003-2987  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.945  2003-2840  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.965  2003-2186  ActivityTaskManager     system_server                        I  Displayed com.smssync.sms_sync_mobile/.MainActivity for user 0: +1s104ms
+2026-03-14 02:04:05.967  2003-2186  ActivityTaskManager     system_server                        I  Fully drawn com.smssync.sms_sync_mobile/.MainActivity: +1s104ms
+2026-03-14 02:05:04.240  2003-2792  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: -1, arg2: -1, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.767 24145-24145 sms_sync_mobile         zygote64                             I  Late-enabling -Xcheck:jni
+2026-03-14 02:05:05.782 24145-24145 sms_sync_mobile         zygote64                             I  Using CollectorTypeCC GC.
+2026-03-14 02:05:05.791 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init Processname  com.smssync.sms_sync_mobile  
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init hasGetProcessName  com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+2026-03-14 02:05:05.845 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Configuring clns-9 for other apk /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64:/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.849 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          I  AssetManager2(0xb400007289512938) locale list changing from [] to [zh-CN]
+2026-03-14 02:05:05.854 24145-24145 ShaderCache             com.smssync.sms_sync_mobile          I  Parse coeffs for /com.smssync.sms_sync_mobile with space syetem(version 3)
+2026-03-14 02:05:05.854 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  Currently set values for:
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_values=[angle, native, native, native]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in per-application setting
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  ANGLE allowlist from config: 
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in ANGLE allowlist or settings, returning default
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  App is not on the allowlist for updatable production driver.
+2026-03-14 02:05:05.866 24145-24145 SmsApplication          com.smssync.sms_sync_mobile          D  SmsApplication onCreate
+2026-03-14 02:05:05.887 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Starting flutter engine for background service
+2026-03-14 02:05:05.895 24145-24145 DisplayManager          com.smssync.sms_sync_mobile          I  Implicitly registering for refresh rate
+2026-03-14 02:05:05.898 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  Beginning load of flutter...
+2026-03-14 02:05:05.899 24145-24166 ResourceExtractor       com.smssync.sms_sync_mobile          I  Found extracted resources res_timestamp-2-1773424773253
+2026-03-14 02:05:05.926 24145-24165 nativeloader            com.smssync.sms_sync_mobile          D  Load /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libflutter.so using class loader ns clns-9 (caller=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk): ok
+2026-03-14 02:05:05.927 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  flutter (null) was loaded normally!
+2026-03-14 02:05:05.937 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          W  type=1400 audit(0.0:13073909): avc:  denied  { read } for  name="max_map_count" dev="proc" ino=34880375 scontext=u:r:untrusted_app:s0:c173,c257,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.950 24145-24168 GameManager             com.smssync.sms_sync_mobile          I  __progname=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64'
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a'
+2026-03-14 02:05:05.968 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  added global layer 'VK_LAYER_KHRONOS_validation' from library '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libVkLayer_khronos_validation.so'
+2026-03-14 02:05:05.977 24145-24168 MMUD                    com.smssync.sms_sync_mobile          D  mtk_memory_debug_init com.smssync.sms_sync_mobile 0xb4000073a749e210
+2026-03-14 02:05:05.978 24145-24168 MMUD                    com.smssync.sms_sync_mobile          I  [MEMPROF] Memory instrumentation via debugfs (Experimental) enabled 0
+2026-03-14 02:05:05.988 24145-24168 flutter                 com.smssync.sms_sync_mobile          I  [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+2026-03-14 02:05:06.052 24145-24186 flutter                 com.smssync.sms_sync_mobile          I  The Dart VM service is listening on http://127.0.0.1:42993/0U-SR5XeqTI=/
+2026-03-14 02:05:06.087 24145-24181 MMUD                    com.smssync.sms_sync_mobile          D  get_leak_baseline 3246391296
+2026-03-14 02:05:06.403 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  `flutter_background_service_android` threw an error: Exception: This class should only be used in the main isolate (UI App). The app may not function as expected until you remove this plugin from pubspec.yaml
+2026-03-14 02:05:06.467 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+2026-03-14 02:05:06.487 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connectToServer trigger=startup
+2026-03-14 02:05:06.515 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connecting
+2026-03-14 02:05:06.664 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.665 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.741 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connected
+2026-03-14 02:05:06.814 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=5b0263b4-f569-4bbb-9a57-cf23934315dc ageMs=119009
+2026-03-14 02:05:06.816 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=aa08e4e7-d2c8-4913-8633-e548bbe69226 ageMs=979682
+2026-03-14 02:05:11.155 24145-24194 ProfileInstaller        com.smssync.sms_sync_mobile          D  Installing profile for com.smssync.sms_sync_mobile
+2026-03-14 02:05:27.266 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Forcing GC for allocation-inactive process
+2026-03-14 02:05:27.305 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Background concurrent copying GC freed 908KB AllocSpace bytes, 9(344KB) LOS objects, 75% free, 2015KB(1652KB_8192B)/8159KB, 2, itvl 21.484s, cpu 36.253ms, paused 100us,10us total 38.209ms
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  onReceive called with action: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Incoming SMS action accepted: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Number of PDUs: 1
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Format: 3gpp
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Processing PDU 0
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  From: 10684041130051156615
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Body: 【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码。
+2026-03-14 02:05:28.001 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for sms-receiver, queueing for background runtime
+2026-03-14 02:05:28.003 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=sms-receiver-no-channel
+2026-03-14 02:05:28.004 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from sms-receiver for background delivery
+2026-03-14 02:05:28.004 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.028 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=sms-receiver-no-channel
+2026-03-14 02:05:28.902 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-14 02:05:28.902 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-14 02:05:28.904 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-14 02:05:28.904 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-14 02:05:28.904 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.925 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=notification-listener-no-channel
+2026-03-14 02:05:29.045 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=sms-receiver
+2026-03-14 02:05:29.934 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=notification-listener
+2026-03-14 02:04:05.266  2003-2987  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.945  2003-2840  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: 1260, arg2: 2800, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:04:05.965  2003-2186  ActivityTaskManager     system_server                        I  Displayed com.smssync.sms_sync_mobile/.MainActivity for user 0: +1s104ms
+2026-03-14 02:04:05.967  2003-2186  ActivityTaskManager     system_server                        I  Fully drawn com.smssync.sms_sync_mobile/.MainActivity: +1s104ms
+2026-03-14 02:05:04.240  2003-2792  BatteryStatsService     system_server                        D  noteVideoSurfaceChanged  noteWhich: 49,arg1: -1, arg2: -1, arg3: 23455, arg4: 72158332495855617, name: com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.767 24145-24145 sms_sync_mobile         zygote64                             I  Late-enabling -Xcheck:jni
+2026-03-14 02:05:05.782 24145-24145 sms_sync_mobile         zygote64                             I  Using CollectorTypeCC GC.
+2026-03-14 02:05:05.791 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init Processname  com.smssync.sms_sync_mobile  
+2026-03-14 02:05:05.792 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          E  BBinder_init hasGetProcessName  com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2026-03-14 02:05:05.840 24145-24145 ApplicationLoaders      com.smssync.sms_sync_mobile          D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+2026-03-14 02:05:05.845 24145-24145 nativeloader            com.smssync.sms_sync_mobile          D  Configuring clns-9 for other apk /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64:/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.849 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          I  AssetManager2(0xb400007289512938) locale list changing from [] to [zh-CN]
+2026-03-14 02:05:05.854 24145-24145 ShaderCache             com.smssync.sms_sync_mobile          I  Parse coeffs for /com.smssync.sms_sync_mobile with space syetem(version 3)
+2026-03-14 02:05:05.854 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  Currently set values for:
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V    angle_gl_driver_selection_values=[angle, native, native, native]
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in per-application setting
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  ANGLE allowlist from config: 
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  com.smssync.sms_sync_mobile is not listed in ANGLE allowlist or settings, returning default
+2026-03-14 02:05:05.855 24145-24145 GraphicsEnvironment     com.smssync.sms_sync_mobile          V  App is not on the allowlist for updatable production driver.
+2026-03-14 02:05:05.866 24145-24145 SmsApplication          com.smssync.sms_sync_mobile          D  SmsApplication onCreate
+2026-03-14 02:05:05.887 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Starting flutter engine for background service
+2026-03-14 02:05:05.895 24145-24145 DisplayManager          com.smssync.sms_sync_mobile          I  Implicitly registering for refresh rate
+2026-03-14 02:05:05.898 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  Beginning load of flutter...
+2026-03-14 02:05:05.899 24145-24166 ResourceExtractor       com.smssync.sms_sync_mobile          I  Found extracted resources res_timestamp-2-1773424773253
+2026-03-14 02:05:05.926 24145-24165 nativeloader            com.smssync.sms_sync_mobile          D  Load /data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libflutter.so using class loader ns clns-9 (caller=/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk): ok
+2026-03-14 02:05:05.927 24145-24165 FlutterJNI              com.smssync.sms_sync_mobile          D  flutter (null) was loaded normally!
+2026-03-14 02:05:05.937 24145-24145 sms_sync_mobile         com.smssync.sms_sync_mobile          W  type=1400 audit(0.0:13073909): avc:  denied  { read } for  name="max_map_count" dev="proc" ino=34880375 scontext=u:r:untrusted_app:s0:c173,c257,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.950 24145-24168 GameManager             com.smssync.sms_sync_mobile          I  __progname=com.smssync.sms_sync_mobile
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/lib/arm64'
+2026-03-14 02:05:05.956 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  searching for layers in '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a'
+2026-03-14 02:05:05.968 24145-24168 vulkan                  com.smssync.sms_sync_mobile          D  added global layer 'VK_LAYER_KHRONOS_validation' from library '/data/app/~~1as1v6-_ABOthvAOIQlQCg==/com.smssync.sms_sync_mobile-3WNPHKD-lkPpSL0abvXLag==/base.apk!/lib/arm64-v8a/libVkLayer_khronos_validation.so'
+2026-03-14 02:05:05.977 24145-24168 MMUD                    com.smssync.sms_sync_mobile          D  mtk_memory_debug_init com.smssync.sms_sync_mobile 0xb4000073a749e210
+2026-03-14 02:05:05.978 24145-24168 MMUD                    com.smssync.sms_sync_mobile          I  [MEMPROF] Memory instrumentation via debugfs (Experimental) enabled 0
+2026-03-14 02:05:05.988 24145-24168 flutter                 com.smssync.sms_sync_mobile          I  [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+2026-03-14 02:05:06.052 24145-24186 flutter                 com.smssync.sms_sync_mobile          I  The Dart VM service is listening on http://127.0.0.1:42993/0U-SR5XeqTI=/
+2026-03-14 02:05:06.087 24145-24181 MMUD                    com.smssync.sms_sync_mobile          D  get_leak_baseline 3246391296
+2026-03-14 02:05:06.403 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  `flutter_background_service_android` threw an error: Exception: This class should only be used in the main isolate (UI App). The app may not function as expected until you remove this plugin from pubspec.yaml
+2026-03-14 02:05:06.467 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  UDP listening on port 8888, address: InternetAddress('0.0.0.0', IPv4)
+2026-03-14 02:05:06.487 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connectToServer trigger=startup
+2026-03-14 02:05:06.515 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connecting
+2026-03-14 02:05:06.664 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.665 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Ignored notification pkg=com.smssync.sms_sync_mobile, title=短信同步, text=正在后台同步短信
+2026-03-14 02:05:06.741 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [ServerStatus] connected
+2026-03-14 02:05:06.814 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=5b0263b4-f569-4bbb-9a57-cf23934315dc ageMs=119009
+2026-03-14 02:05:06.816 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  [DevicePresence][WS] stale presence id=aa08e4e7-d2c8-4913-8633-e548bbe69226 ageMs=979682
+2026-03-14 02:05:11.155 24145-24194 ProfileInstaller        com.smssync.sms_sync_mobile          D  Installing profile for com.smssync.sms_sync_mobile
+2026-03-14 02:05:27.266 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Forcing GC for allocation-inactive process
+2026-03-14 02:05:27.305 24145-24150 sms_sync_mobile         com.smssync.sms_sync_mobile          I  Background concurrent copying GC freed 908KB AllocSpace bytes, 9(344KB) LOS objects, 75% free, 2015KB(1652KB_8192B)/8159KB, 2, itvl 21.484s, cpu 36.253ms, paused 100us,10us total 38.209ms
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  onReceive called with action: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.997 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Incoming SMS action accepted: android.provider.Telephony.SMS_RECEIVED
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Number of PDUs: 1
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Format: 3gpp
+2026-03-14 02:05:27.998 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Processing PDU 0
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  From: 10684041130051156615
+2026-03-14 02:05:28.001 24145-24145 SmsReceiver             com.smssync.sms_sync_mobile          D  Body: 【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码。
+2026-03-14 02:05:28.001 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for sms-receiver, queueing for background runtime
+2026-03-14 02:05:28.003 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=sms-receiver-no-channel
+2026-03-14 02:05:28.004 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from sms-receiver for background delivery
+2026-03-14 02:05:28.004 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.028 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=sms-receiver-no-channel
+2026-03-14 02:05:28.902 24145-24145 SmsNotifListener        com.smssync.sms_sync_mobile          D  Accepted notification SMS pkg=com.android.mms.service, from=火山引擎, body=【火山引擎】验证码： 855167 。您正在进行身份验证，需要进行验证码校验（10分钟内有效），请勿向任何人提供此验证码...
+2026-03-14 02:05:28.902 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Method channel unavailable for notification-listener, queueing for background runtime
+2026-03-14 02:05:28.904 24145-24145 BgServiceStarter        com.smssync.sms_sync_mobile          D  Requested background service start, reason=notification-listener-no-channel
+2026-03-14 02:05:28.904 24145-24145 NativeSmsRelay          com.smssync.sms_sync_mobile          D  Queued pending SMS from notification-listener for background delivery
+2026-03-14 02:05:28.904 24145-24145 BackgroundService       com.smssync.sms_sync_mobile          V  Service already running, using existing service
+2026-03-14 02:05:28.925 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Processing 1 pending native SMS item(s), trigger=notification-listener-no-channel
+2026-03-14 02:05:29.045 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=sms-receiver
+2026-03-14 02:05:29.934 24145-24145 flutter                 com.smssync.sms_sync_mobile          I  Pending SMS delivered to server via direct socket, source=notification-listener

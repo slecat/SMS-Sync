@@ -3,3 +3,9 @@ nul
 sms-sync/desktop/node_modules/
 sms-sync/desktop/dist/
 .tools/
+.codex/
+.superpowers/
+remote-snapshots/
+server_access_*_ed25519
+server_access_*.pem
+sms-sync/desktop/release/
