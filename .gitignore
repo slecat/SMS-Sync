@@ -13,6 +13,7 @@ output/
 desktop/release/
 output/
 mobile/.gradle-user-home/
-server/.smoke/*.log
-server/.smoke/*.pid
-server/.smoke/*.xml
+.env
+mobile/log.txt
+mobile/serverLog.txt
+mobile/tmp_*.xml

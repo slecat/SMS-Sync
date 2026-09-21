@@ -12,8 +12,9 @@
 - `desktop`：Electron 桌面端，负责设备配对、消息展示和桌面通知。
 - `server`：Node.js WebSocket 中转服务，用于跨网络同步。
 - `package_all.bat`：移动端 APK 和桌面端安装包的一键打包入口。
+- `docs/`：仓库级设计文档与实施计划，历史计划文档按日期归档。
 - `remote-snapshots/`：运维或快照参考目录，除非任务明确要求，否则不要修改。
-- `.codex/`、`.opencode/`、`.tools/`、`.tmp/`：本地工具和代理辅助目录，除非任务明确要求，否则不要修改。
+- `.codex/`、`.opencode/`、`.superpowers/`、`.tools/`：本地工具和代理辅助目录，除非任务明确要求，否则不要修改。
 
 ## 工作位置
 
