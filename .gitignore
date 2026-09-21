@@ -2,6 +2,7 @@ nul
 .opencode/
 sms-sync/desktop/node_modules/
 sms-sync/desktop/dist/
+sms-sync/output/
 .tools/
 .codex/
 .superpowers/
