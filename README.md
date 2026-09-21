@@ -4,9 +4,9 @@
 
 ## 项目结构
 
-- `sms-sync/mobile`：Flutter Android 客户端，负责短信接收与转发
-- `sms-sync/desktop`：Electron 桌面端，负责短信展示与通知
-- `sms-sync/server`：Node.js WebSocket 中转服务
+- `mobile`：Flutter Android 客户端，负责短信接收与转发
+- `desktop`：Electron 桌面端，负责短信展示与通知
+- `server`：Node.js WebSocket 中转服务
 
 ## 核心能力
 
@@ -28,25 +28,25 @@
 ### 1) 启动服务端
 
 ```bash
-cd sms-sync/server
+cd server
 npm install
 node index.js
 ```
 
 默认端口为 `8004`，可通过环境变量 `PORT` 覆盖。
 
-服务端事件默认持久化到 `sms-sync/server/data/relay-events.json`，可通过 `RELAY_PERSISTENCE_PATH` 指定路径。生产环境请将该目录纳入备份。
+服务端事件默认持久化到 `server/data/relay-events.json`，可通过 `RELAY_PERSISTENCE_PATH` 指定路径。生产环境请将该目录纳入备份。
 
 如果是线上服务器部署，服务端代码修改后需要同步到服务器，并按项目现有的 SSH 运维流程执行部署。可优先参考：
 
 ```bash
-sms-sync/server/deploy.sh
+server/deploy.sh
 ```
 
 ### 2) 启动桌面端
 
 ```bash
-cd sms-sync/desktop
+cd desktop
 npm install
 npm start
 ```
@@ -61,7 +61,7 @@ npm start
 ### 3) 启动移动端
 
 ```bash
-cd sms-sync/mobile
+cd mobile
 flutter pub get
 flutter run
 ```
@@ -78,18 +78,17 @@ flutter run
 移动端和桌面端打包统一使用：
 
 ```bat
-cd sms-sync
 package_all.bat
 ```
 
-该脚本会完成移动端 APK 构建和桌面端安装包构建，并将产物输出到 `sms-sync/output/`。
+该脚本会完成移动端 APK 构建和桌面端安装包构建，并将产物输出到 `output/`。
 
 ## 开发与测试
 
 ### Mobile
 
 ```bash
-cd sms-sync/mobile
+cd mobile
 flutter analyze
 flutter test
 ```
@@ -97,7 +96,7 @@ flutter test
 ### Desktop
 
 ```bash
-cd sms-sync/desktop
+cd desktop
 npm run lint
 npm test
 ```
@@ -105,7 +104,7 @@ npm test
 ### Server
 
 ```bash
-cd sms-sync/server
+cd server
 npm install
 node index.js
 ```
@@ -115,7 +114,7 @@ node index.js
 - Android 端需要授予短信、通知和后台运行相关权限。
 - 部分 ROM 会限制后台常驻，建议关闭电池优化。
 - 原生中继服务使用 `START_STICKY`、WorkManager 租约恢复和启动广播；用户在系统设置中“强行停止”应用后，Android 不允许应用自行重启，这是系统级限制。
-- `sms-sync/mobile` 使用 `dependency_overrides` 指向本地 `third_party/flutter_background_service_android`，修改时需要注意这是仓库内维护的定制依赖。
+- `mobile` 使用 `dependency_overrides` 指向本地 `third_party/flutter_background_service_android`，修改时需要注意这是仓库内维护的定制依赖。
 - 服务端相关改动如果只停留在本地仓库，线上环境不会自动生效，部署时要同步走项目内已有的 SSH 流程。
 
 ## Android 验证码兼容说明
