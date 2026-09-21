@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:crypto/crypto.dart';
 import 'package:sms_sync_mobile/services/app_update_service.dart';
 
 void main() {
@@ -281,6 +281,183 @@ void main() {
       expect(state.message, contains('text/html'));
     });
 
+    test('downloadUpdate rejects a truncated apk when release declares file size', () async {
+      final truncatedFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}sms-sync-mobile-truncated-test.apk',
+      );
+      addTearDown(() async {
+        if (await truncatedFile.exists()) {
+          await truncatedFile.delete();
+        }
+      });
+      await truncatedFile.writeAsBytes(const [1, 2, 3, 4]);
+
+      final service = AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128',
+        downloadReleaseFile: (uri, fileName, onProgress) async {
+          onProgress(4, 10);
+          return DownloadedUpdateFile(filePath: truncatedFile.path, size: 4);
+        },
+      );
+
+      final state = await service.downloadUpdate(
+        release: const AppRelease(
+          version: '2.0.1',
+          buildNumber: 5,
+          downloadUrl: 'http://111.228.32.128/files/sms-sync-mobile-2.0.1.apk',
+          fileSize: 10,
+        ),
+      );
+
+      expect(state.status, AppUpdateStatus.error);
+      expect(state.message, contains('下载不完整'));
+      expect(await truncatedFile.exists(), isFalse);
+    });
+
+    test('downloadUpdate rejects checksum mismatch and deletes the file', () async {
+      final apkFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}sms-sync-mobile-checksum-test.apk',
+      );
+      addTearDown(() async {
+        if (await apkFile.exists()) {
+          await apkFile.delete();
+        }
+      });
+      await apkFile.writeAsBytes(const [1, 2, 3, 4]);
+
+      final service = AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128',
+        downloadReleaseFile: (uri, fileName, onProgress) async {
+          onProgress(4, 4);
+          return DownloadedUpdateFile(filePath: apkFile.path, size: 4);
+        },
+      );
+
+      final state = await service.downloadUpdate(
+        release: const AppRelease(
+          version: '2.0.1',
+          buildNumber: 5,
+          downloadUrl: 'http://111.228.32.128/files/sms-sync-mobile-2.0.1.apk',
+          fileSize: 4,
+          checksumSha256: 'deadbeef',
+        ),
+      );
+
+      expect(state.status, AppUpdateStatus.error);
+      expect(state.message, contains('SHA-256 不匹配'));
+      expect(await apkFile.exists(), isFalse);
+    });
+
+    test('downloadUpdate succeeds when checksum matches', () async {
+      final apkFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}sms-sync-mobile-checksum-ok-test.apk',
+      );
+      addTearDown(() async {
+        if (await apkFile.exists()) {
+          await apkFile.delete();
+        }
+      });
+      await apkFile.writeAsBytes(const [1, 2, 3, 4]);
+      final checksum = sha256.convert(const [1, 2, 3, 4]).toString();
+
+      final service = AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128',
+        downloadReleaseFile: (uri, fileName, onProgress) async {
+          onProgress(4, 4);
+          return DownloadedUpdateFile(filePath: apkFile.path, size: 4);
+        },
+      );
+
+      final state = await service.downloadUpdate(
+        release: AppRelease(
+          version: '2.0.1',
+          buildNumber: 5,
+          downloadUrl: 'http://111.228.32.128/files/sms-sync-mobile-2.0.1.apk',
+          fileSize: 4,
+          checksumSha256: checksum,
+        ),
+      );
+
+      expect(state.status, AppUpdateStatus.readyToInstall);
+      expect(state.downloadedFilePath, apkFile.path);
+      expect(state.downloadedBytes, 4);
+    });
+
+    test('checkForUpdates reuses a verified cached apk instead of re-downloading', () async {
+      final cachedFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}sms-sync-mobile-2.0.1-build-5.apk',
+      );
+      addTearDown(() async {
+        if (await cachedFile.exists()) {
+          await cachedFile.delete();
+        }
+      });
+      await cachedFile.writeAsBytes(const [1, 2, 3, 4]);
+      final checksum = sha256.convert(const [1, 2, 3, 4]).toString();
+
+      final service = AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128',
+        loadReleasePayload: (_) async => <String, dynamic>{
+          'success': true,
+          'data': <String, dynamic>{
+            'version': '2.0.1',
+            'build_number': 5,
+            'download_url': 'http://111.228.32.128/files/sms-sync-mobile-2.0.1.apk',
+            'file_size': 4,
+            'checksum_sha256': checksum,
+          },
+        },
+      );
+
+      final state = await service.checkForUpdates(
+        currentVersion: const AppVersionInfo(version: '2.0.0', buildNumber: 2),
+      );
+
+      expect(state.status, AppUpdateStatus.readyToInstall);
+      expect(state.downloadedFilePath, cachedFile.path);
+      expect(state.downloadedBytes, 4);
+      expect(state.downloadProgress, 100);
+    });
+
+    test('checkForUpdates discards a corrupt cached apk', () async {
+      final cachedFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}sms-sync-mobile-2.0.1-build-5.apk',
+      );
+      addTearDown(() async {
+        if (await cachedFile.exists()) {
+          await cachedFile.delete();
+        }
+      });
+      // 大小不匹配的缓存文件应被丢弃（服务器声明的 file_size = 4）。
+      await cachedFile.writeAsBytes(const [1, 2, 3, 4, 5]);
+      final service = AppUpdateService(
+        softwareSlug: 'sms-sync-mobile',
+        apiBaseUrl: 'http://111.228.32.128',
+        loadReleasePayload: (_) async => <String, dynamic>{
+          'success': true,
+          'data': <String, dynamic>{
+            'version': '2.0.1',
+            'build_number': 5,
+            'download_url': 'http://111.228.32.128/files/sms-sync-mobile-2.0.1.apk',
+            'file_size': 4,
+            'checksum_sha256': sha256.convert(const [1, 2, 3, 4]).toString(),
+          },
+        },
+      );
+
+      final state = await service.checkForUpdates(
+        currentVersion: const AppVersionInfo(version: '2.0.0', buildNumber: 2),
+      );
+
+      expect(state.status, AppUpdateStatus.available);
+      expect(state.isUpdateAvailable, isTrue);
+      expect(await cachedFile.exists(), isFalse);
+    });
+
     test('downloadUpdate streams progress and returns a readyToInstall state', () async {
       final progressStates = <AppUpdateState>[];
       final service = AppUpdateService(
@@ -297,7 +474,7 @@ void main() {
           onProgress(10, 10);
           return DownloadedUpdateFile(
             filePath: '/tmp/sms-sync-mobile-2.0.1-build-5.apk',
-            bytes: Uint8List.fromList(const [1, 2, 3, 4]),
+            size: 4,
           );
         },
       );
@@ -328,7 +505,7 @@ void main() {
           onProgress(4, 4);
           return DownloadedUpdateFile(
             filePath: '/tmp/sms-sync-mobile-2.0.1-build-5.apk',
-            bytes: Uint8List.fromList(const [1, 2, 3, 4]),
+            size: 4,
           );
         },
       );

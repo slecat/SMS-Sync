@@ -36,6 +36,7 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
   AppUpdateState _updateState = AppUpdateState.initial();
   AppVersionInfo? _currentVersionInfo;
   NativeRelayHealth? _relayHealth;
+  String? _relayHealthError;
 
   @override
   void initState() {
@@ -68,13 +69,21 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
     }
     try {
       final health = await const NativeRelayChannel().readHealth();
-      if (mounted) {
-        setState(() {
-          _relayHealth = health;
-        });
+      if (!mounted) {
+        return;
       }
+      setState(() {
+        _relayHealth = health;
+        _relayHealthError = null;
+      });
     } catch (error) {
       debugPrint('Failed to read native relay health: $error');
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _relayHealthError = '队列状态读取失败，请点击右上角刷新重试';
+      });
     }
   }
 
@@ -356,7 +365,17 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
       if (success) {
         HomeSnackBar.show(context, '已启动系统安装器');
       } else {
-        HomeSnackBar.show(context, '启动安装失败', tone: HomeSnackBarTone.error);
+        // 启动安装器失败通常意味着安装包已被系统清理或损坏。
+        // 退回"可下载"状态，让用户一键重新下载，无需再手动检查更新。
+        setState(() {
+          _updateState = _updateState.copyWith(
+            status: AppUpdateStatus.available,
+            message: 'install-launch-failed',
+            clearDownloadedFilePath: true,
+            downloadProgress: 0,
+          );
+        });
+        HomeSnackBar.show(context, '启动安装失败，请重新下载', tone: HomeSnackBarTone.error);
       }
     } on PlatformException {
       if (mounted) {
@@ -712,7 +731,12 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
                 ),
                 tooltip: '刷新队列状态',
               ),
-              children: [_RelayHealthSummary(health: _relayHealth)],
+              children: [
+                _RelayHealthSummary(
+                  health: _relayHealth,
+                  error: _relayHealthError,
+                ),
+              ],
             ),
           ],
         ),
@@ -817,14 +841,26 @@ class _SettingsTabState extends State<SettingsTab> with WidgetsBindingObserver {
 }
 
 class _RelayHealthSummary extends StatelessWidget {
-  const _RelayHealthSummary({required this.health});
+  const _RelayHealthSummary({required this.health, this.error});
 
   final NativeRelayHealth? health;
+  final String? error;
 
   @override
   Widget build(BuildContext context) {
     final value = health;
     if (value == null) {
+      final errorText = error;
+      if (errorText != null && errorText.isNotEmpty) {
+        return Text(
+          errorText,
+          style: const TextStyle(
+            color: Color(0xFFEF4444),
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        );
+      }
       return const Text(
         '正在读取原生队列状态…',
         style: TextStyle(color: Color(0xFF173C36), fontSize: 13),

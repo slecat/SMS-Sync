@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
 
 typedef ReleasePayloadLoader =
     Future<Map<String, dynamic>> Function(Uri uri);
@@ -51,6 +52,8 @@ class AppRelease {
     required this.downloadUrl,
     this.downloadOptions = const <AppDownloadOption>[],
     this.changelog = '',
+    this.fileSize,
+    this.checksumSha256,
   });
 
   final String version;
@@ -58,16 +61,18 @@ class AppRelease {
   final String downloadUrl;
   final List<AppDownloadOption> downloadOptions;
   final String changelog;
+  final int? fileSize;
+  final String? checksumSha256;
 }
 
 class DownloadedUpdateFile {
   const DownloadedUpdateFile({
     required this.filePath,
-    required this.bytes,
+    required this.size,
   });
 
   final String filePath;
-  final Uint8List bytes;
+  final int size;
 }
 
 enum AppUpdateStatus {
@@ -220,6 +225,22 @@ class AppUpdateService {
       final isUpdateAvailable =
           compareReleaseVersions(latestRelease, currentRelease) > 0;
 
+      if (isUpdateAvailable) {
+        final cachedFile = await _findCachedReleaseFile(latestRelease);
+        if (cachedFile != null) {
+          _state = _state.copyWith(
+            status: AppUpdateStatus.readyToInstall,
+            message: 'ready',
+            latestRelease: latestRelease,
+            isUpdateAvailable: true,
+            downloadProgress: 100,
+            downloadedFilePath: cachedFile.path,
+            downloadedBytes: await cachedFile.length(),
+          );
+          return _state;
+        }
+      }
+
       _state = _state.copyWith(
         status: isUpdateAvailable
             ? AppUpdateStatus.available
@@ -272,12 +293,14 @@ class AppUpdateService {
         },
       );
 
+      await _verifyDownloadedReleaseFile(release, downloadedFile);
+
       _state = _state.copyWith(
         status: AppUpdateStatus.readyToInstall,
         message: 'ready',
         downloadProgress: 100,
         downloadedFilePath: downloadedFile.filePath,
-        downloadedBytes: downloadedFile.bytes.length,
+        downloadedBytes: downloadedFile.size,
       );
       onStateChanged?.call(_state);
     } catch (error) {
@@ -292,6 +315,53 @@ class AppUpdateService {
     }
 
     return _state;
+  }
+
+  /// 下载完成后校验安装包：优先比对服务端声明的文件大小，再校验 SHA-256。
+  /// 校验失败时删除损坏文件并抛出异常，避免把损坏的 APK 交给系统安装器。
+  Future<void> _verifyDownloadedReleaseFile(
+    AppRelease release,
+    DownloadedUpdateFile downloadedFile,
+  ) async {
+    final apkFile = File(downloadedFile.filePath);
+    final expectedSize = release.fileSize;
+    if (expectedSize != null && expectedSize > 0) {
+      final actualSize = downloadedFile.size > 0
+          ? downloadedFile.size
+          : (await apkFile.exists() ? await apkFile.length() : 0);
+      if (actualSize != expectedSize) {
+        await _deleteQuietly(apkFile);
+        throw StateError(
+          '安装包下载不完整（$actualSize/$expectedSize 字节），请重新下载',
+        );
+      }
+    }
+    await _verifyChecksum(apkFile, release.checksumSha256);
+  }
+
+  /// 查找上一次下载、且通过校验的安装包，避免安装失败后被迫重新下载。
+  Future<File?> _findCachedReleaseFile(AppRelease release) async {
+    final expectedSize = release.fileSize;
+    if (expectedSize == null || expectedSize <= 0) {
+      return null;
+    }
+    final fileName = _buildDownloadFileName(release, release.downloadUrl);
+    final cachedFile = File(
+      '${Directory.systemTemp.path}${Platform.pathSeparator}$fileName',
+    );
+    if (!await cachedFile.exists()) {
+      return null;
+    }
+    if (await cachedFile.length() != expectedSize) {
+      await _deleteQuietly(cachedFile);
+      return null;
+    }
+    try {
+      await _verifyChecksum(cachedFile, release.checksumSha256);
+    } on Exception {
+      return null;
+    }
+    return cachedFile;
   }
 
   AppRelease _normalizeRelease(Map<String, dynamic> rawRelease) {
@@ -319,6 +389,17 @@ class AppUpdateService {
         ? resolvedPrimaryDownloadUrl
         : _resolveDownloadUrl('/api/public/download/$softwareSlug/latest');
 
+    final rawFileSize = rawRelease['file_size'] ?? rawRelease['fileSize'];
+    final fileSize = rawFileSize == null
+        ? null
+        : int.tryParse(rawFileSize.toString());
+    final checksum =
+        (rawRelease['checksum_sha256'] ?? rawRelease['checksumSha256'])
+            ?.toString()
+            .trim();
+    final checksumSha256 =
+        (checksum == null || checksum.isEmpty) ? null : checksum;
+
     return AppRelease(
       version: version,
       buildNumber: buildNumber,
@@ -328,6 +409,8 @@ class AppUpdateService {
         primaryDownloadUrl: normalizedPrimaryDownloadUrl,
       ),
       changelog: (rawRelease['changelog'] ?? '').toString(),
+      fileSize: fileSize,
+      checksumSha256: checksumSha256,
     );
   }
 
@@ -490,13 +573,11 @@ Future<DownloadedUpdateFile> _defaultDownloadReleaseFile(
     }
 
     final sink = file.openWrite();
-    final collected = BytesBuilder(copy: false);
     var receivedBytes = 0;
 
     try {
       await for (final chunk in response) {
         sink.add(chunk);
-        collected.add(chunk);
         receivedBytes += chunk.length;
         onProgress(receivedBytes, totalBytes);
       }
@@ -507,9 +588,55 @@ Future<DownloadedUpdateFile> _defaultDownloadReleaseFile(
 
     return DownloadedUpdateFile(
       filePath: file.path,
-      bytes: collected.takeBytes(),
+      size: receivedBytes,
     );
   } finally {
     client.close(force: true);
+  }
+}
+
+/// 以流式方式计算文件 SHA-256，避免一次性读入整个安装包。
+Future<String> _computeSha256(File file) async {
+  final digestSink = _DigestSink();
+  final byteSink = sha256.startChunkedConversion(digestSink);
+  await for (final chunk in file.openRead()) {
+    byteSink.add(chunk);
+  }
+  byteSink.close();
+  return digestSink.digest!.toString();
+}
+
+class _DigestSink implements Sink<Digest> {
+  Digest? digest;
+
+  @override
+  void add(Digest data) {
+    digest = data;
+  }
+
+  @override
+  void close() {}
+}
+
+/// 服务端声明了 SHA-256 时逐块校验下载内容，防止把损坏的安装包交给系统安装器。
+Future<void> _verifyChecksum(File file, String? expectedSha256) async {
+  final expected = (expectedSha256 ?? '').trim().toLowerCase();
+  if (expected.isEmpty) {
+    return;
+  }
+  final actual = await _computeSha256(file);
+  if (actual != expected) {
+    await _deleteQuietly(file);
+    throw StateError('安装包校验失败（SHA-256 不匹配），已删除损坏文件，请重新下载');
+  }
+}
+
+Future<void> _deleteQuietly(File file) async {
+  try {
+    if (await file.exists()) {
+      await file.delete();
+    }
+  } catch (_) {
+    // 清理失败不影响主流程，缓存复用前还会重新校验。
   }
 }

@@ -84,7 +84,25 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "getDeviceId" -> result.success(resolveDeviceId())
-                "getRelayHealth" -> result.success(getRelayHealth())
+                "getRelayHealth" -> {
+                    // Room 不允许在主线程同步查询，否则抛异常后 MethodChannel 永不回复，
+                    // Dart 侧会一直停在等待状态。
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val health = try {
+                            getRelayHealth()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error reading relay health: ${e.message}", e)
+                            null
+                        }
+                        runOnUiThread {
+                            if (health == null) {
+                                result.error("RELAY_HEALTH_FAILED", "无法读取原生队列状态", null)
+                            } else {
+                                result.success(health)
+                            }
+                        }
+                    }
+                }
                 else -> result.notImplemented()
             }
         }
